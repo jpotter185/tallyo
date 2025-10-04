@@ -7,4 +7,5 @@ type Game = {
   awayScore: string;
   period: string;
   channel: string;
+  espnLink: string;
 };

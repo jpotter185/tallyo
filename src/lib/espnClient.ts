@@ -24,6 +24,7 @@ export async function getCurrentWeekGames(): Promise<Game[]> {
           awayScore: awayTeam.score === "0" ? " " : awayTeam.score,
           period: competition.status.type.detail,
           channel: competition.broadcasts[0].names[0],
+          espnLink: event.links[0].href,
         };
         console.log(game);
         games.push(game);
