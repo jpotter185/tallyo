@@ -1,6 +1,8 @@
 type Game = {
   id: string;
   homeTeam: string;
+  homeTeamId: string;
+  awayTeamId: string;
   homeTeamLogo: string;
   awayTeam: string;
   awayTeamLogo: string;
@@ -11,4 +13,8 @@ type Game = {
   channel: string;
   espnLink: string;
   lastPlay: string;
+  currentDownAndDistance: string;
+  possessionTeamId: string;
+  homeTeamRecord: string;
+  awayTeamRecord: string;
 };

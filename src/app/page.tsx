@@ -1,9 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { getCollegeFootballGames, getNflFootballGames } from "./api/api";
-import GameCard from "../components/GameCard";
 import Header from "../components/Header";
-import LeagueHeader from "@/components/League";
 import League from "@/components/League";
 export default function Home() {
   const [nflGames, setNflGames] = useState<Game[]>([]);
@@ -16,6 +14,7 @@ export default function Home() {
       setNflGames(fetchedNflGames);
     };
     fetch();
+    setInterval(fetch, 30000);
   }, []);
 
   return (
