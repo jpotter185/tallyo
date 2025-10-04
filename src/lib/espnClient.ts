@@ -5,7 +5,7 @@ export async function getCurrentWeekGames(): Promise<Game[]> {
   const response = await fetch(NFL_CURRENT_WEEK_ENDPOINT);
   const data = await response.json();
   const events = data.events;
-  let games: Game[] = [];
+  const games: Game[] = [];
   if (events && events.length > 0) {
     for (const event of events) {
       for (const competition of event.competitions) {
@@ -15,7 +15,7 @@ export async function getCurrentWeekGames(): Promise<Game[]> {
         const awayTeam = competition.competitors.find(
           (c: { homeAway: string }) => c.homeAway === "away"
         );
-        let game: Game = {
+        const game: Game = {
           homeTeam: homeTeam.team.displayName,
           awayTeam: awayTeam.team.displayName,
           id: competition.id,
