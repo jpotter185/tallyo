@@ -4,7 +4,7 @@ interface GameProps {
 
 const GameCard: React.FC<GameProps> = ({ game }) => {
   return (
-    <div className="mb-4 shadow-md p-6 max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow-sm dark:bg-gray-800 dark:border-gray-700">
+    <div className="mb-4 shadow-md p-6 max-w-md p-6 bg-white border border-gray-200 rounded-lg shadow-sm dark:bg-gray-800 dark:border-gray-700">
       <div>
         {game.awayTeam} {game.awayScore} @ {game.homeTeam} {game.homeScore}
       </div>

@@ -3,8 +3,8 @@ type Game = {
   homeTeam: string;
   awayTeam: string;
   location: string;
-  homeScore: number;
-  awayScore: number;
+  homeScore: string;
+  awayScore: string;
   period: string;
   channel: string;
 };

@@ -20,11 +20,12 @@ export async function getCurrentWeekGames(): Promise<Game[]> {
           awayTeam: awayTeam.team.displayName,
           id: competition.id,
           location: competition.venue.fullName,
-          homeScore: homeTeam.score,
-          awayScore: awayTeam.score,
+          homeScore: homeTeam.score === "0" ? " " : homeTeam.score,
+          awayScore: awayTeam.score === "0" ? " " : awayTeam.score,
           period: competition.status.type.detail,
           channel: competition.broadcasts[0].names[0],
         };
+        console.log(game);
         games.push(game);
       }
     }
