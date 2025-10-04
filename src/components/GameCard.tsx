@@ -15,7 +15,7 @@ const GameCard: React.FC<GameProps> = ({ game }) => {
               alt={`${game.awayTeam} logo`}
               width="36"
               height="36" /></dt>
-            <dd className="whitespace-nowrap">{game.awayTeam}</dd>
+            <dd>{game.awayTeam}</dd>
             <dd>{game.awayTeamRecord}</dd>
           </dl>
         </div>
@@ -25,7 +25,7 @@ const GameCard: React.FC<GameProps> = ({ game }) => {
               alt={`${game.homeTeam} logo`}
               width="36"
               height="36" /></dt>
-            <dd className="whitespace-nowrap">{game.homeTeam}</dd>
+            <dd >{game.homeTeam}</dd>
             <dd>{game.homeTeamRecord}</dd>
           </dl>
 
