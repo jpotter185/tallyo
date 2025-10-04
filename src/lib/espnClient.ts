@@ -31,9 +31,19 @@ function getGamesFromJson(data: { events: any }): Game[] {
         const awayTeam = competition.competitors.find(
           (c: { homeAway: string }) => c.homeAway === "away"
         );
+        const homeTeamRank =
+          homeTeam?.curatedRank?.current === 99 ||
+          !homeTeam?.curatedRank?.current
+            ? ""
+            : "#" + homeTeam?.curatedRank?.current + " ";
+        const awayTeamRank =
+          awayTeam?.curatedRank?.current === 99 ||
+          !awayTeam?.curatedRank?.current
+            ? ""
+            : "#" + awayTeam?.curatedRank?.current + " ";
         const game: Game = {
-          homeTeam: homeTeam.team.displayName,
-          awayTeam: awayTeam.team.displayName,
+          homeTeam: homeTeamRank + homeTeam.team.displayName,
+          awayTeam: awayTeamRank + awayTeam.team.displayName,
           id: competition.id,
           location: competition.venue.fullName,
           homeScore: homeTeam.score === "0" ? " " : homeTeam.score,
