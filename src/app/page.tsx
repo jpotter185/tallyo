@@ -3,7 +3,8 @@ import { useEffect, useState } from "react";
 import { getCollegeFootballGames, getNflFootballGames } from "./api/api";
 import GameCard from "../components/GameCard";
 import Header from "../components/Header";
-import LeagueHeader from "@/components/LeagueHeader";
+import LeagueHeader from "@/components/League";
+import League from "@/components/League";
 export default function Home() {
   const [nflGames, setNflGames] = useState<Game[]>([]);
   const [cfbGames, setCfbGames] = useState<Game[]>([]);
@@ -20,18 +21,8 @@ export default function Home() {
   return (
     <div className="pl-3">
       <Header />
-      <LeagueHeader leagueName="NFL"/>
-      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {nflGames.map((game) => (
-          <GameCard key={game.id} game={game} />
-        ))}
-      </div>
-      <LeagueHeader leagueName="CFB"/>
-      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {cfbGames.map((game) => (
-          <GameCard key={game.id} game={game} />
-        ))}
-      </div>
+      <League leagueName="CFB" games={cfbGames} />
+      <League leagueName="NFL" games={nflGames} />
     </div>
   );
 }
