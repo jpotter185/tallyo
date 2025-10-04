@@ -1,5 +1,9 @@
-import { getCurrentWeekGames } from "@/lib/espnClient";
+import { getCollegeGames, getNflGames } from "@/lib/espnClient";
 
-export async function getGames() {
-  return await getCurrentWeekGames();
+export async function getCollegeFootballGames() {
+  return await getCollegeGames();
+}
+
+export async function getNflFootballGames() {
+  return await getNflGames();
 }

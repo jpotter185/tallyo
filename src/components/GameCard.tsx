@@ -12,6 +12,7 @@ const GameCard: React.FC<GameProps> = ({ game }) => {
       </div>
       <div>{game.channel}</div>
       <div>{game.period}</div>
+      <div>{game.lastPlay}</div>
       <div>{game.location}</div>
       <Link
         href={game.espnLink}

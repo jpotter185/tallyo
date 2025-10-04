@@ -8,4 +8,5 @@ type Game = {
   period: string;
   channel: string;
   espnLink: string;
+  lastPlay: string;
 };

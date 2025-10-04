@@ -1,11 +1,27 @@
 const NFL_CURRENT_WEEK_ENDPOINT =
   "https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard";
 
-export async function getCurrentWeekGames(): Promise<Game[]> {
-  const response = await fetch(NFL_CURRENT_WEEK_ENDPOINT);
-  const data = await response.json();
-  const events = data.events;
+const CFB_CURRENT_WEEK_ENDPOINT =
+  "https://site.api.espn.com/apis/site/v2/sports/football/college-football/scoreboard";
+
+export async function getCollegeGames(): Promise<Game[]> {
+  const cfbResponse = await fetch(CFB_CURRENT_WEEK_ENDPOINT);
+  const cfbData = await cfbResponse.json();
+  const collegeGames = getGamesFromJson(cfbData);
+  return collegeGames;
+}
+
+export async function getNflGames() {
+  const nflResponse = await fetch(NFL_CURRENT_WEEK_ENDPOINT);
+  const nflData = await nflResponse.json();
+  const nflGames = getGamesFromJson(nflData);
+  return nflGames;
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function getGamesFromJson(data: { events: any }): Game[] {
   const games: Game[] = [];
+  const events = data.events;
   if (events && events.length > 0) {
     for (const event of events) {
       for (const competition of event.competitions) {
@@ -25,8 +41,8 @@ export async function getCurrentWeekGames(): Promise<Game[]> {
           period: competition.status.type.detail,
           channel: competition.broadcasts[0].names[0],
           espnLink: event.links[0].href,
+          lastPlay: competition?.situation?.lastPlay?.text,
         };
-        console.log(game);
         games.push(game);
       }
     }
