@@ -11,18 +11,19 @@ export async function getCurrentWeekGames(): Promise<Game[]> {
       for (const competition of event.competitions) {
         const homeTeam = competition.competitors.find(
           (c: { homeAway: string }) => c.homeAway === "home"
-        )!;
+        );
         const awayTeam = competition.competitors.find(
           (c: { homeAway: string }) => c.homeAway === "away"
-        )!;
+        );
         let game: Game = {
           homeTeam: homeTeam.team.displayName,
           awayTeam: awayTeam.team.displayName,
           id: competition.id,
-          date: competition.date,
           location: competition.venue.fullName,
           homeScore: homeTeam.score,
           awayScore: awayTeam.score,
+          period: competition.status.type.detail,
+          channel: competition.broadcasts[0].names[0],
         };
         games.push(game);
       }
