@@ -1,11 +1,9 @@
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 type Game = {
   id: string;
-  homeTeam: string;
-  homeTeamId: string;
-  awayTeamId: string;
-  homeTeamLogo: string;
-  awayTeam: string;
-  awayTeamLogo: string;
+  homeTeam: Team;
+  awayTeam: Team;
+  stadiumName: string;
   location: string;
   homeScore: string;
   awayScore: string;
@@ -15,6 +13,5 @@ type Game = {
   lastPlay: string;
   currentDownAndDistance: string;
   possessionTeamId: string;
-  homeTeamRecord: string;
-  awayTeamRecord: string;
+  winner?: string;
 };
