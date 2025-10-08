@@ -36,27 +36,28 @@ const League: React.FC<LeagueProps> = ({
         ></ChevronDown>
       </button>
       {isOpen && (
-        <div className="px-3">
-          <p>{week !== "" ? "Week " + week : "Current Week"}</p>
-          <select
-            id="numberSelect"
-            value={week ?? ""}
-            onChange={(e) => setWeek(e.target.value)}
-            className="border border-gray-500 dark:border-neutral-800 py-1 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-          >
-            <option value="">- Current Week -</option>
-            {Array.from({ length: numberOfWeeks }, (_, i) => i + 1).map(
-              (num) => (
-                <option key={num} value={num}>
-                  Week {num}
-                </option>
-              )
-            )}
-          </select>
-          <div className="p-2 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {games.map((game) => {
-              return <GameCard key={game.id} game={game} />;
-            })}
+        <div>
+          <div className="px-3">
+            <select
+              id="numberSelect"
+              value={week ?? ""}
+              onChange={(e) => setWeek(e.target.value)}
+              className="border border-gray-500 dark:border-neutral-800 py-1 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-500"
+            >
+              <option value="">- Current Week -</option>
+              {Array.from({ length: numberOfWeeks }, (_, i) => i + 1).map(
+                (num) => (
+                  <option key={num} value={num}>
+                    Week {num}
+                  </option>
+                )
+              )}
+            </select>
+            <div className="py-2 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+              {games.map((game) => {
+                return <GameCard key={game.id} game={game} />;
+              })}
+            </div>
           </div>
         </div>
       )}

@@ -45,26 +45,31 @@ export default function Home() {
   }, [cfbWeek, isCfbOpen]);
 
   return (
-    <div className="bg-sky-50 dark:bg-neutral-800 border border-gray-500 dark:divide-neutral-800 divide-y divide-gray-500 dark:divide-neutral-800">
+    <div className="bg-sky-50 dark:bg-neutral-800 border border-gray-500 divide-y divide-x divide-gray-500 dark:divide-gray-500">
       <Header />
-      <League
-        leagueName="CFB"
-        games={cfbGames}
-        isOpen={isCfbOpen}
-        setIsOpen={setIsCfbOpen}
-        week={cfbWeek}
-        setWeek={setCfbWeek}
-        numberOfWeeks={16}
-      />
-      <League
-        leagueName="NFL"
-        games={nflGames}
-        isOpen={isNflOpen}
-        setIsOpen={setIsNflOpen}
-        week={nflWeek}
-        setWeek={setNflWeek}
-        numberOfWeeks={18}
-      />
+      <div>
+        <League
+          leagueName="CFB"
+          games={cfbGames}
+          isOpen={isCfbOpen}
+          setIsOpen={setIsCfbOpen}
+          week={cfbWeek}
+          setWeek={setCfbWeek}
+          numberOfWeeks={16}
+        />
+      </div>
+      <div>
+        <League
+          leagueName="NFL"
+          games={nflGames}
+          isOpen={isNflOpen}
+          setIsOpen={setIsNflOpen}
+          week={nflWeek}
+          setWeek={setNflWeek}
+          numberOfWeeks={18}
+        />
+      </div>
+
       <Footer isOpen={isContactOpen} setIsOpen={setIsContactOpen} />
     </div>
   );
