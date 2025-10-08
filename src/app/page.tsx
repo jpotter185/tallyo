@@ -18,8 +18,11 @@ export default function Home() {
     const fetch = async () => {
       const fetchedNflGames = await getNflGames(nflWeek);
       const now = new Date().toISOString();
-      console.log(`${now} Got ${fetchedNflGames.length} NFL game(s)`);
-      setNflGames(fetchedNflGames);
+      console.log(
+        `${now} Got ${fetchedNflGames.games.length} NFL game(s) for week ${fetchedNflGames.dataWeek}`
+      );
+      setNflGames(fetchedNflGames.games);
+      setNflWeek(fetchedNflGames.dataWeek);
     };
     fetch();
     const interval = setInterval(fetch, 30000);
@@ -30,8 +33,11 @@ export default function Home() {
     const fetch = async () => {
       const fetchedCfbGames = await getCfbGames(cfbWeek);
       const now = new Date().toISOString();
-      console.log(`${now} Got ${fetchedCfbGames.length} CFB game(s)`);
-      setCfbGames(fetchedCfbGames);
+      console.log(
+        `${now} Got ${fetchedCfbGames.games.length} NFL game(s) for week ${fetchedCfbGames.dataWeek}`
+      );
+      setCfbGames(fetchedCfbGames.games);
+      setCfbWeek(fetchedCfbGames.dataWeek);
     };
     fetch();
     const interval = setInterval(fetch, 30000);

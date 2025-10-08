@@ -66,8 +66,8 @@ const GameCard: React.FC<GameProps> = ({ game }) => {
           </div>
         )}
 
+        {game.odds && <div className="text-center flex-1">{game.odds}</div>}
         {game.period && <div className="text-center flex-1">{game.period}</div>}
-
         {game.currentDownAndDistance && (
           <div
             className="text-center flex-1"

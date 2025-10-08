@@ -1,5 +1,5 @@
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function getGamesFromJson(data: { events: any }): Game[] {
+export function getGamesFromJson(data: any): Game[] {
   const games: Game[] = [];
   const events = data.events;
   if (events && events.length > 0) {
@@ -26,12 +26,14 @@ export function getGamesFromJson(data: { events: any }): Game[] {
         const gameLocation = buildGameLocationString(
           competition?.venue?.address
         );
-        const channel = getChannel(competition.broadcasts);
+        const channel = competition.broadcast ? competition.broadcast : "TBD";
 
         const headline =
           competition.notes && competition.notes.length > 0
             ? competition.notes[0].headline
             : "";
+
+        const gameOdds = getOdds(competition);
 
         const currentDownAndDistance = competition.situation?.downDistanceText;
         const game: Game = {
@@ -50,6 +52,7 @@ export function getGamesFromJson(data: { events: any }): Game[] {
           currentDownAndDistance: currentDownAndDistance,
           winner: winner ? winner.id : undefined,
           headline: headline,
+          odds: gameOdds,
         };
         games.push(game);
       }
@@ -59,14 +62,11 @@ export function getGamesFromJson(data: { events: any }): Game[] {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-function getChannel(broadcasts: any) {
-  if (broadcasts && broadcasts.length > 0) {
-    const names = broadcasts[0].names;
-    if (names && names.length > 0) {
-      return names[0];
-    }
+function getOdds(competition: any) {
+  if (competition.odds && competition.odds.length > 0) {
+    return competition.odds[0].details;
   }
-  return "TBD";
+  return undefined;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

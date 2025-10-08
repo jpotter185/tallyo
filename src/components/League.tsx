@@ -36,17 +36,15 @@ const League: React.FC<LeagueProps> = ({
         ></ChevronDown>
       </button>
       {isOpen && (
-        <div>
-          <p className="px-3">
-            {week !== "" ? "Week " + week : "Current Week"}
-          </p>
+        <div className="px-3">
+          <p>{week !== "" ? "Week " + week : "Current Week"}</p>
           <select
             id="numberSelect"
             value={week ?? ""}
             onChange={(e) => setWeek(e.target.value)}
-            className="border border-gray-300 rounded-lg px-3 py-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="border border-gray-500 dark:border-neutral-800 py-1 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
-            <option value="">-- Select a week --</option>
+            <option value="">- Current Week -</option>
             {Array.from({ length: numberOfWeeks }, (_, i) => i + 1).map(
               (num) => (
                 <option key={num} value={num}>
@@ -56,9 +54,9 @@ const League: React.FC<LeagueProps> = ({
             )}
           </select>
           <div className="p-2 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {games.map((game) => (
-              <GameCard key={game.id} game={game} />
-            ))}
+            {games.map((game) => {
+              return <GameCard key={game.id} game={game} />;
+            })}
           </div>
         </div>
       )}

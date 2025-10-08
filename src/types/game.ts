@@ -15,4 +15,5 @@ type Game = {
   possessionTeamId: string;
   winner?: string;
   headline?: string;
+  odds?: string;
 };
