@@ -12,28 +12,32 @@ const GameCard: React.FC<GameProps> = ({ game }) => {
         <div className="grid grid-cols-2 font-bold divide-x divide-gray-500 dark:divide-neutral-800">
           <div className="flex-1 px-1">
             <dl>
-              <dt>
-                <Image
-                  src={game.awayTeam.logo}
-                  alt={`${game.awayTeam} logo`}
-                  width="36"
-                  height="36"
-                />
-              </dt>
+              {game.awayTeam.logo && (
+                <dt>
+                  <Image
+                    src={game.awayTeam.logo}
+                    alt={`${game.awayTeam} logo`}
+                    width="36"
+                    height="36"
+                  />
+                </dt>
+              )}
               <dd>{game.awayTeam.name}</dd>
               <dd className="text-sm">{game.awayTeam.record}</dd>
             </dl>
           </div>
           <div className="flex-1 px-1">
             <dl>
-              <dt>
-                <Image
-                  src={game.homeTeam.logo}
-                  alt={`${game.homeTeam} logo`}
-                  width="36"
-                  height="36"
-                />
-              </dt>
+              {game.homeTeam.logo && (
+                <dt>
+                  <Image
+                    src={game.homeTeam.logo}
+                    alt={`${game.homeTeam} logo`}
+                    width="36"
+                    height="36"
+                  />
+                </dt>
+              )}
               <dd>{game.homeTeam.name}</dd>
               <dd className="text-sm">{game.homeTeam.record}</dd>
             </dl>
@@ -86,12 +90,14 @@ const GameCard: React.FC<GameProps> = ({ game }) => {
         )}
       </div>
       <div>
+        {game.headline && <div>{game.headline}</div>}
         <div>{game.channel}</div>
         <div>{game.stadiumName}</div>
         <div>{game.location}</div>
         <Link
           href={game.espnLink}
           className="font-medium text-blue-600 dark:text-blue-400 hover:underline"
+          target="_blank"
         >
           ESPN Game Page
         </Link>

@@ -14,4 +14,5 @@ type Game = {
   currentDownAndDistance: string;
   possessionTeamId: string;
   winner?: string;
+  headline?: string;
 };

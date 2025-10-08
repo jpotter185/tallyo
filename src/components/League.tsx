@@ -7,6 +7,9 @@ interface LeagueProps {
   leagueName: string;
   isOpen: boolean;
   setIsOpen: Dispatch<SetStateAction<boolean>>;
+  week: string;
+  numberOfWeeks: number;
+  setWeek: Dispatch<SetStateAction<string>>;
 }
 
 const League: React.FC<LeagueProps> = ({
@@ -14,6 +17,9 @@ const League: React.FC<LeagueProps> = ({
   games,
   isOpen,
   setIsOpen,
+  week,
+  setWeek,
+  numberOfWeeks,
 }) => {
   return (
     <div>
@@ -29,12 +35,31 @@ const League: React.FC<LeagueProps> = ({
           }`}
         ></ChevronDown>
       </button>
-
       {isOpen && (
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {games.map((game) => (
-            <GameCard key={game.id} game={game} />
-          ))}
+        <div>
+          <p className="px-3">
+            {week !== "" ? "Week " + week : "Current Week"}
+          </p>
+          <select
+            id="numberSelect"
+            value={week ?? ""}
+            onChange={(e) => setWeek(e.target.value)}
+            className="border border-gray-300 rounded-lg px-3 py-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            <option value="">-- Select a week --</option>
+            {Array.from({ length: numberOfWeeks }, (_, i) => i + 1).map(
+              (num) => (
+                <option key={num} value={num}>
+                  Week {num}
+                </option>
+              )
+            )}
+          </select>
+          <div className="p-2 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {games.map((game) => (
+              <GameCard key={game.id} game={game} />
+            ))}
+          </div>
         </div>
       )}
     </div>
