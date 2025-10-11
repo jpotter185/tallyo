@@ -1,4 +1,5 @@
 import GameCard from "./GameCard";
+import Selector from "./Selector";
 import { Dispatch, SetStateAction } from "react";
 import { ChevronDown } from "lucide-react";
 
@@ -10,6 +11,10 @@ interface LeagueProps {
   week: string;
   numberOfWeeks: number;
   setWeek: Dispatch<SetStateAction<string>>;
+  scoreboardGroups: string[];
+  currentScoreboardGroup: string;
+  setCurrentScoreboardGroup: Dispatch<SetStateAction<string>>;
+  displayMap?: Map<string, string>;
 }
 
 const League: React.FC<LeagueProps> = ({
@@ -20,6 +25,10 @@ const League: React.FC<LeagueProps> = ({
   week,
   setWeek,
   numberOfWeeks,
+  scoreboardGroups,
+  currentScoreboardGroup,
+  setCurrentScoreboardGroup,
+  displayMap,
 }) => {
   return (
     <div>
@@ -38,21 +47,22 @@ const League: React.FC<LeagueProps> = ({
       {isOpen && (
         <div>
           <div className="px-3">
-            <select
-              id="numberSelect"
-              value={week ?? ""}
-              onChange={(e) => setWeek(e.target.value)}
-              className="border border-gray-500 dark:border-neutral-800 py-1 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-500"
-            >
-              <option value="">- Current Week -</option>
-              {Array.from({ length: numberOfWeeks }, (_, i) => i + 1).map(
-                (num) => (
-                  <option key={num} value={num}>
-                    Week {num}
-                  </option>
-                )
+            {leagueName === "CFB" && (
+              <Selector
+                currentValue={currentScoreboardGroup}
+                data={scoreboardGroups}
+                setCurrentValue={setCurrentScoreboardGroup}
+                displayMap={displayMap}
+              ></Selector>
+            )}
+            <Selector
+              currentValue={week}
+              data={Array.from({ length: numberOfWeeks }, (_, i) =>
+                String(i + 1)
               )}
-            </select>
+              setCurrentValue={setWeek}
+              displayString="Week"
+            ></Selector>
             <div className="py-2 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
               {games.map((game) => {
                 return <GameCard key={game.id} game={game} />;

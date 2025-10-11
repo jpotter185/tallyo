@@ -4,6 +4,7 @@ import Header from "../components/Header";
 import Footer from "../components/Footer";
 import League from "@/components/League";
 import { getCfbGames, getNflGames } from "@/lib/espnClient";
+import { cfbGroupIdMapping } from "@/lib/espn/transformers";
 
 export default function Home() {
   const [nflGames, setNflGames] = useState<Game[]>([]);
@@ -13,6 +14,7 @@ export default function Home() {
   const [isNflOpen, setIsNflOpen] = useState<boolean>(false);
   const [nflWeek, setNflWeek] = useState<string>("");
   const [cfbWeek, setCfbWeek] = useState<string>("");
+  const [cfbScoreboardGroup, setCfbScoreboardGroup] = useState<string>("-1");
 
   useEffect(() => {
     const fetch = async () => {
@@ -31,18 +33,19 @@ export default function Home() {
 
   useEffect(() => {
     const fetch = async () => {
-      const fetchedCfbGames = await getCfbGames(cfbWeek);
+      const fetchedCfbGames = await getCfbGames(cfbWeek, cfbScoreboardGroup);
       const now = new Date().toISOString();
       console.log(
-        `${now} Got ${fetchedCfbGames.games.length} NFL game(s) for week ${fetchedCfbGames.dataWeek}`
+        `${now} Got ${fetchedCfbGames.games.length} CFB game(s) for week ${fetchedCfbGames.dataWeek}`
       );
       setCfbGames(fetchedCfbGames.games);
       setCfbWeek(fetchedCfbGames.dataWeek);
+      setCfbScoreboardGroup(fetchedCfbGames.scoreboardGroupId);
     };
     fetch();
     const interval = setInterval(fetch, 30000);
     return () => clearInterval(interval);
-  }, [cfbWeek, isCfbOpen]);
+  }, [cfbWeek, isCfbOpen, cfbScoreboardGroup]);
 
   return (
     <div className="bg-sky-50 dark:bg-neutral-800 border border-gray-500 divide-y divide-x divide-gray-500 dark:divide-gray-500">
@@ -56,6 +59,10 @@ export default function Home() {
           week={cfbWeek}
           setWeek={setCfbWeek}
           numberOfWeeks={16}
+          scoreboardGroups={Array.from(cfbGroupIdMapping.keys())}
+          currentScoreboardGroup={cfbScoreboardGroup}
+          setCurrentScoreboardGroup={setCfbScoreboardGroup}
+          displayMap={cfbGroupIdMapping}
         />
       </div>
       <div>
@@ -67,6 +74,9 @@ export default function Home() {
           week={nflWeek}
           setWeek={setNflWeek}
           numberOfWeeks={18}
+          scoreboardGroups={[]}
+          currentScoreboardGroup=""
+          setCurrentScoreboardGroup={() => undefined}
         />
       </div>
 
