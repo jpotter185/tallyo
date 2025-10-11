@@ -22,7 +22,12 @@ const GameCard: React.FC<GameProps> = ({ game }) => {
                   />
                 </dt>
               )}
-              <dd className="font-bold ">{game.awayTeam.name}</dd>
+              <dd className="font-bold ">
+                {game.awayTeam.name &&
+                game.possessionTeamId === game.awayTeam.id
+                  ? game.awayTeam.name + " 🏈"
+                  : game.awayTeam.name}
+              </dd>
               <dd className="text-sm">{game.awayTeam.record}</dd>
               {game.awayTimeouts >= 0 && (
                 <dd className="text-sm">Timeouts: {game.awayTimeouts}</dd>
@@ -41,7 +46,12 @@ const GameCard: React.FC<GameProps> = ({ game }) => {
                   />
                 </dt>
               )}
-              <dd className="font-bold ">{game.homeTeam.name}</dd>
+              <dd className="font-bold ">
+                {game.homeTeam.name &&
+                game.possessionTeamId === game.homeTeam.id
+                  ? game.homeTeam.name + " 🏈"
+                  : game.homeTeam.name}
+              </dd>
               <dd className="text-sm">{game.homeTeam.record}</dd>
               {game.homeTimeouts >= 0 && (
                 <dd className="text-sm">Timeouts: {game.homeTimeouts}</dd>
@@ -75,18 +85,7 @@ const GameCard: React.FC<GameProps> = ({ game }) => {
         {game.odds && <div className="text-center flex-1">{game.odds}</div>}
         {game.period && <div className="text-center flex-1">{game.period}</div>}
         {game.currentDownAndDistance && (
-          <div
-            className="text-center flex-1"
-            style={{
-              backgroundColor: `#${
-                game.possessionTeamId === game.homeTeam.id
-                  ? game.homeTeam.primaryColor
-                  : game.possessionTeamId === game.awayTeam.id
-                  ? game.awayTeam.primaryColor
-                  : "0"
-              }`,
-            }}
-          >
+          <div className="text-center flex-1">
             {game.currentDownAndDistance}
           </div>
         )}
