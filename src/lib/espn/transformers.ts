@@ -89,7 +89,7 @@ export function getGamesFromJson(data: any): Game[] {
           homeScore: homeTeamScore,
           awayScore: awayTeamScore,
           date: date,
-          period: competition?.status?.type?.description,
+          period: competition?.status?.type?.detail,
           channel: channel,
           espnLink: event.links[0].href,
           lastPlay: competition?.situation?.lastPlay?.text,
