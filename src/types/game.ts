@@ -13,6 +13,8 @@ type Game = {
   lastPlay: string;
   currentDownAndDistance: string;
   possessionTeamId: string;
+  homeTimeouts: number;
+  awayTimeouts: number;
   winner?: string;
   headline?: string;
   odds?: string;

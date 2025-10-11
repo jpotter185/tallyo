@@ -36,6 +36,9 @@ export function getGamesFromJson(data: any): Game[] {
         const gameOdds = getOdds(competition);
 
         const currentDownAndDistance = competition.situation?.downDistanceText;
+        const homeTimeouts = competition.situation?.homeTimeouts;
+        const awayTimeouts = competition.situation?.awayTimeouts;
+
         const game: Game = {
           id: competition.id,
           homeTeam: homeTeamObject,
@@ -53,6 +56,8 @@ export function getGamesFromJson(data: any): Game[] {
           winner: winner ? winner.id : undefined,
           headline: headline,
           odds: gameOdds,
+          homeTimeouts: homeTimeouts,
+          awayTimeouts: awayTimeouts,
         };
         games.push(game);
       }

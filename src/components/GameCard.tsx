@@ -9,7 +9,7 @@ const GameCard: React.FC<GameProps> = ({ game }) => {
   return (
     <div className="border border-gray-300 dark:border-gray-500 p-5 rounded-lg shadow-lg space-y-4 bg-neutral-300 dark:bg-neutral-500">
       <div className="border border-gray-500 dark:border-neutral-800 divide-y divide-gray-500 dark:divide-neutral-800">
-        <div className="grid grid-cols-2 font-bold divide-x divide-gray-500 dark:divide-neutral-800">
+        <div className="grid grid-cols-2 divide-x divide-gray-500 dark:divide-neutral-800">
           <div className="flex-1 px-1">
             <dl>
               {game.awayTeam.logo && (
@@ -22,8 +22,11 @@ const GameCard: React.FC<GameProps> = ({ game }) => {
                   />
                 </dt>
               )}
-              <dd>{game.awayTeam.name}</dd>
+              <dd className="font-bold ">{game.awayTeam.name}</dd>
               <dd className="text-sm">{game.awayTeam.record}</dd>
+              {game.awayTimeouts >= 0 && (
+                <dd className="text-sm">Timeouts: {game.awayTimeouts}</dd>
+              )}
             </dl>
           </div>
           <div className="flex-1 px-1">
@@ -38,8 +41,11 @@ const GameCard: React.FC<GameProps> = ({ game }) => {
                   />
                 </dt>
               )}
-              <dd>{game.homeTeam.name}</dd>
+              <dd className="font-bold ">{game.homeTeam.name}</dd>
               <dd className="text-sm">{game.homeTeam.record}</dd>
+              {game.homeTimeouts >= 0 && (
+                <dd className="text-sm">Timeouts: {game.homeTimeouts}</dd>
+              )}
             </dl>
           </div>
         </div>
