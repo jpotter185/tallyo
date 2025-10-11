@@ -58,7 +58,7 @@ export function getGamesFromJson(data: any): Game[] {
         const gameLocation = buildGameLocationString(
           competition?.venue?.address
         );
-        const channel = competition.broadcast ? competition.broadcast : "TBD";
+        const channel = competition.broadcast;
 
         const headline =
           competition.notes && competition.notes.length > 0
@@ -70,6 +70,15 @@ export function getGamesFromJson(data: any): Game[] {
         const currentDownAndDistance = competition.situation?.downDistanceText;
         const homeTimeouts = competition.situation?.homeTimeouts;
         const awayTimeouts = competition.situation?.awayTimeouts;
+        const dateFormatter = new Intl.DateTimeFormat("en-US", {
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+          hour: "numeric",
+          minute: "numeric",
+          timeZoneName: "short",
+        });
+        const date = dateFormatter.format(new Date(competition.startDate));
 
         const game: Game = {
           id: competition.id,
@@ -79,7 +88,8 @@ export function getGamesFromJson(data: any): Game[] {
           location: gameLocation,
           homeScore: homeTeamScore,
           awayScore: awayTeamScore,
-          period: competition?.status?.type?.detail,
+          date: date,
+          period: competition?.status?.type?.description,
           channel: channel,
           espnLink: event.links[0].href,
           lastPlay: competition?.situation?.lastPlay?.text,

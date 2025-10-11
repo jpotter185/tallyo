@@ -5,6 +5,7 @@ type Game = {
   awayTeam: Team;
   stadiumName: string;
   location: string;
+  date: string;
   homeScore: string;
   awayScore: string;
   period: string;

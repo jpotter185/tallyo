@@ -95,8 +95,9 @@ const GameCard: React.FC<GameProps> = ({ game }) => {
         )}
       </div>
       <div>
+        <div>{game.date}</div>
         {game.headline && <div>{game.headline}</div>}
-        <div>{game.channel}</div>
+        {game.channel && <div>{game.channel}</div>}
         <div>{game.stadiumName}</div>
         <div>{game.location}</div>
         <Link
