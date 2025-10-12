@@ -1,5 +1,5 @@
 "use client";
-import GameCard from "./GameCard";
+import GameCard from "./GameCard/GameCard";
 import Selector from "./Selector";
 import { Dispatch, SetStateAction } from "react";
 import { ChevronDown } from "lucide-react";
@@ -68,7 +68,7 @@ const League: React.FC<LeagueProps> = ({
               setCurrentValue={setWeek}
               displayString="Week"
             ></Selector>
-            <div className="py-2 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+            <div className="grid gap-6 grid-cols-[repeat(auto-fit,minmax(250px,1fr))] p-2 ">
               {games.map((game) => {
                 return (
                   <GameCard
