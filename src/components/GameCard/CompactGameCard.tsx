@@ -8,7 +8,7 @@ const CompactGameCard: React.FC<GameCompactProps> = ({ game }) => {
   return (
     <div>
       <div
-        className={`grid grid-cols-[auto_1fr_auto] items-center gap-2 p-1 ${
+        className={`grid grid-cols-[auto_1fr_auto] items-center gap-1 p-1 ${
           game.winner && game.winner === game.awayTeam.id
             ? "border-2 border-sky-50 dark:border-neutral-800"
             : ""
@@ -21,11 +21,19 @@ const CompactGameCard: React.FC<GameCompactProps> = ({ game }) => {
           height={24}
           className="pointer-events-none"
         />
-        <div className="font-bold text-sm">
-          {game.awayTeam.abbreviation &&
-          game.possessionTeamId === game.awayTeam.id
-            ? game.awayTeam.abbreviation + " ▶"
-            : game.awayTeam.abbreviation}
+        <div className="flex items-center gap-1 font-bold text-sm">
+          <div>{game.awayTeam.abbreviation}</div>
+          {game.possessionTeamId === game.awayTeam.id && (
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 120 50"
+              xmlns="http://www.w3.org/2000/svg"
+              className="inline-block"
+            >
+              <polygon points="10,25 60,5 110,25 60,45" fill="currentColor" />
+            </svg>
+          )}
         </div>
         <div>{game.awayScore}</div>
       </div>
@@ -43,13 +51,19 @@ const CompactGameCard: React.FC<GameCompactProps> = ({ game }) => {
           height={24}
           className="pointer-events-none"
         />
-        <div className="font-bold text-sm">
-          <span className="font-bold text-sm">
-            {game.homeTeam.abbreviation &&
-            game.possessionTeamId === game.homeTeam.id
-              ? game.homeTeam.abbreviation + " ▶"
-              : game.homeTeam.abbreviation}
-          </span>
+        <div className="flex items-center gap-1 font-bold text-sm">
+          <div>{game.homeTeam.abbreviation}</div>
+          {game.possessionTeamId === game.homeTeam.id && (
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 120 50"
+              xmlns="http://www.w3.org/2000/svg"
+              className="inline-block"
+            >
+              <polygon points="10,25 60,5 110,25 60,45" fill="currentColor" />
+            </svg>
+          )}
         </div>
         <div>{game.homeScore}</div>
       </div>
