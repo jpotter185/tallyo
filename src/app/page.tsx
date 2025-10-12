@@ -51,43 +51,80 @@ export default function Home() {
     const interval = setInterval(fetch, 30000);
     return () => clearInterval(interval);
   }, [cfbWeek, isCfbOpen, cfbScoreboardGroup]);
+  let cfbFirst = true;
+  const today = new Date();
+  if (today.getDay() === 0 || today.getDay() === 1) {
+    cfbFirst = false;
+  }
 
   return (
     <div className="bg-sky-50 dark:bg-neutral-800 border border-gray-500 divide-y divide-x divide-gray-500 dark:divide-gray-500">
       <Header />
-      <div>
-        <League
-          leagueName="CFB"
-          games={cfbGames}
-          isOpen={isCfbOpen}
-          setIsOpen={setIsCfbOpen}
-          week={cfbWeek}
-          setWeek={setCfbWeek}
-          numberOfWeeks={16}
-          scoreboardGroups={Array.from(cfbGroupIdMapping.keys())}
-          currentScoreboardGroup={cfbScoreboardGroup}
-          setCurrentScoreboardGroup={setCfbScoreboardGroup}
-          displayMap={cfbGroupIdMapping}
-          openGames={openGames}
-          toggleOpenGame={toggleOpenGame}
-        />
-      </div>
-      <div>
-        <League
-          leagueName="NFL"
-          games={nflGames}
-          isOpen={isNflOpen}
-          setIsOpen={setIsNflOpen}
-          week={nflWeek}
-          setWeek={setNflWeek}
-          numberOfWeeks={18}
-          scoreboardGroups={[]}
-          currentScoreboardGroup=""
-          setCurrentScoreboardGroup={() => undefined}
-          openGames={openGames}
-          toggleOpenGame={toggleOpenGame}
-        />
-      </div>
+      {cfbFirst ? (
+        <div>
+          <League
+            leagueName="CFB"
+            games={cfbGames}
+            isOpen={isCfbOpen}
+            setIsOpen={setIsCfbOpen}
+            week={cfbWeek}
+            setWeek={setCfbWeek}
+            numberOfWeeks={16}
+            scoreboardGroups={Array.from(cfbGroupIdMapping.keys())}
+            currentScoreboardGroup={cfbScoreboardGroup}
+            setCurrentScoreboardGroup={setCfbScoreboardGroup}
+            displayMap={cfbGroupIdMapping}
+            openGames={openGames}
+            toggleOpenGame={toggleOpenGame}
+          />
+          <League
+            leagueName="NFL"
+            games={nflGames}
+            isOpen={isNflOpen}
+            setIsOpen={setIsNflOpen}
+            week={nflWeek}
+            setWeek={setNflWeek}
+            numberOfWeeks={18}
+            scoreboardGroups={[]}
+            currentScoreboardGroup=""
+            setCurrentScoreboardGroup={() => undefined}
+            openGames={openGames}
+            toggleOpenGame={toggleOpenGame}
+          />
+        </div>
+      ) : (
+        <div>
+          <League
+            leagueName="NFL"
+            games={nflGames}
+            isOpen={isNflOpen}
+            setIsOpen={setIsNflOpen}
+            week={nflWeek}
+            setWeek={setNflWeek}
+            numberOfWeeks={18}
+            scoreboardGroups={[]}
+            currentScoreboardGroup=""
+            setCurrentScoreboardGroup={() => undefined}
+            openGames={openGames}
+            toggleOpenGame={toggleOpenGame}
+          />
+          <League
+            leagueName="CFB"
+            games={cfbGames}
+            isOpen={isCfbOpen}
+            setIsOpen={setIsCfbOpen}
+            week={cfbWeek}
+            setWeek={setCfbWeek}
+            numberOfWeeks={16}
+            scoreboardGroups={Array.from(cfbGroupIdMapping.keys())}
+            currentScoreboardGroup={cfbScoreboardGroup}
+            setCurrentScoreboardGroup={setCfbScoreboardGroup}
+            displayMap={cfbGroupIdMapping}
+            openGames={openGames}
+            toggleOpenGame={toggleOpenGame}
+          />
+        </div>
+      )}
 
       <Footer isOpen={isContactOpen} setIsOpen={setIsContactOpen} />
     </div>

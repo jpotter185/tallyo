@@ -45,7 +45,7 @@ const FullSizeGameCard: React.FC<GameProps> = ({ game }) => {
         </div>
 
         {/* Game info */}
-        <div className="flex flex-col whitespace-nowrap">
+        <div className="flex flex-col whitespace-nowrap place-items-center items-center justify-center">
           {game.shortPeriod !== "Final" &&
             game.gameStatus !== "STATUS_SCHEDULED" && (
               <div>{game.shortPeriod}</div>
