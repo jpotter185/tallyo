@@ -13,7 +13,7 @@ export async function getCfbGames(week: string, scoreboardGroup: string) {
     if (data.groups) {
       returnedScoreboardGroupId = data.groups[0];
     }
-    const games = getGamesFromJson(data);
+    const games = await getGamesFromJson(data, "cfb");
     return { games, dataWeek, scoreboardGroupId: returnedScoreboardGroupId };
   } else {
     return {
@@ -28,7 +28,7 @@ export async function getNflGames(week: string) {
   const data = await fetchEspnData("nfl", week);
   if (data) {
     const dataWeek = data.week.number;
-    const games = getGamesFromJson(data);
+    const games = await getGamesFromJson(data, "nfl");
     return { games, dataWeek };
   } else {
     return {

@@ -31,7 +31,10 @@ export const cfbGroupIdMapping = new Map([
 ]);
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function getGamesFromJson(data: any): Game[] {
+export async function getGamesFromJson(
+  data: any,
+  league: "nfl" | "cfb"
+): Promise<Game[]> {
   const games: Game[] = [];
   const events = data.events;
   if (events && events.length > 0) {
@@ -65,8 +68,6 @@ export function getGamesFromJson(data: any): Game[] {
             ? competition.notes[0].headline
             : "";
 
-        const gameOdds = getOdds(competition);
-
         const currentDownAndDistance = competition.situation?.downDistanceText;
         const homeTimeouts = competition.situation?.homeTimeouts;
         const awayTimeouts = competition.situation?.awayTimeouts;
@@ -79,6 +80,8 @@ export function getGamesFromJson(data: any): Game[] {
           timeZoneName: "short",
         });
         const date = dateFormatter.format(new Date(competition.startDate));
+
+        const gameOdds = await getOdds(competition.id, league);
 
         const game: Game = {
           id: competition.id,
@@ -112,12 +115,18 @@ export function getGamesFromJson(data: any): Game[] {
   return games;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function getOdds(competition: any) {
-  if (competition.odds && competition.odds.length > 0) {
-    return competition.odds[0].details;
+export async function getOdds(eventId: string, league: "nfl" | "cfb") {
+  const ODDS_API_ENDPOINT = `https://sports.core.api.espn.com/v2/sports/football/leagues/${
+    league === "nfl" ? "nfl" : "college-football"
+  }/events/${eventId}/competitions/${eventId}/odds/58`;
+  try {
+    const response = await fetch(ODDS_API_ENDPOINT);
+    const data = await response?.json();
+    return data?.details;
+  } catch (error) {
+    console.error(error);
+    return undefined;
   }
-  return undefined;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

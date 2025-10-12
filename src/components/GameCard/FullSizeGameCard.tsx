@@ -98,6 +98,7 @@ const FullSizeGameCard: React.FC<GameProps> = ({ game }) => {
       </div>
       <div className="flex flex-col place-items-center items-center justify-center">
         <div>{game.lastPlay}</div>
+        <div>{game.odds}</div>
         {game.gameStatus === "STATUS_SCHEDULED" && <div>{game.date}</div>}
         <div>
           <Link
