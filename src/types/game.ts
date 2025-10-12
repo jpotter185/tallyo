@@ -14,6 +14,8 @@ type Game = {
   espnLink: string;
   lastPlay: string;
   currentDownAndDistance: string;
+  down: string;
+  ballLocation: string;
   possessionTeamId: string;
   homeTimeouts: number;
   awayTimeouts: number;

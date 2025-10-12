@@ -97,6 +97,8 @@ export function getGamesFromJson(data: any): Game[] {
           lastPlay: competition?.situation?.lastPlay?.text,
           possessionTeamId: posessionTeamId ? posessionTeamId : undefined,
           currentDownAndDistance: currentDownAndDistance,
+          down: competition.situation?.shortDownDistanceText,
+          ballLocation: competition.situation?.possessionText,
           winner: winner ? winner.id : undefined,
           headline: headline,
           odds: gameOdds,

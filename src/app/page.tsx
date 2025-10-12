@@ -26,7 +26,7 @@ export default function Home() {
       const fetchedNflGames = await getNflGames(nflWeek);
       const now = new Date().toISOString();
       console.log(
-        `${now} Got ${fetchedNflGames.games.length} NFL game(s) for week ${fetchedNflGames.dataWeek}`
+        `${now} Got ${fetchedNflGames.games?.length} NFL game(s) for week ${fetchedNflGames.dataWeek}`
       );
       setNflGames(fetchedNflGames.games);
       setNflWeek(fetchedNflGames.dataWeek);
@@ -41,7 +41,7 @@ export default function Home() {
       const fetchedCfbGames = await getCfbGames(cfbWeek, cfbScoreboardGroup);
       const now = new Date().toISOString();
       console.log(
-        `${now} Got ${fetchedCfbGames.games.length} CFB game(s) for week ${fetchedCfbGames.dataWeek}`
+        `${now} Got ${fetchedCfbGames.games?.length} CFB game(s) for week ${fetchedCfbGames.dataWeek}`
       );
       setCfbGames(fetchedCfbGames.games);
       setCfbWeek(fetchedCfbGames.dataWeek);

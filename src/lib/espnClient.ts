@@ -7,18 +7,33 @@ export async function getCfbGames(week: string, scoreboardGroup: string) {
     scoreboardGroupId = scoreboardGroup;
   }
   const data = await fetchEspnData("cfb", week, scoreboardGroupId);
-  const dataWeek = data.week.number;
-  let returnedScoreboardGroupId = scoreboardGroupId;
-  if (data.groups) {
-    returnedScoreboardGroupId = data.groups[0];
+  if (data) {
+    const dataWeek = data.week.number;
+    let returnedScoreboardGroupId = scoreboardGroupId;
+    if (data.groups) {
+      returnedScoreboardGroupId = data.groups[0];
+    }
+    const games = getGamesFromJson(data);
+    return { games, dataWeek, scoreboardGroupId: returnedScoreboardGroupId };
+  } else {
+    return {
+      games: [],
+      dataWeek: week,
+      scoreboardGroupId: scoreboardGroupId,
+    };
   }
-  const games = getGamesFromJson(data);
-  return { games, dataWeek, scoreboardGroupId: returnedScoreboardGroupId };
 }
 
 export async function getNflGames(week: string) {
   const data = await fetchEspnData("nfl", week);
-  const dataWeek = data.week.number;
-  const games = getGamesFromJson(data);
-  return { games, dataWeek };
+  if (data) {
+    const dataWeek = data.week.number;
+    const games = getGamesFromJson(data);
+    return { games, dataWeek };
+  } else {
+    return {
+      games: [],
+      dataWeek: week,
+    };
+  }
 }

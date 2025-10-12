@@ -67,8 +67,12 @@ const CompactGameCard: React.FC<GameCompactProps> = ({ game }) => {
         </div>
         <div>{game.homeScore}</div>
       </div>
-      <div>
-        {game.shortPeriod} {game.shortPeriod === "Final" ? "" : game.channel}
+      <div className="flex flex-col">
+        {game.gameStatus !== "STATUS_SCHEDULED" && (
+          <div>{game.shortPeriod}</div>
+        )}
+        {game.gameStatus === "STATUS_SCHEDULED" && <div>{game.date}</div>}
+        {game.shortPeriod !== "Final" && <div>{game.channel}</div>}
       </div>
     </div>
   );

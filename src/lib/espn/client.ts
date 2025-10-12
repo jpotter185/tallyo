@@ -13,10 +13,11 @@ export async function fetchEspnData(
   if (scoreboardGroupId && scoreboardGroupId !== "-1")
     url.searchParams.set("groups", String(scoreboardGroupId));
 
-  const response = await fetch(url.toString(), { cache: "no-store" });
-  if (!response.ok) {
-    throw new Error(`Failed to fetch ESPN ${sport} data`);
+  try {
+    const response = await fetch(url.toString(), { cache: "no-store" });
+    return await response.json();
+  } catch (error) {
+    console.error(error);
+    return undefined;
   }
-
-  return await response.json();
 }
