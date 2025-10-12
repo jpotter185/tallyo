@@ -30,8 +30,8 @@ export const cfbGroupIdMapping = new Map([
   ["35", "Div II/III"],
 ]);
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function getGamesFromJson(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   data: any,
   league: "nfl" | "cfb"
 ): Promise<Game[]> {
