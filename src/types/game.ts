@@ -9,6 +9,7 @@ type Game = {
   homeScore: string;
   awayScore: string;
   period: string;
+  shortPeriod: string;
   channel: string;
   espnLink: string;
   lastPlay: string;
@@ -19,4 +20,5 @@ type Game = {
   winner?: string;
   headline?: string;
   odds?: string;
+  gameStatus: string;
 };

@@ -1,3 +1,4 @@
+"use client";
 import GameCard from "./GameCard";
 import Selector from "./Selector";
 import { Dispatch, SetStateAction } from "react";
@@ -15,6 +16,8 @@ interface LeagueProps {
   currentScoreboardGroup: string;
   setCurrentScoreboardGroup: Dispatch<SetStateAction<string>>;
   displayMap?: Map<string, string>;
+  openGames: Record<string, boolean>;
+  toggleOpenGame: (id: string) => void;
 }
 
 const League: React.FC<LeagueProps> = ({
@@ -29,6 +32,8 @@ const League: React.FC<LeagueProps> = ({
   currentScoreboardGroup,
   setCurrentScoreboardGroup,
   displayMap,
+  openGames,
+  toggleOpenGame,
 }) => {
   return (
     <div>
@@ -65,7 +70,14 @@ const League: React.FC<LeagueProps> = ({
             ></Selector>
             <div className="py-2 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
               {games.map((game) => {
-                return <GameCard key={game.id} game={game} />;
+                return (
+                  <GameCard
+                    key={game.id}
+                    game={game}
+                    isOpen={!!openGames[game.id]}
+                    toggleOpenGame={() => toggleOpenGame(game.id)}
+                  />
+                );
               })}
             </div>
           </div>

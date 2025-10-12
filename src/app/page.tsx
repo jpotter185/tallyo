@@ -15,6 +15,11 @@ export default function Home() {
   const [nflWeek, setNflWeek] = useState<string>("");
   const [cfbWeek, setCfbWeek] = useState<string>("");
   const [cfbScoreboardGroup, setCfbScoreboardGroup] = useState<string>("-1");
+  const [openGames, setOpenGames] = useState<{ [id: string]: boolean }>({});
+  const toggleOpenGame = (id: string) => {
+    console.log("Toggling");
+    setOpenGames((prev) => ({ ...prev, [id]: !prev[id] }));
+  };
 
   useEffect(() => {
     const fetch = async () => {
@@ -63,6 +68,8 @@ export default function Home() {
           currentScoreboardGroup={cfbScoreboardGroup}
           setCurrentScoreboardGroup={setCfbScoreboardGroup}
           displayMap={cfbGroupIdMapping}
+          openGames={openGames}
+          toggleOpenGame={toggleOpenGame}
         />
       </div>
       <div>
@@ -77,6 +84,8 @@ export default function Home() {
           scoreboardGroups={[]}
           currentScoreboardGroup=""
           setCurrentScoreboardGroup={() => undefined}
+          openGames={openGames}
+          toggleOpenGame={toggleOpenGame}
         />
       </div>
 

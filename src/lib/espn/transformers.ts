@@ -89,9 +89,11 @@ export function getGamesFromJson(data: any): Game[] {
           homeScore: homeTeamScore,
           awayScore: awayTeamScore,
           date: date,
+          gameStatus: gameStatus,
           period: competition?.status?.type?.detail,
+          shortPeriod: competition?.status?.type?.shortDetail,
           channel: channel,
-          espnLink: event.links[0].href,
+          espnLink: event.links[0]?.href,
           lastPlay: competition?.situation?.lastPlay?.text,
           possessionTeamId: posessionTeamId ? posessionTeamId : undefined,
           currentDownAndDistance: currentDownAndDistance,
@@ -140,9 +142,14 @@ function buildTeam(teamJson: any): Team {
   const teamName = teamDisplayName(teamRank, teamJson);
   const teamRecord = getTeamRecord(teamJson.records);
 
+  const abbreviation = teamRank
+    ? teamRank + teamJson.team.abbreviation
+    : teamJson.team.abbreviation;
+
   const teamObject: Team = {
     id: teamJson.id,
     name: teamName,
+    abbreviation: abbreviation,
     logo: teamJson.team.logo,
     primaryColor: teamJson.team.color,
     alternateColor: teamJson.team.alternateColor,

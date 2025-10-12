@@ -2,6 +2,7 @@
 type Team = {
   id: string;
   name: string;
+  abbreviation: string;
   logo: string;
   primaryColor: string;
   alternateColor: string;
