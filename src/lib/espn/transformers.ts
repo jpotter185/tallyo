@@ -30,6 +30,8 @@ export const cfbGroupIdMapping = new Map([
   ["35", "Div II/III"],
 ]);
 
+export const defaultCfbGroupId = "-1";
+
 export async function getGamesFromJson(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   data: any,

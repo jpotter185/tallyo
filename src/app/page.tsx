@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import League from "@/components/League";
-import { getCfbGames, getNflGames } from "@/lib/espnClient";
 import { cfbGroupIdMapping } from "@/lib/espn/transformers";
 
 export default function Home() {
@@ -22,35 +21,40 @@ export default function Home() {
   };
 
   useEffect(() => {
-    const fetch = async () => {
-      const fetchedNflGames = await getNflGames(nflWeek);
-      const now = new Date().toISOString();
-      console.log(
-        `${now} Got ${fetchedNflGames.games?.length} NFL game(s) for week ${fetchedNflGames.dataWeek}`
+    const fetchNflGames = async () => {
+      const res = await fetch(
+        `/api/games?league=nfl${nflWeek ? `&week=${nflWeek}` : ""}`
       );
-      setNflGames(fetchedNflGames.games);
-      setNflWeek(fetchedNflGames.dataWeek);
+      const data = await res.json();
+
+      setNflGames(data.games || []);
+      setNflWeek(data.dataWeek);
+      if (data.week?.number) setNflWeek(data.week.number.toString());
     };
-    fetch();
+    fetchNflGames();
     const interval = setInterval(fetch, 30000);
     return () => clearInterval(interval);
   }, [nflWeek, isNflOpen]);
 
   useEffect(() => {
-    const fetch = async () => {
-      const fetchedCfbGames = await getCfbGames(cfbWeek, cfbScoreboardGroup);
-      const now = new Date().toISOString();
-      console.log(
-        `${now} Got ${fetchedCfbGames.games?.length} CFB game(s) for week ${fetchedCfbGames.dataWeek}`
+    const fetchCfbGames = async () => {
+      const res = await fetch(
+        `/api/games?league=cfb${cfbWeek ? `&week=${cfbWeek}` : ""}${
+          cfbScoreboardGroup ? `&scoreboardGroupId=${cfbScoreboardGroup}` : ""
+        }`
       );
-      setCfbGames(fetchedCfbGames.games);
-      setCfbWeek(fetchedCfbGames.dataWeek);
-      setCfbScoreboardGroup(fetchedCfbGames.scoreboardGroupId);
+      const data = await res.json();
+      console.log(data);
+      setCfbGames(data.games || []);
+      setCfbWeek(data.dataWeek);
+      setCfbScoreboardGroup(data.scoreboardGroupId);
+      if (data.week?.number) setCfbWeek(data.week.number.toString());
     };
-    fetch();
+    fetchCfbGames();
     const interval = setInterval(fetch, 30000);
     return () => clearInterval(interval);
   }, [cfbWeek, isCfbOpen, cfbScoreboardGroup]);
+
   let cfbFirst = true;
   const today = new Date();
   if (today.getDay() === 0 || today.getDay() === 1) {

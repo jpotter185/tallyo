@@ -8,4 +8,6 @@ type Team = {
   alternateColor: string;
   location: string;
   record: string;
+  conferenceRecord?: string;
+  divisionRecord?: string;
 };

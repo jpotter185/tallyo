@@ -1,9 +1,11 @@
 const ENDPOINTS = {
   nfl: "https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard",
   cfb: "https://site.api.espn.com/apis/site/v2/sports/football/college-football/scoreboard",
+  nflstandings: "https://cdn.espn.com/core/nfl/standings?xhr=1",
+  cfbstandings: "https://cdn.espn.com/core/college-football/standings?xhr=1",
 };
 
-export async function fetchEspnData(
+export async function fetchEspnGameData(
   sport: "nfl" | "cfb",
   week?: string,
   scoreboardGroupId?: string
@@ -19,5 +21,15 @@ export async function fetchEspnData(
   } catch (error) {
     console.error(error);
     return undefined;
+  }
+}
+
+export async function fetchStandings(sport: "nfl" | "cfb") {
+  try {
+    const response = await fetch(ENDPOINTS[`${sport}standings`]);
+    const standings = (await response.json()).body.content.standings;
+    console.log(standings);
+  } catch (error) {
+    console.error(error);
   }
 }

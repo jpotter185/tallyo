@@ -1,12 +1,15 @@
-import { fetchEspnData } from "./espn/client";
-import { getGamesFromJson } from "./espn/transformers";
+import { fetchEspnGameData } from "./espn/client";
+import { defaultCfbGroupId, getGamesFromJson } from "./espn/transformers";
 
-export async function getCfbGames(week: string, scoreboardGroup: string) {
-  let scoreboardGroupId = "-1";
+export async function getCfbGames(
+  week: string | undefined,
+  scoreboardGroup: string | undefined
+) {
+  let scoreboardGroupId = defaultCfbGroupId;
   if (scoreboardGroup) {
     scoreboardGroupId = scoreboardGroup;
   }
-  const data = await fetchEspnData("cfb", week, scoreboardGroupId);
+  const data = await fetchEspnGameData("cfb", week, scoreboardGroupId);
   if (data) {
     const dataWeek = data.week.number;
     let returnedScoreboardGroupId = scoreboardGroupId;
@@ -24,8 +27,8 @@ export async function getCfbGames(week: string, scoreboardGroup: string) {
   }
 }
 
-export async function getNflGames(week: string) {
-  const data = await fetchEspnData("nfl", week);
+export async function getNflGames(week: string | undefined) {
+  const data = await fetchEspnGameData("nfl", week);
   if (data) {
     const dataWeek = data.week.number;
     const games = await getGamesFromJson(data, "nfl");
