@@ -20,6 +20,20 @@ const FullSizeGameCard: React.FC<GameProps> = ({ game }) => {
           />
           <div className="text-nowrap">{game.awayTeam.abbreviation}</div>
           <div className="text-xs">{game.awayTeam.record}</div>
+          {game.awayTimeouts && (
+            <div className="flex items-center gap-1">
+              {[...Array(3)].map((_, i) => (
+                <div
+                  key={i}
+                  className={`w-2 h-2 rounded-full ${
+                    i < game.awayTimeouts
+                      ? "bg-current"
+                      : "border border-gray-400"
+                  }`}
+                />
+              ))}
+            </div>
+          )}
         </div>
         {/* Away team score */}
         <div
@@ -94,6 +108,20 @@ const FullSizeGameCard: React.FC<GameProps> = ({ game }) => {
           />
           <div className="text-nowrap">{game.homeTeam.abbreviation}</div>
           <div className="text-small">{game.homeTeam.record}</div>
+          {game.homeTimeouts && (
+            <div className="flex items-center gap-1">
+              {[...Array(3)].map((_, i) => (
+                <div
+                  key={i}
+                  className={`w-2 h-2 rounded-full ${
+                    i < game.homeTimeouts
+                      ? "bg-current"
+                      : "border border-gray-400"
+                  }`}
+                />
+              ))}
+            </div>
+          )}
         </div>
       </div>
       <div className="flex flex-col place-items-center items-center justify-center">
