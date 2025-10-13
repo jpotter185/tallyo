@@ -1,0 +1,88 @@
+import { useState } from "react";
+import { ChevronDown } from "lucide-react";
+
+interface StandingsProps {
+  standings: Standings[];
+}
+
+const Standings: React.FC<StandingsProps> = ({ standings }) => {
+  const [openStandings, setOpenStandings] = useState<{ [id: string]: boolean }>(
+    {}
+  );
+  const [isStandingsOpen, setIsStandingsOpen] = useState<boolean>(false);
+  const toggleOpenStandings = (id: string) => {
+    setOpenStandings((prev) => ({ ...prev, [id]: !prev[id] }));
+  };
+
+  return (
+    <div className="divide-x divide-gray-500">
+      <div
+        className="p-2 text-xl font-bold flex w-full items-center justify-between p-2"
+        onClick={() => setIsStandingsOpen(!isStandingsOpen)}
+      >
+        Standings
+        <ChevronDown
+          textAnchor="end"
+          className={`w-5 h-5 text-gray-500 transition-transform duration-300 ${
+            isStandingsOpen ? "rotate-180" : ""
+          }`}
+        ></ChevronDown>
+      </div>
+      {isStandingsOpen &&
+        standings.map((standing) => {
+          return (
+            <div key={standing.groupName}>
+              <div
+                className="flex w-full items-center justify-between p-2"
+                onClick={() => toggleOpenStandings(standing.groupName)}
+              >
+                <div className="p-1">{standing.groupName}</div>
+                <ChevronDown
+                  textAnchor="end"
+                  className={`w-5 h-5 text-gray-500 transition-transform duration-300 ${
+                    openStandings[standing.groupName] ? "rotate-180" : ""
+                  }`}
+                ></ChevronDown>
+              </div>
+              {openStandings[standing.groupName] && (
+                <div>
+                  <div
+                    className="px-1 grid grid-cols-8 border border-gray-500 divide-x divide-gray-500"
+                    key="header"
+                  >
+                    <div className="p-1">Rank</div>
+                    <div className="p-1">Name</div>
+                    <div className="p-1">Overall Record</div>
+                    <div className="p-1">Record Vs. Conference</div>
+                    <div className="p-1">Record Vs. Division</div>
+                    <div className="p-1">PF</div>
+                    <div className="p-1">PA</div>
+                    <div className="p-1">DIFF</div>
+                  </div>
+                  {standing.teams.map((team) => {
+                    return (
+                      <div
+                        className="px-1 grid grid-cols-8 border border-gray-500  divide-x divide-gray-500"
+                        key={team.id}
+                      >
+                        <div className="p-1">{team.seed}</div>
+                        <div className="p-1">{team.name}</div>
+                        <div className="p-1">{team.record}</div>
+                        <div className="p-1">{team.vsconf}</div>
+                        <div className="p-1">{team.vsdiv}</div>
+                        <div className="p-1">{team.pointsfor}</div>
+                        <div className="p-1">{team.pointsagainst}</div>
+                        <div className="p-1">{team.differential}</div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          );
+        })}
+    </div>
+  );
+};
+
+export default Standings;

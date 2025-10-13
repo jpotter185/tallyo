@@ -1,5 +1,9 @@
-import { fetchEspnGameData } from "./espn/client";
-import { defaultCfbGroupId, getGamesFromJson } from "./espn/transformers";
+import { fetchEspnGameData, fetchStandings } from "./espn/client";
+import {
+  defaultCfbGroupId,
+  getGamesFromJson,
+  getNflStandingsFromJson,
+} from "./espn/transformers";
 
 export async function getCfbGames(
   week: string | undefined,
@@ -38,5 +42,16 @@ export async function getNflGames(week: string | undefined) {
       games: [],
       dataWeek: week,
     };
+  }
+}
+
+export async function getNflStandings() {
+  const data = await fetchStandings("nfl");
+
+  if (data) {
+    const standings = getNflStandingsFromJson(data);
+    return standings;
+  } else {
+    return [];
   }
 }

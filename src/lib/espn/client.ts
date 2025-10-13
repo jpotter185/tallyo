@@ -27,8 +27,7 @@ export async function fetchEspnGameData(
 export async function fetchStandings(sport: "nfl" | "cfb") {
   try {
     const response = await fetch(ENDPOINTS[`${sport}standings`]);
-    const standings = (await response.json()).body.content.standings;
-    console.log(standings);
+    return await response.json();
   } catch (error) {
     console.error(error);
   }

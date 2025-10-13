@@ -195,3 +195,61 @@ function getTeamRecord(records: any[]): string {
   }
   return "0-0";
 }
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function getNflStandingsFromJson(json: any) {
+  const conferenceGroups = json.content.standings.groups;
+  const standings: Standings[] = [];
+  for (const conferenceGroup of conferenceGroups) {
+    const conferenceGroupName = conferenceGroup.name;
+    let conferenceTeams: Team[] = [];
+    for (const divisionGroup of conferenceGroup.groups) {
+      const divisionGroupName = divisionGroup.name;
+      const standingEntries = divisionGroup.standings.entries;
+      for (const standingEntry of standingEntries) {
+        const teamInfo = standingEntry.team;
+        const teamStats = standingEntry.stats;
+        let team: Team = {
+          id: teamInfo.id,
+          name: teamInfo.displayName,
+          abbreviation: teamInfo.abbreviation,
+          logo: teamInfo.logos[0].href,
+          location: teamInfo.location,
+          seed: teamInfo.seed,
+          division: divisionGroupName,
+        };
+        team = populateTeamStats(team, teamStats);
+        conferenceTeams.push(team);
+      }
+    }
+    try {
+      const sortedConferenceTeams = [...conferenceTeams].sort(
+        (teamA, teamB) => {
+          const teamAIntSeed = parseInt(teamA.seed || "100");
+          const teamBIntSeed = parseInt(teamB.seed || "100");
+          return teamAIntSeed - teamBIntSeed;
+        }
+      );
+      conferenceTeams = sortedConferenceTeams;
+    } catch (error) {
+      console.error("error when sorting teams by seed ", error);
+    }
+    const conferenceStandings: Standings = {
+      teams: conferenceTeams,
+      groupName: conferenceGroupName,
+    };
+    standings.push(conferenceStandings);
+  }
+  return standings;
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function populateTeamStats(team: Team, stats: any) {
+  for (const stat of stats) {
+    team[stat.type] = stat.displayValue;
+  }
+  if (team.wins && team.losses && team.ties) {
+    team.record = `${team.wins}-${team.losses}-${team.ties}`;
+  }
+  return team;
+}
