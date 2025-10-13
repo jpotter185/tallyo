@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { ChevronDown } from "lucide-react";
+import { HeaderConstants } from "../types/StandingsConstants";
 
 interface StandingsProps {
   standings: Standings[];
@@ -50,14 +51,54 @@ const Standings: React.FC<StandingsProps> = ({ standings }) => {
                     className="px-1 grid grid-cols-8 border border-gray-500 divide-x divide-gray-500"
                     key="header"
                   >
-                    <div className="p-1">Rank</div>
-                    <div className="p-1">Name</div>
-                    <div className="p-1">Overall Record</div>
-                    <div className="p-1">Record Vs. Conference</div>
-                    <div className="p-1">Record Vs. Division</div>
-                    <div className="p-1">PF</div>
-                    <div className="p-1">PA</div>
-                    <div className="p-1">DIFF</div>
+                    <div className="p-1 hidden md:inline">
+                      {HeaderConstants.Rank.long}
+                    </div>
+                    <div className="p-1 inline md:hidden">
+                      {HeaderConstants.Rank.short}
+                    </div>
+                    <div className="p-1 hidden md:inline">
+                      {HeaderConstants.TeamName.long}
+                    </div>
+                    <div className="p-1 inline md:hidden">
+                      {HeaderConstants.TeamName.short}
+                    </div>
+                    <div className="p-1 hidden md:inline">
+                      {HeaderConstants.OverallRecord.long}
+                    </div>
+                    <div className="p-1 inline md:hidden">
+                      {HeaderConstants.OverallRecord.short}
+                    </div>
+                    <div className="p-1 hidden md:inline">
+                      {HeaderConstants.ConferenceRecord.long}
+                    </div>
+                    <div className="p-1 inline md:hidden">
+                      {HeaderConstants.ConferenceRecord.short}
+                    </div>
+                    <div className="p-1 hidden md:inline">
+                      {HeaderConstants.DivisionRecord.long}
+                    </div>
+                    <div className="p-1 inline md:hidden">
+                      {HeaderConstants.DivisionRecord.short}
+                    </div>
+                    <div className="p-1 hidden md:inline">
+                      {HeaderConstants.PointsFor.long}
+                    </div>
+                    <div className="p-1 inline md:hidden">
+                      {HeaderConstants.PointsFor.short}
+                    </div>
+                    <div className="p-1 hidden md:inline">
+                      {HeaderConstants.PointsAgainst.long}
+                    </div>
+                    <div className="p-1 inline md:hidden">
+                      {HeaderConstants.PointsAgainst.short}
+                    </div>
+                    <div className="p-1 hidden md:inline">
+                      {HeaderConstants.Differential.long}
+                    </div>
+                    <div className="p-1 inline md:hidden">
+                      {HeaderConstants.Differential.short}
+                    </div>
                   </div>
                   {standing.teams.map((team) => {
                     return (
