@@ -20,7 +20,7 @@ const FullSizeGameCard: React.FC<GameProps> = ({ game }) => {
           />
           <div className="text-nowrap">{game.awayTeam.abbreviation}</div>
           <div className="text-xs">{game.awayTeam.record}</div>
-          {game.awayTimeouts && (
+          {game.awayTimeouts && game.league === "nfl" && (
             <div className="flex items-center gap-1">
               {[...Array(3)].map((_, i) => (
                 <div
@@ -108,7 +108,7 @@ const FullSizeGameCard: React.FC<GameProps> = ({ game }) => {
           />
           <div className="text-nowrap">{game.homeTeam.abbreviation}</div>
           <div className="text-small">{game.homeTeam.record}</div>
-          {game.homeTimeouts && (
+          {game.homeTimeouts && game.league === "nfl" && (
             <div className="flex items-center gap-1">
               {[...Array(3)].map((_, i) => (
                 <div

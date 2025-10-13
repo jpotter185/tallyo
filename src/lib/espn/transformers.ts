@@ -85,6 +85,7 @@ export async function getGamesFromJson(
 
         const game: Game = {
           id: competition.id,
+          league: league,
           homeTeam: homeTeamObject,
           awayTeam: awayTeamObject,
           stadiumName: competition?.venue?.fullName,

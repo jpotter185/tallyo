@@ -1,6 +1,7 @@
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 type Game = {
   id: string;
+  league: "nfl" | "cfb";
   homeTeam: Team;
   awayTeam: Team;
   stadiumName: string;
