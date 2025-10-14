@@ -77,6 +77,7 @@ export async function getGamesFromJson(
         const currentDownAndDistance = competition.situation?.downDistanceText;
         const homeTimeouts = competition.situation?.homeTimeouts;
         const awayTimeouts = competition.situation?.awayTimeouts;
+        const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
         const dateFormatter = new Intl.DateTimeFormat("en-US", {
           year: "numeric",
           month: "long",
@@ -84,6 +85,7 @@ export async function getGamesFromJson(
           hour: "numeric",
           minute: "numeric",
           timeZoneName: "short",
+          timeZone,
         });
         const date = dateFormatter.format(new Date(competition.startDate));
 
