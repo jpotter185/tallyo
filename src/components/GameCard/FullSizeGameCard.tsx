@@ -25,7 +25,7 @@ const FullSizeGameCard: React.FC<GameProps> = ({ game }) => {
               {[...Array(3)].map((_, i) => (
                 <div
                   key={i}
-                  className={`w-2 h-2 rounded-full ${
+                  className={`w-1 h-1 rounded-full ${
                     i < game.awayTimeouts
                       ? "bg-current"
                       : "border border-gray-400"
@@ -94,7 +94,7 @@ const FullSizeGameCard: React.FC<GameProps> = ({ game }) => {
               height="20"
               viewBox="0 0 120 50"
               xmlns="http://www.w3.org/2000/svg"
-              className="inline-block text-base"
+              className="inline-block px-1"
             >
               <polygon points="10,25 60,5 110,25 60,45" fill="currentColor" />
             </svg>
@@ -111,13 +111,13 @@ const FullSizeGameCard: React.FC<GameProps> = ({ game }) => {
             className="pointer-events-none"
           />
           <div className="text-nowrap">{game.homeTeam.abbreviation}</div>
-          <div className="text-small">{game.homeTeam.record}</div>
+          <div className="text-xs">{game.homeTeam.record}</div>
           {game.homeTimeouts && game.league === "nfl" && (
             <div className="flex items-center gap-1">
               {[...Array(3)].map((_, i) => (
                 <div
                   key={i}
-                  className={`w-2 h-2 rounded-full ${
+                  className={`w-1 h-1 rounded-full ${
                     i < game.homeTimeouts
                       ? "bg-current"
                       : "border border-gray-400"
