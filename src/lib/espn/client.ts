@@ -3,6 +3,8 @@ const ENDPOINTS = {
   cfb: "https://site.api.espn.com/apis/site/v2/sports/football/college-football/scoreboard",
   nflstandings: "https://cdn.espn.com/core/nfl/standings?xhr=1",
   cfbstandings: "https://cdn.espn.com/core/college-football/standings?xhr=1",
+  nflstats: "https://cdn.espn.com/core/nfl/game?xhr=1&gameId=",
+  cfbstats: "https://cdn.espn.com/core/college-football/game?xhr=1&gameId=",
 };
 
 export async function fetchEspnGameData(
@@ -21,6 +23,20 @@ export async function fetchEspnGameData(
   } catch (error) {
     console.error(error);
     return undefined;
+  }
+}
+
+export async function getStatsForGame(
+  league: "nfl" | "cfb",
+  gameId: string
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+): Promise<any[]> {
+  if (gameId) {
+    const response = await fetch(ENDPOINTS[`${league}stats`] + gameId);
+    const leaders = (await response.json()).gamepackageJSON.leaders;
+    return leaders;
+  } else {
+    return [];
   }
 }
 

@@ -1,4 +1,5 @@
 import GameStatusEnums from "@/types/GameStatusEnums";
+import { getStatsForGame } from "./client";
 
 export const dateFormatter = new Intl.DateTimeFormat("en-US", {
   year: "numeric",
@@ -53,7 +54,12 @@ export async function getGamesFromJson(
   if (events && events.length > 0) {
     for (const event of events) {
       for (const competition of event.competitions) {
-        const stats: Stat[] = getStatLeadersForGame(competition.leaders);
+        let statMap = new Map<string, Stat>();
+        try {
+          statMap = await getStatLeadersForGame(league, competition.id);
+        } catch (error) {
+          console.error(error);
+        }
         const homeTeam = competition.competitors.find(
           (c: { homeAway: string }) => c.homeAway === "home"
         );
@@ -116,7 +122,7 @@ export async function getGamesFromJson(
           odds: gameOdds,
           homeTimeouts: homeTimeouts,
           awayTimeouts: awayTimeouts,
-          stats: stats,
+          stats: Object.fromEntries(statMap),
         };
         games.push(game);
       }
@@ -125,24 +131,32 @@ export async function getGamesFromJson(
   return sortGames(games);
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function getStatLeadersForGame(leaders: any) {
-  const stats: Stat[] = [];
-  for (const leader of leaders) {
-    const stat: Stat = {
-      name: leader.name,
-      displayName: leader.displayName,
-      shortDisplayName: leader.shortDisplayName,
-      abbreviation: leader.abbreviation,
-      value: leader.value,
-      displayValue: leader.leaders[0].displayValue,
-      playerName: leader.leaders[0].athlete.fullName,
-      playerShortName: leader.leaders[0].athlete.shortName,
-      teamId: leader.leaders[0].team.id,
-    };
-    stats.push(stat);
+async function getStatLeadersForGame(league: "nfl" | "cfb", gameId: string) {
+  const leaders = await getStatsForGame(league, gameId);
+  const statMap: Map<string, Stat> = new Map<string, Stat>();
+  if (!leaders) {
+    return statMap;
   }
-  return stats;
+  for (const team of leaders) {
+    for (const teamStat of team.leaders) {
+      const teamStatLeaders = teamStat.leaders;
+      if (teamStatLeaders && teamStatLeaders.length > 0) {
+        const stat: Stat = {
+          name: teamStat?.name,
+          displayName: teamStat?.displayName,
+          shortDisplayName: teamStat?.shortDisplayName,
+          abbreviation: team?.team.abbreviation,
+          value: teamStat?.value,
+          displayValue: teamStat?.leaders[0].displayValue,
+          playerName: teamStat?.leaders[0].athlete.fullName,
+          playerShortName: teamStat?.leaders[0].athlete.shortName,
+          teamId: team?.team.id,
+        };
+        statMap.set(`${teamStat.name}-${team.team.id}`, stat);
+      }
+    }
+  }
+  return statMap;
 }
 
 type GameStatus =

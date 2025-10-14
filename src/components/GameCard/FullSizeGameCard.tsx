@@ -7,6 +7,19 @@ interface GameProps {
 }
 
 const FullSizeGameCard: React.FC<GameProps> = ({ game }) => {
+  const statsMap = new Map(Object.entries(game.stats));
+  const gameStatNameTracker = new Set<string>();
+  const defaultStat: Stat = {
+    name: "",
+    displayName: "",
+    shortDisplayName: "",
+    abbreviation: "",
+    value: "",
+    displayValue: "",
+    playerName: "",
+    playerShortName: "",
+    teamId: "",
+  };
   return (
     <div>
       <div className="grid grid-cols-[3fr_2fr_2fr_2fr_3fr] text-sm place-items-center items-center justify-center">
@@ -145,19 +158,53 @@ const FullSizeGameCard: React.FC<GameProps> = ({ game }) => {
           </Link>
         </div>
       </div>
-      {game.stats && (
-        <div className="border divide-x divide-y">
-          {game.stats?.map((stat) => (
-            <div key={stat.name}>
-              <div className="border-b p-1">{stat.displayName}</div>
-              <div className="p-1">{`${
-                stat.teamId === game.awayTeam.id
-                  ? game.awayTeam.abbreviation
-                  : game.homeTeam.abbreviation
-              } ${stat.playerShortName}`}</div>
-              <div className="p-1">{stat.displayValue}</div>
-            </div>
-          ))}
+
+      {statsMap && (
+        <div className="border rounded overflow-hidden divide-y">
+          <div className="grid grid-cols-3 text-center divide-x font-semibold">
+            <div>{game.awayTeam.abbreviation}</div>
+            <div>Stat</div>
+            <div>{game.homeTeam.abbreviation}</div>
+          </div>
+          {Array.from(statsMap.keys()).map((stat) => {
+            const statName = stat.split("-")[0];
+            if (!statName || gameStatNameTracker.has(statName)) {
+              return;
+            } else {
+              gameStatNameTracker.add(statName);
+              let homeStat: Stat | undefined = statsMap.get(
+                `${statName}-${game.homeTeam.id}`
+              );
+              if (!homeStat) {
+                homeStat = defaultStat;
+              }
+              let awayStat: Stat | undefined = statsMap.get(
+                `${statName}-${game.awayTeam.id}`
+              );
+              if (!awayStat) {
+                awayStat = defaultStat;
+              }
+              if (awayStat.name === "" && homeStat.name === "") {
+                return;
+              }
+              return (
+                <div
+                  key={statName}
+                  className="grid grid-cols-3 text-center divide-x"
+                >
+                  <div>
+                    <div>{awayStat.playerShortName}</div>
+                    <div>{awayStat.displayValue}</div>
+                  </div>
+                  <div>{awayStat.displayName}</div>
+                  <div>
+                    <div>{homeStat.playerShortName}</div>
+                    <div>{homeStat.displayValue}</div>
+                  </div>
+                </div>
+              );
+            }
+          })}
         </div>
       )}
     </div>
