@@ -1,3 +1,5 @@
+import GameStatusEnums from "@/types/GameStatusEnums";
+
 export const cfbGroupIdMapping = new Map([
   ["-1", "Top 25"],
   ["80", "FBS"],
@@ -95,6 +97,7 @@ export async function getGamesFromJson(
           homeScore: homeTeamScore,
           awayScore: awayTeamScore,
           date: date,
+          isoDate: new Date(competition.startDate).toISOString(),
           gameStatus: gameStatus,
           period: competition?.status?.type?.detail,
           shortPeriod: competition?.status?.type?.shortDetail,
@@ -115,10 +118,32 @@ export async function getGamesFromJson(
       }
     }
   }
+  return sortGames(games);
+}
+
+type GameStatus =
+  | "STATUS_IN_PROGRESS"
+  | "STATUS_HALFTIME"
+  | "STATUS_SCHEDULED"
+  | "STATUS_FINAL";
+
+function sortGames(games: Game[]) {
+  games.sort((gameA: Game, gameB: Game) => {
+    const gameAStatus = GameStatusEnums[gameA.gameStatus as GameStatus];
+    const gameBStatus = GameStatusEnums[gameB.gameStatus as GameStatus];
+
+    if (gameAStatus === gameBStatus) {
+      return (
+        new Date(gameA.isoDate).getTime() - new Date(gameB.isoDate).getTime()
+      );
+    } else {
+      return gameAStatus - gameBStatus;
+    }
+  });
   return games;
 }
 
-export async function getOdds(eventId: string, league: "nfl" | "cfb") {
+async function getOdds(eventId: string, league: "nfl" | "cfb") {
   const ODDS_API_ENDPOINT = `https://sports.core.api.espn.com/v2/sports/football/leagues/${
     league === "nfl" ? "nfl" : "college-football"
   }/events/${eventId}/competitions/${eventId}/odds/58`;
