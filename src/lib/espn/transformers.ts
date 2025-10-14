@@ -44,9 +44,11 @@ export async function getGamesFromJson(
   if (events && events.length > 0) {
     for (const event of events) {
       for (const competition of event.competitions) {
+        const stats: Stat[] = getStatLeadersForGame(competition.leaders);
         const homeTeam = competition.competitors.find(
           (c: { homeAway: string }) => c.homeAway === "home"
         );
+
         const awayTeam = competition.competitors.find(
           (c: { homeAway: string }) => c.homeAway === "away"
         );
@@ -113,12 +115,33 @@ export async function getGamesFromJson(
           odds: gameOdds,
           homeTimeouts: homeTimeouts,
           awayTimeouts: awayTimeouts,
+          stats: stats,
         };
         games.push(game);
       }
     }
   }
   return sortGames(games);
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function getStatLeadersForGame(leaders: any) {
+  const stats: Stat[] = [];
+  for (const leader of leaders) {
+    const stat: Stat = {
+      name: leader.name,
+      displayName: leader.displayName,
+      shortDisplayName: leader.shortDisplayName,
+      abbreviation: leader.abbreviation,
+      value: leader.value,
+      displayValue: leader.leaders[0].displayValue,
+      playerName: leader.leaders[0].athlete.fullName,
+      playerShortName: leader.leaders[0].athlete.shortName,
+      teamId: leader.leaders[0].team.id,
+    };
+    stats.push(stat);
+  }
+  return stats;
 }
 
 type GameStatus =

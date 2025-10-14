@@ -39,7 +39,9 @@ const FullSizeGameCard: React.FC<GameProps> = ({ game }) => {
         <div
           className={` ${
             game.winner && game.winner === game.awayTeam.id
-              ? "border-2 border-sky-50 dark:border-neutral-800"
+              ? "font-extrabold"
+              : game.winner
+              ? "font-thin text-xs"
               : ""
           }`}
         >
@@ -80,7 +82,9 @@ const FullSizeGameCard: React.FC<GameProps> = ({ game }) => {
         <div
           className={` ${
             game.winner && game.winner === game.homeTeam.id
-              ? "border-2 border-sky-50 dark:border-neutral-800"
+              ? "font-extrabold"
+              : game.winner
+              ? "font-thin text-xs"
               : ""
           }`}
         >
@@ -138,6 +142,17 @@ const FullSizeGameCard: React.FC<GameProps> = ({ game }) => {
           </Link>
         </div>
       </div>
+      {game.stats && (
+        <div className="border divide-x divide-y">
+          {game.stats?.map((stat) => (
+            <div key={stat.name}>
+              <div className="border-b p-1">{stat.displayName}</div>
+              <div className="p-1">{stat.playerShortName}</div>
+              <div className="p-1">{stat.displayValue}</div>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 };

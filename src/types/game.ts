@@ -25,4 +25,5 @@ type Game = {
   headline?: string;
   odds?: string;
   gameStatus: string;
+  stats?: Stat[];
 };
