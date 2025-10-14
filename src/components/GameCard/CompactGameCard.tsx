@@ -29,7 +29,7 @@ const CompactGameCard: React.FC<GameCompactProps> = ({ game }) => {
               height="16"
               viewBox="0 0 120 50"
               xmlns="http://www.w3.org/2000/svg"
-              className="inline-block"
+              className="inline-block text-base"
             >
               <polygon points="10,25 60,5 110,25 60,45" fill="currentColor" />
             </svg>
@@ -59,7 +59,7 @@ const CompactGameCard: React.FC<GameCompactProps> = ({ game }) => {
               height="16"
               viewBox="0 0 120 50"
               xmlns="http://www.w3.org/2000/svg"
-              className="inline-block"
+              className="inline-block text-base"
             >
               <polygon points="10,25 60,5 110,25 60,45" fill="currentColor" />
             </svg>
