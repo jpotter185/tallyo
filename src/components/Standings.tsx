@@ -47,102 +47,112 @@ const Standings: React.FC<StandingsProps> = ({ standings }) => {
                 ></ChevronDown>
               </div>
               {openStandings[standing.groupName] && (
-                <div>
-                  <div
-                    className="px-1 grid grid-cols-9 border border-gray-500 divide-x divide-gray-500"
-                    key="header"
-                  >
-                    <div className="p-1 hidden md:inline">
-                      {HeaderConstants.Rank.long}
+                <div className="overflow-x-auto">
+                  <div className="min-w-[700px]">
+                    <div
+                      className="px-1 grid grid-cols-9 border border-gray-500 divide-x divide-gray-500"
+                      key="header"
+                    >
+                      <div className="p-1 hidden md:inline">
+                        {HeaderConstants.Rank.long}
+                      </div>
+                      <div className="p-1 inline md:hidden">
+                        {HeaderConstants.Rank.short}
+                      </div>
+                      <div className="p-1 hidden md:inline">
+                        {HeaderConstants.TeamName.long}
+                      </div>
+                      <div className="p-1 inline md:hidden">
+                        {HeaderConstants.TeamName.short}
+                      </div>
+                      <div className="p-1 hidden md:inline">
+                        {HeaderConstants.WinPercentage.long}
+                      </div>
+                      <div className="p-1 inline md:hidden">
+                        {HeaderConstants.WinPercentage.short}
+                      </div>
+                      <div className="p-1 hidden md:inline">
+                        {HeaderConstants.OverallRecord.long}
+                      </div>
+                      <div className="p-1 inline md:hidden">
+                        {HeaderConstants.OverallRecord.short}
+                      </div>
+                      <div className="p-1 hidden md:inline">
+                        {HeaderConstants.ConferenceRecord.long}
+                      </div>
+                      <div className="p-1 inline md:hidden">
+                        {HeaderConstants.ConferenceRecord.short}
+                      </div>
+                      <div className="p-1 hidden md:inline">
+                        {HeaderConstants.DivisionRecord.long}
+                      </div>
+                      <div className="p-1 inline md:hidden">
+                        {HeaderConstants.DivisionRecord.short}
+                      </div>
+                      <div className="p-1 hidden md:inline">
+                        {HeaderConstants.PointsFor.long}
+                      </div>
+                      <div className="p-1 inline md:hidden">
+                        {HeaderConstants.PointsFor.short}
+                      </div>
+                      <div className="p-1 hidden md:inline">
+                        {HeaderConstants.PointsAgainst.long}
+                      </div>
+                      <div className="p-1 inline md:hidden">
+                        {HeaderConstants.PointsAgainst.short}
+                      </div>
+                      <div className="p-1 hidden md:inline">
+                        {HeaderConstants.Differential.long}
+                      </div>
+                      <div className="p-1 inline md:hidden">
+                        {HeaderConstants.Differential.short}
+                      </div>
                     </div>
-                    <div className="p-1 inline md:hidden">
-                      {HeaderConstants.Rank.short}
-                    </div>
-                    <div className="p-1 hidden md:inline">
-                      {HeaderConstants.TeamName.long}
-                    </div>
-                    <div className="p-1 inline md:hidden">
-                      {HeaderConstants.TeamName.short}
-                    </div>
-                    <div className="p-1 hidden md:inline">
-                      {HeaderConstants.WinPercentage.long}
-                    </div>
-                    <div className="p-1 inline md:hidden">
-                      {HeaderConstants.WinPercentage.short}
-                    </div>
-                    <div className="p-1 hidden md:inline">
-                      {HeaderConstants.OverallRecord.long}
-                    </div>
-                    <div className="p-1 inline md:hidden">
-                      {HeaderConstants.OverallRecord.short}
-                    </div>
-                    <div className="p-1 hidden md:inline">
-                      {HeaderConstants.ConferenceRecord.long}
-                    </div>
-                    <div className="p-1 inline md:hidden">
-                      {HeaderConstants.ConferenceRecord.short}
-                    </div>
-                    <div className="p-1 hidden md:inline">
-                      {HeaderConstants.DivisionRecord.long}
-                    </div>
-                    <div className="p-1 inline md:hidden">
-                      {HeaderConstants.DivisionRecord.short}
-                    </div>
-                    <div className="p-1 hidden md:inline">
-                      {HeaderConstants.PointsFor.long}
-                    </div>
-                    <div className="p-1 inline md:hidden">
-                      {HeaderConstants.PointsFor.short}
-                    </div>
-                    <div className="p-1 hidden md:inline">
-                      {HeaderConstants.PointsAgainst.long}
-                    </div>
-                    <div className="p-1 inline md:hidden">
-                      {HeaderConstants.PointsAgainst.short}
-                    </div>
-                    <div className="p-1 hidden md:inline">
-                      {HeaderConstants.Differential.long}
-                    </div>
-                    <div className="p-1 inline md:hidden">
-                      {HeaderConstants.Differential.short}
-                    </div>
-                  </div>
-                  {standing.teams.map((team) => {
-                    return (
-                      <div
-                        className="px-1 grid grid-cols-9 border border-gray-500 divide-x divide-gray-500"
-                        key={team.id}
-                      >
-                        <div className="p-1 items-center">{team.seed}</div>
+                    {standing.teams.map((team) => {
+                      return (
                         <div
-                          className={`p-1 grid grid-cols-[auto_1fr_auto] items-center gap-1w-full h-auto object-contain`}
+                          className="px-1 grid grid-cols-9 border border-gray-500 divide-x divide-gray-500"
+                          key={team.id}
                         >
-                          <Image
-                            src={team.logo}
-                            alt=""
-                            width={24}
-                            height={24}
-                          />
-                          <div className="p-1 items-center">
-                            {team.abbreviation}
+                          <div className="p-1 items-center">{team.seed}</div>
+                          <div
+                            className={`p-1 grid grid-cols-[auto_1fr_auto] items-center gap-1 w-full h-auto object-contain`}
+                          >
+                            <Image
+                              src={team.logo}
+                              alt=""
+                              width={24}
+                              height={24}
+                            />
+                            <div className="p-1 items-center">
+                              {team.abbreviation}
+                            </div>
+                          </div>
+                          <div className="p-1 items-center w-full h-auto object-contain">
+                            {team.winpercent}
+                          </div>
+                          <div className="p-1 items-center w-full h-auto object-contain">
+                            {team.record}
+                          </div>
+                          <div className="p-1 items-center w-full h-auto object-contain">
+                            {team.vsconf}
+                          </div>
+                          <div className="p-1 items-center w-full h-auto object-contain">
+                            {team.vsdiv}
+                          </div>
+                          <div className="p-1 items-center w-full h-auto object-contain">
+                            {team.pointsfor}
+                          </div>
+                          <div className="p-1 items-center w-full h-auto object-contain">
+                            {team.pointsagainst}
+                          </div>
+                          <div className="p-1 items-center w-full h-auto object-contain">
+                            {team.differential}
                           </div>
                         </div>
-                        <div className="p-1 items-center">
-                          {team.winpercent}
-                        </div>
-                        <div className="p-1 items-center">{team.record}</div>
-                        <div className="p-1 items-center">{team.vsconf}</div>
-                        <div className="p-1 items-center">{team.vsdiv}</div>
-                        <div className="p-1 items-center">{team.pointsfor}</div>
-                        <div className="p-1 items-center">
-                          {team.pointsagainst}
-                        </div>
-                        <div className="p-1 items-center">
-                          {team.differential}
-                        </div>
-                      </div>
-                    );
-                  })}
+                      );
+                    })}
+                  </div>
                 </div>
               )}
             </div>
