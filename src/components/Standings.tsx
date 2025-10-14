@@ -110,30 +110,36 @@ const Standings: React.FC<StandingsProps> = ({ standings }) => {
                   {standing.teams.map((team) => {
                     return (
                       <div
-                        className="px-1 grid grid-cols-9 border border-gray-500  divide-x divide-gray-500"
+                        className="px-1 grid grid-cols-9 border border-gray-500 divide-x divide-gray-500"
                         key={team.id}
                       >
-                        <div className="p-1">{team.seed}</div>
+                        <div className="p-1 items-center">{team.seed}</div>
                         <div
-                          className={`grid grid-cols-[auto_1fr_auto] items-center gap-1 p-1`}
+                          className={`p-1 grid grid-cols-[auto_1fr_auto] items-center gap-1w-full h-auto object-contain`}
                         >
                           <Image
                             src={team.logo}
                             alt=""
                             width={24}
                             height={24}
-                            className="pointer-events-none"
                           />
-
-                          <div className="p-1">{team.abbreviation}</div>
+                          <div className="p-1 items-center">
+                            {team.abbreviation}
+                          </div>
                         </div>
-                        <div className="p-1">{team.winpercent}</div>
-                        <div className="p-1">{team.record}</div>
-                        <div className="p-1">{team.vsconf}</div>
-                        <div className="p-1">{team.vsdiv}</div>
-                        <div className="p-1">{team.pointsfor}</div>
-                        <div className="p-1">{team.pointsagainst}</div>
-                        <div className="p-1">{team.differential}</div>
+                        <div className="p-1 items-center">
+                          {team.winpercent}
+                        </div>
+                        <div className="p-1 items-center">{team.record}</div>
+                        <div className="p-1 items-center">{team.vsconf}</div>
+                        <div className="p-1 items-center">{team.vsdiv}</div>
+                        <div className="p-1 items-center">{team.pointsfor}</div>
+                        <div className="p-1 items-center">
+                          {team.pointsagainst}
+                        </div>
+                        <div className="p-1 items-center">
+                          {team.differential}
+                        </div>
                       </div>
                     );
                   })}

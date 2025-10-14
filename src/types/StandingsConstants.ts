@@ -9,7 +9,7 @@ export const HeaderConstants = Object.freeze({
   },
   WinPercentage: {
     long: "Overall Win Percentage",
-    short: "WIN %",
+    short: "WIN%",
   },
   OverallRecord: {
     long: "Overall Record",
