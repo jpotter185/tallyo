@@ -1,5 +1,14 @@
 import GameStatusEnums from "@/types/GameStatusEnums";
 
+export const dateFormatter = new Intl.DateTimeFormat("en-US", {
+  year: "numeric",
+  month: "long",
+  day: "numeric",
+  hour: "numeric",
+  minute: "numeric",
+  timeZoneName: "short",
+});
+
 export const cfbGroupIdMapping = new Map([
   ["-1", "Top 25"],
   ["80", "FBS"],
@@ -77,16 +86,6 @@ export async function getGamesFromJson(
         const currentDownAndDistance = competition.situation?.downDistanceText;
         const homeTimeouts = competition.situation?.homeTimeouts;
         const awayTimeouts = competition.situation?.awayTimeouts;
-        const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-        const dateFormatter = new Intl.DateTimeFormat("en-US", {
-          year: "numeric",
-          month: "long",
-          day: "numeric",
-          hour: "numeric",
-          minute: "numeric",
-          timeZoneName: "short",
-          timeZone,
-        });
         const date = dateFormatter.format(new Date(competition.startDate));
 
         const gameOdds = await getOdds(competition.id, league);

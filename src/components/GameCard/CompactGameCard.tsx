@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { dateFormatter } from "@/lib/espn/transformers";
 
 interface GameCompactProps {
   game: Game;
@@ -71,7 +72,9 @@ const CompactGameCard: React.FC<GameCompactProps> = ({ game }) => {
         {game.gameStatus !== "STATUS_SCHEDULED" && (
           <div>{game.shortPeriod}</div>
         )}
-        {game.gameStatus === "STATUS_SCHEDULED" && <div>{game.date}</div>}
+        {game.gameStatus === "STATUS_SCHEDULED" && (
+          <div>{dateFormatter.format(new Date(game.isoDate))}</div>
+        )}
         {game.shortPeriod !== "Final" && <div>{game.channel}</div>}
       </div>
     </div>

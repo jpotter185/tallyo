@@ -1,6 +1,7 @@
 import Image from "next/image";
-
 import Link from "next/link";
+import { dateFormatter } from "@/lib/espn/transformers";
+
 interface GameProps {
   game: Game;
 }
@@ -131,7 +132,9 @@ const FullSizeGameCard: React.FC<GameProps> = ({ game }) => {
       <div className="flex flex-col place-items-center items-center justify-center">
         <div>{game.lastPlay}</div>
         <div>{game.odds}</div>
-        {game.gameStatus === "STATUS_SCHEDULED" && <div>{game.date}</div>}
+        {game.gameStatus === "STATUS_SCHEDULED" && (
+          <div>{dateFormatter.format(new Date(game.isoDate))}</div>
+        )}
         <div>
           <Link
             href={game.espnLink}
