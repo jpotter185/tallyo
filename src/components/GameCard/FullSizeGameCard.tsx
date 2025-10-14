@@ -147,7 +147,11 @@ const FullSizeGameCard: React.FC<GameProps> = ({ game }) => {
           {game.stats?.map((stat) => (
             <div key={stat.name}>
               <div className="border-b p-1">{stat.displayName}</div>
-              <div className="p-1">{stat.playerShortName}</div>
+              <div className="p-1">{`${
+                stat.teamId === game.awayTeam.id
+                  ? game.awayTeam.abbreviation
+                  : game.homeTeam.abbreviation
+              } ${stat.playerShortName}`}</div>
               <div className="p-1">{stat.displayValue}</div>
             </div>
           ))}
