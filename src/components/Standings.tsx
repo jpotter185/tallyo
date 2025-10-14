@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { ChevronDown } from "lucide-react";
 import { HeaderConstants } from "../types/StandingsConstants";
+import Image from "next/image";
 
 interface StandingsProps {
   standings: Standings[];
@@ -48,7 +49,7 @@ const Standings: React.FC<StandingsProps> = ({ standings }) => {
               {openStandings[standing.groupName] && (
                 <div>
                   <div
-                    className="px-1 grid grid-cols-8 border border-gray-500 divide-x divide-gray-500"
+                    className="px-1 grid grid-cols-9 border border-gray-500 divide-x divide-gray-500"
                     key="header"
                   >
                     <div className="p-1 hidden md:inline">
@@ -62,6 +63,12 @@ const Standings: React.FC<StandingsProps> = ({ standings }) => {
                     </div>
                     <div className="p-1 inline md:hidden">
                       {HeaderConstants.TeamName.short}
+                    </div>
+                    <div className="p-1 hidden md:inline">
+                      {HeaderConstants.WinPercentage.long}
+                    </div>
+                    <div className="p-1 inline md:hidden">
+                      {HeaderConstants.WinPercentage.short}
                     </div>
                     <div className="p-1 hidden md:inline">
                       {HeaderConstants.OverallRecord.long}
@@ -103,11 +110,24 @@ const Standings: React.FC<StandingsProps> = ({ standings }) => {
                   {standing.teams.map((team) => {
                     return (
                       <div
-                        className="px-1 grid grid-cols-8 border border-gray-500  divide-x divide-gray-500"
+                        className="px-1 grid grid-cols-9 border border-gray-500  divide-x divide-gray-500"
                         key={team.id}
                       >
                         <div className="p-1">{team.seed}</div>
-                        <div className="p-1">{team.name}</div>
+                        <div
+                          className={`grid grid-cols-[auto_1fr_auto] items-center gap-1 p-1`}
+                        >
+                          <Image
+                            src={team.logo}
+                            alt=""
+                            width={24}
+                            height={24}
+                            className="pointer-events-none"
+                          />
+
+                          <div className="p-1">{team.abbreviation}</div>
+                        </div>
+                        <div className="p-1">{team.winpercent}</div>
                         <div className="p-1">{team.record}</div>
                         <div className="p-1">{team.vsconf}</div>
                         <div className="p-1">{team.vsdiv}</div>

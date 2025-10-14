@@ -7,6 +7,10 @@ export const HeaderConstants = Object.freeze({
     long: "Team",
     short: "Team",
   },
+  WinPercentage: {
+    long: "Overall Win Percentage",
+    short: "WIN %",
+  },
   OverallRecord: {
     long: "Overall Record",
     short: "OVR",
@@ -28,7 +32,7 @@ export const HeaderConstants = Object.freeze({
     short: "PA",
   },
   Differential: {
-    long: "DIFF",
+    long: "Point Differential",
     short: "DIFF",
   },
 });
