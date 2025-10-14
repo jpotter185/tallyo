@@ -22,7 +22,7 @@ const FullSizeGameCard: React.FC<GameProps> = ({ game }) => {
   };
   return (
     <div>
-      <div className="grid grid-cols-[3fr_2fr_2fr_2fr_3fr] text-sm place-items-center items-center justify-center">
+      <div className="grid grid-cols-[3fr_2fr_2fr_2fr_3fr] place-items-center items-center justify-center p-2">
         {/* Away team info */}
         <div className="flex flex-col">
           <Image
@@ -55,7 +55,7 @@ const FullSizeGameCard: React.FC<GameProps> = ({ game }) => {
             game.winner && game.winner === game.awayTeam.id
               ? "font-extrabold"
               : game.winner
-              ? "font-thin text-xs"
+              ? "font-thin"
               : ""
           }`}
         >
@@ -76,10 +76,9 @@ const FullSizeGameCard: React.FC<GameProps> = ({ game }) => {
 
         {/* Game info */}
         <div className="flex flex-col whitespace-nowrap place-items-center items-center justify-center">
-          {game.shortPeriod !== "Final" &&
-            game.gameStatus !== "STATUS_SCHEDULED" && (
-              <div>{game.shortPeriod}</div>
-            )}
+          {game.gameStatus !== "STATUS_SCHEDULED" && (
+            <div>{game.shortPeriod}</div>
+          )}
           {game.shortPeriod !== "Final" &&
             game.gameStatus !== "STATUS_SCHEDULED" && (
               <div className="text-xs">{game.down}</div>
@@ -98,7 +97,7 @@ const FullSizeGameCard: React.FC<GameProps> = ({ game }) => {
             game.winner && game.winner === game.homeTeam.id
               ? "font-extrabold"
               : game.winner
-              ? "font-thin text-xs"
+              ? "font-thin"
               : ""
           }`}
         >
@@ -140,22 +139,6 @@ const FullSizeGameCard: React.FC<GameProps> = ({ game }) => {
               ))}
             </div>
           )}
-        </div>
-      </div>
-      <div className="flex flex-col place-items-center items-center justify-center">
-        <div>{game.lastPlay}</div>
-        <div>{game.odds}</div>
-        {game.gameStatus === "STATUS_SCHEDULED" && (
-          <div>{dateFormatter.format(new Date(game.isoDate))}</div>
-        )}
-        <div>
-          <Link
-            href={game.espnLink}
-            className="font-medium text-blue-600 dark:text-blue-400 hover:underline"
-            target="_blank"
-          >
-            ESPN
-          </Link>
         </div>
       </div>
 
@@ -207,6 +190,23 @@ const FullSizeGameCard: React.FC<GameProps> = ({ game }) => {
           })}
         </div>
       )}
+
+      <div className="flex flex-col place-items-center items-center justify-center">
+        <div>{game.lastPlay}</div>
+        <div>{game.odds}</div>
+        {game.gameStatus === "STATUS_SCHEDULED" && (
+          <div>{dateFormatter.format(new Date(game.isoDate))}</div>
+        )}
+        <div>
+          <Link
+            href={game.espnLink}
+            className="font-medium text-blue-600 dark:text-blue-400 hover:underline"
+            target="_blank"
+          >
+            ESPN
+          </Link>
+        </div>
+      </div>
     </div>
   );
 };
