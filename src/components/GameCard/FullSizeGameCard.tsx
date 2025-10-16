@@ -1,13 +1,20 @@
 import Image from "next/image";
 import Link from "next/link";
 import { dateFormatter } from "@/lib/espn/transformers";
+import { useState } from "react";
 
 interface GameProps {
   game: Game;
+  getStatsForGame: (game: Game) => Promise<Map<string, Stat>>;
 }
 
-const FullSizeGameCard: React.FC<GameProps> = ({ game }) => {
-  const statsMap = new Map(Object.entries(game.stats));
+const FullSizeGameCard: React.FC<GameProps> = ({ game, getStatsForGame }) => {
+  const [stats, setStats] = useState<Map<string, Stat> | null>(null);
+  const handleHover = async () => {
+    if (stats) return;
+    const fetched = await getStatsForGame(game);
+    setStats(fetched);
+  };
   const gameStatNameTracker = new Set<string>();
   const defaultStat: Stat = {
     name: "",
@@ -21,7 +28,7 @@ const FullSizeGameCard: React.FC<GameProps> = ({ game }) => {
     teamId: "",
   };
   return (
-    <div>
+    <div onMouseEnter={handleHover}>
       <div className="grid grid-cols-[3fr_2fr_2fr_2fr_3fr] place-items-center items-center justify-center p-2">
         {/* Away team info */}
         <div className="flex flex-col">
@@ -142,26 +149,26 @@ const FullSizeGameCard: React.FC<GameProps> = ({ game }) => {
         </div>
       </div>
 
-      {statsMap && (
+      {stats && (
         <div className="border rounded overflow-hidden divide-y">
           <div className="grid grid-cols-3 text-center divide-x font-semibold">
             <div>{game.awayTeam.abbreviation}</div>
             <div>Stat</div>
             <div>{game.homeTeam.abbreviation}</div>
           </div>
-          {Array.from(statsMap.keys()).map((stat) => {
+          {Array.from(stats.keys()).map((stat) => {
             const statName = stat.split("-")[0];
             if (!statName || gameStatNameTracker.has(statName)) {
               return;
             } else {
               gameStatNameTracker.add(statName);
-              let homeStat: Stat | undefined = statsMap.get(
+              let homeStat: Stat | undefined = stats.get(
                 `${statName}-${game.homeTeam.id}`
               );
               if (!homeStat) {
                 homeStat = defaultStat;
               }
-              let awayStat: Stat | undefined = statsMap.get(
+              let awayStat: Stat | undefined = stats.get(
                 `${statName}-${game.awayTeam.id}`
               );
               if (!awayStat) {

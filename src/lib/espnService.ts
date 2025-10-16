@@ -3,6 +3,7 @@ import {
   defaultCfbGroupId,
   getGamesFromJson,
   getNflStandingsFromJson,
+  getStatLeadersForGame,
 } from "./espn/transformers";
 
 export async function getCfbGames(
@@ -54,4 +55,12 @@ export async function getNflStandings() {
   } else {
     return [];
   }
+}
+
+export async function getNflStatsForGame(gameId: string) {
+  return await getStatLeadersForGame("nfl", gameId);
+}
+
+export async function getCfbStatsForGame(gameId: string) {
+  return await getStatLeadersForGame("cfb", gameId);
 }

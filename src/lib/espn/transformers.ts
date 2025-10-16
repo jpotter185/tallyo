@@ -54,12 +54,6 @@ export async function getGamesFromJson(
   if (events && events.length > 0) {
     for (const event of events) {
       for (const competition of event.competitions) {
-        let statMap = new Map<string, Stat>();
-        try {
-          statMap = await getStatLeadersForGame(league, competition.id);
-        } catch (error) {
-          console.error(error);
-        }
         const homeTeam = competition.competitors.find(
           (c: { homeAway: string }) => c.homeAway === "home"
         );
@@ -122,7 +116,7 @@ export async function getGamesFromJson(
           odds: gameOdds,
           homeTimeouts: homeTimeouts,
           awayTimeouts: awayTimeouts,
-          stats: Object.fromEntries(statMap),
+          stats: {},
         };
         games.push(game);
       }
@@ -131,10 +125,14 @@ export async function getGamesFromJson(
   return sortGames(games);
 }
 
-async function getStatLeadersForGame(league: "nfl" | "cfb", gameId: string) {
+export async function getStatLeadersForGame(
+  league: "nfl" | "cfb",
+  gameId: string
+) {
   const leaders = await getStatsForGame(league, gameId);
   const statMap: Map<string, Stat> = new Map<string, Stat>();
   if (!leaders) {
+    console.log("ending early");
     return statMap;
   }
   for (const team of leaders) {

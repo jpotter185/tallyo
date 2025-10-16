@@ -2,13 +2,14 @@
 
 interface GameProps {
   game: Game;
+  getStatsForGame: (game: Game) => Promise<Map<string, Stat>>;
   isOpen: boolean;
   toggleOpenGame: () => void;
 }
 
 import FullsizeGameCard from "./FullSizeGameCard";
 import CompactGameCard from "./CompactGameCard";
-const GameCard: React.FC<GameProps> = ({ game, isOpen, toggleOpenGame }) => {
+const GameCard: React.FC<GameProps> = ({ game, getStatsForGame, isOpen, toggleOpenGame }) => {
   return (
     <div
       className={`border border-gray-300 dark:border-gray-500 p-5 rounded-lg shadow-lg bg-neutral-300 dark:bg-neutral-500 transition-transform duration-300 ${
@@ -17,7 +18,7 @@ const GameCard: React.FC<GameProps> = ({ game, isOpen, toggleOpenGame }) => {
       onClick={toggleOpenGame}
     >
       {isOpen ? (
-        <FullsizeGameCard game={game} />
+        <FullsizeGameCard game={game} getStatsForGame={getStatsForGame} />
       ) : (
         <CompactGameCard game={game} />
       )}
