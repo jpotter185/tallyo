@@ -28,7 +28,7 @@ const FullSizeGameCard: React.FC<GameProps> = ({ game, getStatsForGame }) => {
     teamId: "",
   };
   return (
-    <div onMouseEnter={handleHover}>
+    <div onMouseEnter={handleHover} onTouchStart={handleHover}>
       <div className="grid grid-cols-[3fr_2fr_2fr_2fr_3fr] place-items-center items-center justify-center p-2">
         {/* Away team info */}
         <div className="flex flex-col">
