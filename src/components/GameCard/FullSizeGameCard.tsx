@@ -1,20 +1,31 @@
 import Image from "next/image";
 import Link from "next/link";
 import { dateFormatter } from "@/lib/espn/transformers";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 interface GameProps {
   game: Game;
   getStatsForGame: (game: Game) => Promise<Map<string, Stat>>;
+  isOpen: boolean;
 }
 
-const FullSizeGameCard: React.FC<GameProps> = ({ game, getStatsForGame }) => {
+const FullSizeGameCard: React.FC<GameProps> = ({
+  game,
+  getStatsForGame,
+  isOpen,
+}) => {
   const [stats, setStats] = useState<Map<string, Stat> | null>(null);
-  const handleHover = async () => {
-    if (stats) return;
-    const fetched = await getStatsForGame(game);
-    setStats(fetched);
-  };
+
+  useEffect(() => {
+    const handleHover = async () => {
+      const fetched = await getStatsForGame(game);
+      setStats(fetched);
+    };
+    handleHover();
+    const interval = setInterval(handleHover, 30000);
+    return () => clearInterval(interval);
+  }, [isOpen, game, getStatsForGame]);
+
   const gameStatNameTracker = new Set<string>();
   const defaultStat: Stat = {
     name: "",
@@ -28,7 +39,7 @@ const FullSizeGameCard: React.FC<GameProps> = ({ game, getStatsForGame }) => {
     teamId: "",
   };
   return (
-    <div onMouseEnter={handleHover} onTouchStart={handleHover}>
+    <div>
       <div className="grid grid-cols-[3fr_2fr_2fr_2fr_3fr] place-items-center items-center justify-center p-2">
         {/* Away team info */}
         <div className="flex flex-col">
@@ -186,7 +197,7 @@ const FullSizeGameCard: React.FC<GameProps> = ({ game, getStatsForGame }) => {
                     <div>{awayStat.playerShortName}</div>
                     <div>{awayStat.displayValue}</div>
                   </div>
-                  <div>{awayStat.displayName}</div>
+                  <div>{awayStat.displayName || homeStat.displayName}</div>
                   <div>
                     <div>{homeStat.playerShortName}</div>
                     <div>{homeStat.displayValue}</div>

@@ -9,7 +9,12 @@ interface GameProps {
 
 import FullsizeGameCard from "./FullSizeGameCard";
 import CompactGameCard from "./CompactGameCard";
-const GameCard: React.FC<GameProps> = ({ game, getStatsForGame, isOpen, toggleOpenGame }) => {
+const GameCard: React.FC<GameProps> = ({
+  game,
+  getStatsForGame,
+  isOpen,
+  toggleOpenGame,
+}) => {
   return (
     <div
       className={`border border-gray-300 dark:border-gray-500 p-5 rounded-lg shadow-lg bg-neutral-300 dark:bg-neutral-500 transition-transform duration-300 ${
@@ -18,7 +23,11 @@ const GameCard: React.FC<GameProps> = ({ game, getStatsForGame, isOpen, toggleOp
       onClick={toggleOpenGame}
     >
       {isOpen ? (
-        <FullsizeGameCard game={game} getStatsForGame={getStatsForGame} />
+        <FullsizeGameCard
+          game={game}
+          getStatsForGame={getStatsForGame}
+          isOpen={isOpen}
+        />
       ) : (
         <CompactGameCard game={game} />
       )}
