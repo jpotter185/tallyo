@@ -17,13 +17,23 @@ const FullSizeGameCard: React.FC<GameProps> = ({
   const [stats, setStats] = useState<Map<string, Stat> | null>(null);
 
   useEffect(() => {
+    let interval: NodeJS.Timeout | undefined;
     const handleHover = async () => {
       const fetched = await getStatsForGame(game);
       setStats(fetched);
     };
     handleHover();
-    const interval = setInterval(handleHover, 30000);
-    return () => clearInterval(interval);
+    if (
+      game.gameStatus !== "STATUS_FINAL" &&
+      game.gameStatus !== "STATUS_SCHEDULED" &&
+      game.gameStatus !== "STATUS_HALFTIME"
+    ) {
+      interval = setInterval(handleHover, 30000);
+    }
+
+    return () => {
+      if (interval) clearInterval(interval);
+    };
   }, [isOpen, game, getStatsForGame]);
 
   const gameStatNameTracker = new Set<string>();
