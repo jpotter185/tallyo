@@ -129,11 +129,11 @@ export async function getStatLeadersForGame(
   league: "nfl" | "cfb",
   gameId: string
 ) {
-  const leaders = await getStatsForGame(league, gameId);
+  const { leaders, scoringPlays } = await getStatsForGame(league, gameId);
   const statMap: Map<string, Stat> = new Map<string, Stat>();
-  if (!leaders) {
+  if (!leaders && !scoringPlays) {
     console.log("ending early");
-    return statMap;
+    return { statMap, scoringPlays: [] };
   }
   for (const team of leaders) {
     for (const teamStat of team.leaders) {
@@ -154,7 +154,25 @@ export async function getStatLeadersForGame(
       }
     }
   }
-  return statMap;
+  const scoringPlaysArray: ScoringPlay[] = [];
+  if (scoringPlays && scoringPlays.length > 0) {
+    for (const play of scoringPlays) {
+      const scoringPlay: ScoringPlay = {
+        id: play?.id,
+        teamId: play?.team?.id,
+        teamName: play?.team?.displayName,
+        displayText: play?.text,
+        homeScore: play?.homeScore,
+        awayScore: play?.awayScore,
+        scoringType: play?.scoringType?.abbreviation,
+        quarter: play?.period?.number,
+        clock: play?.clock?.displayValue,
+      };
+      scoringPlaysArray.push(scoringPlay);
+    }
+  }
+
+  return { statMap, scoringPlays: scoringPlaysArray };
 }
 
 type GameStatus =

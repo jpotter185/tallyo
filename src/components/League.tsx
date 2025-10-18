@@ -1,7 +1,7 @@
 "use client";
 import GameCard from "./GameCard/GameCard";
 import Selector from "./Selector";
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction } from "react";
 import { ChevronDown } from "lucide-react";
 
 interface LeagueProps {
@@ -35,23 +35,18 @@ const League: React.FC<LeagueProps> = ({
   openGames,
   toggleOpenGame,
 }) => {
-  const [statsCache, setStatsCache] = useState<
-    Record<string, Map<string, Stat>>
-  >({});
 
   const fetchGameStats = async (game: Game) => {
     try {
-      if (statsCache[game.id]) return statsCache[game.id];
       const res = await fetch(
         `/api/stats?league=${game.league}&gameId=${game.id}`
-      );
-      const { data } = await res.json();
-      const map = new Map<string, Stat>(data as [string, Stat][]);
-      setStatsCache((prev) => ({ ...prev, [game.id]: map }));
-      return map;
+      );      
+      const { stats, scoringPlays } = await res.json();
+      const map = new Map<string, Stat>(stats as [string, Stat][]);
+      return { stats: map, scoringPlays: scoringPlays };
     } catch (error) {
       console.error("failed to fetch stats for game ", error);
-      return new Map<string, Stat>();
+      return { stats: new Map<string, Stat>(), scoringPlays: [] };
     }
   };
   return (

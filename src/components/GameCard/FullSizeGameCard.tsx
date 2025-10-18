@@ -2,25 +2,38 @@ import Image from "next/image";
 import Link from "next/link";
 import { dateFormatter } from "@/lib/espn/transformers";
 import { useEffect, useState } from "react";
+import { ChevronDown } from "lucide-react";
 
 interface GameProps {
   game: Game;
-  getStatsForGame: (game: Game) => Promise<Map<string, Stat>>;
+  getStatsForGame: (
+    game: Game
+  ) => Promise<{ stats: Map<string, Stat>; scoringPlays: ScoringPlay[] }>;
   isOpen: boolean;
+  openScoringPlaysForGame: () => void;
+  isScoringPlaysOpen: boolean;
+  openStatsForGame: () => void;
+  isStatsOpen: boolean;
 }
 
 const FullSizeGameCard: React.FC<GameProps> = ({
   game,
   getStatsForGame,
   isOpen,
+  openScoringPlaysForGame,
+  isScoringPlaysOpen,
+  openStatsForGame,
+  isStatsOpen,
 }) => {
   const [stats, setStats] = useState<Map<string, Stat> | null>(null);
+  const [scoringPlays, setScoringPlays] = useState<ScoringPlay[] | null>(null);
 
   useEffect(() => {
     let interval: NodeJS.Timeout | undefined;
     const handleHover = async () => {
       const fetched = await getStatsForGame(game);
-      setStats(fetched);
+      setStats(fetched.stats);
+      setScoringPlays(fetched.scoringPlays);
     };
     handleHover();
     if (
@@ -34,7 +47,7 @@ const FullSizeGameCard: React.FC<GameProps> = ({
     return () => {
       if (interval) clearInterval(interval);
     };
-  }, [isOpen, game, getStatsForGame]);
+  }, [isOpen, isScoringPlaysOpen, isStatsOpen, game, getStatsForGame]);
 
   const gameStatNameTracker = new Set<string>();
   const defaultStat: Stat = {
@@ -169,8 +182,61 @@ const FullSizeGameCard: React.FC<GameProps> = ({
           )}
         </div>
       </div>
-
-      {stats && (
+      <div className="p-2 flex flex-col place-items-center items-center justify-center">
+        Last Play:
+        <div>{game.lastPlay}</div>
+      </div>
+      <div
+        className="flex w-full items-center justify-between p-2"
+        onClick={(e) => {
+          e.stopPropagation();
+          openScoringPlaysForGame();
+        }}
+      >
+        <div className="p-1">Scoring Plays</div>
+        <ChevronDown
+          textAnchor="end"
+          className={`w-5 h-5 transition-transform duration-300 ${
+            isScoringPlaysOpen ? "rotate-180" : ""
+          }`}
+        ></ChevronDown>
+      </div>
+      {isScoringPlaysOpen && (
+        <div className="border rounded overflow-hidden divide-y">
+          {scoringPlays?.map((play) => {
+            return (
+              <div className="p-1" key={play.id}>
+                <div>
+                  {play.quarter}Q-{play.clock}
+                </div>
+                <div>
+                  {game.awayTeam.abbreviation} {play.awayScore}-{play.homeScore}{" "}
+                  {game.homeTeam.abbreviation}
+                </div>
+                <div>
+                  {play.teamName}-{play.displayText}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
+      <div
+        className="flex w-full items-center justify-between p-2"
+        onClick={(e) => {
+          e.stopPropagation();
+          openStatsForGame();
+        }}
+      >
+        <div className="p-1">Stats</div>
+        <ChevronDown
+          textAnchor="end"
+          className={`w-5 h-5 transition-transform duration-300 ${
+            isStatsOpen ? "rotate-180" : ""
+          }`}
+        ></ChevronDown>
+      </div>
+      {isStatsOpen && stats && (
         <div className="border rounded overflow-hidden divide-y">
           <div className="grid grid-cols-3 text-center divide-x font-semibold">
             <div>{game.awayTeam.abbreviation}</div>
@@ -218,9 +284,7 @@ const FullSizeGameCard: React.FC<GameProps> = ({
           })}
         </div>
       )}
-
       <div className="flex flex-col place-items-center items-center justify-center">
-        <div>{game.lastPlay}</div>
         <div>{game.odds}</div>
         {game.gameStatus === "STATUS_SCHEDULED" && (
           <div>{dateFormatter.format(new Date(game.isoDate))}</div>

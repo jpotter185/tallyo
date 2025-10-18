@@ -30,13 +30,15 @@ export async function getStatsForGame(
   league: "nfl" | "cfb",
   gameId: string
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-): Promise<any[]> {
+): Promise<any> {
   if (gameId) {
     const response = await fetch(ENDPOINTS[`${league}stats`] + gameId);
-    const leaders = (await response.json()).gamepackageJSON.leaders;
-    return leaders;
+    const responseJson = await response.json();
+    const leaders = responseJson.gamepackageJSON.leaders;
+    const scoringPlays = responseJson.gamepackageJSON.scoringPlays;
+    return { leaders, scoringPlays };
   } else {
-    return [];
+    return { leaders: [], scoringPlays: [] };
   }
 }
 
