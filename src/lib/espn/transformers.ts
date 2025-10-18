@@ -122,7 +122,7 @@ export async function getGamesFromJson(
       }
     }
   }
-  return sortGames(games);
+  return games;
 }
 
 export async function getStatLeadersForGame(
@@ -173,28 +173,6 @@ export async function getStatLeadersForGame(
   }
 
   return { statMap, scoringPlays: scoringPlaysArray };
-}
-
-type GameStatus =
-  | "STATUS_IN_PROGRESS"
-  | "STATUS_HALFTIME"
-  | "STATUS_SCHEDULED"
-  | "STATUS_FINAL";
-
-function sortGames(games: Game[]) {
-  games.sort((gameA: Game, gameB: Game) => {
-    const gameAStatus = GameStatusEnums[gameA.gameStatus as GameStatus];
-    const gameBStatus = GameStatusEnums[gameB.gameStatus as GameStatus];
-
-    if (gameAStatus === gameBStatus) {
-      return (
-        new Date(gameA.isoDate).getTime() - new Date(gameB.isoDate).getTime()
-      );
-    } else {
-      return gameAStatus - gameBStatus;
-    }
-  });
-  return games;
 }
 
 async function getOdds(eventId: string, league: "nfl" | "cfb") {
