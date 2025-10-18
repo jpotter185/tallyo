@@ -23,7 +23,11 @@ const CompactGameCard: React.FC<GameCompactProps> = ({ game }) => {
           className="pointer-events-none"
         />
         <div className="flex items-center gap-1 font-bold text-sm">
-          <div>{game.awayTeam.abbreviation}</div>
+          <div>
+            {game.awayTeam.ranking
+              ? game.awayTeam.ranking + game.awayTeam.abbreviation
+              : game.awayTeam.abbreviation}
+          </div>
           {game.possessionTeamId === game.awayTeam.id && (
             <svg
               width="16"
@@ -53,7 +57,11 @@ const CompactGameCard: React.FC<GameCompactProps> = ({ game }) => {
           className="pointer-events-none"
         />
         <div className="flex items-center gap-1 font-bold text-sm">
-          <div>{game.homeTeam.abbreviation}</div>
+          <div>
+            {game.homeTeam.ranking
+              ? game.homeTeam.ranking + game.homeTeam.abbreviation
+              : game.homeTeam.abbreviation}
+          </div>
           {game.possessionTeamId === game.homeTeam.id && (
             <svg
               width="16"

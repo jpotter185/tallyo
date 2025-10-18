@@ -73,7 +73,11 @@ const FullSizeGameCard: React.FC<GameProps> = ({
             height={24}
             className="pointer-events-none"
           />
-          <div className="text-nowrap">{game.awayTeam.abbreviation}</div>
+          <div className="text-nowrap">
+            {game.awayTeam.ranking
+              ? game.awayTeam.ranking + game.awayTeam.abbreviation
+              : game.awayTeam.abbreviation}
+          </div>
           <div className="text-xs">{game.awayTeam.record}</div>
           {game.awayTimeouts && game.league === "nfl" && (
             <div className="flex items-center gap-1">
@@ -164,7 +168,11 @@ const FullSizeGameCard: React.FC<GameProps> = ({
             height={24}
             className="pointer-events-none"
           />
-          <div className="text-nowrap">{game.homeTeam.abbreviation}</div>
+          <div className="text-nowrap">
+            {game.homeTeam.ranking
+              ? game.homeTeam.ranking + game.homeTeam.abbreviation
+              : game.homeTeam.abbreviation}
+          </div>
           <div className="text-xs">{game.homeTeam.record}</div>
           {game.homeTimeouts && game.league === "nfl" && (
             <div className="flex items-center gap-1">
@@ -182,32 +190,36 @@ const FullSizeGameCard: React.FC<GameProps> = ({
           )}
         </div>
       </div>
-      <div className="p-2 flex flex-col place-items-center items-center justify-center">
-        Last Play:
-        <div>{game.lastPlay}</div>
-      </div>
-      <div
-        className="flex w-full items-center justify-between p-2"
-        onClick={(e) => {
-          e.stopPropagation();
-          openScoringPlaysForGame();
-        }}
-      >
-        <div className="p-1">Scoring Plays</div>
-        <ChevronDown
-          textAnchor="end"
-          className={`w-5 h-5 transition-transform duration-300 ${
-            isScoringPlaysOpen ? "rotate-180" : ""
-          }`}
-        ></ChevronDown>
-      </div>
+      {game.lastPlay && (
+        <div className="p-2 flex flex-col place-items-center items-center justify-center">
+          Last Play:
+          <div>{game.lastPlay}</div>
+        </div>
+      )}
+      {scoringPlays && scoringPlays.length > 0 && (
+        <div
+          className="flex w-full items-center justify-between p-2"
+          onClick={(e) => {
+            e.stopPropagation();
+            openScoringPlaysForGame();
+          }}
+        >
+          <div className="p-1">Scoring Plays</div>
+          <ChevronDown
+            textAnchor="end"
+            className={`w-5 h-5 transition-transform duration-300 ${
+              isScoringPlaysOpen ? "rotate-180" : ""
+            }`}
+          ></ChevronDown>
+        </div>
+      )}
       {isScoringPlaysOpen && (
         <div className="border rounded overflow-hidden divide-y">
           {scoringPlays?.map((play) => {
             return (
               <div className="p-1" key={play.id}>
                 <div>
-                  {play.quarter}Q-{play.clock}
+                  {play.quarter}Q - {play.clock}
                 </div>
                 <div>
                   {game.awayTeam.abbreviation} {play.awayScore}-{play.homeScore}{" "}
@@ -221,21 +233,23 @@ const FullSizeGameCard: React.FC<GameProps> = ({
           })}
         </div>
       )}
-      <div
-        className="flex w-full items-center justify-between p-2"
-        onClick={(e) => {
-          e.stopPropagation();
-          openStatsForGame();
-        }}
-      >
-        <div className="p-1">Stats</div>
-        <ChevronDown
-          textAnchor="end"
-          className={`w-5 h-5 transition-transform duration-300 ${
-            isStatsOpen ? "rotate-180" : ""
-          }`}
-        ></ChevronDown>
-      </div>
+      {stats && stats.size > 0 && (
+        <div
+          className="flex w-full items-center justify-between p-2"
+          onClick={(e) => {
+            e.stopPropagation();
+            openStatsForGame();
+          }}
+        >
+          <div className="p-1">Stats</div>
+          <ChevronDown
+            textAnchor="end"
+            className={`w-5 h-5 transition-transform duration-300 ${
+              isStatsOpen ? "rotate-180" : ""
+            }`}
+          ></ChevronDown>
+        </div>
+      )}
       {isStatsOpen && stats && (
         <div className="border rounded overflow-hidden divide-y">
           <div className="grid grid-cols-3 text-center divide-x font-semibold">

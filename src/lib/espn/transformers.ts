@@ -1,4 +1,3 @@
-import GameStatusEnums from "@/types/GameStatusEnums";
 import { getStatsForGame } from "./client";
 
 export const dateFormatter = new Intl.DateTimeFormat("en-US", {
@@ -160,7 +159,7 @@ export async function getStatLeadersForGame(
       const scoringPlay: ScoringPlay = {
         id: play?.id,
         teamId: play?.team?.id,
-        teamName: play?.team?.displayName,
+        teamName: play?.team?.abbreviation,
         displayText: play?.text,
         homeScore: play?.homeScore,
         awayScore: play?.awayScore,
@@ -210,12 +209,10 @@ function buildTeam(teamJson: any): Team {
       ? ""
       : "#" + teamJson?.curatedRank?.current + " ";
 
-  const teamName = teamDisplayName(teamRank, teamJson);
+  const teamName = teamJson?.team?.displayName;
   const teamRecord = getTeamRecord(teamJson.records);
 
-  const abbreviation = teamRank
-    ? teamRank + teamJson.team.abbreviation
-    : teamJson.team.abbreviation;
+  const abbreviation = teamJson.team.abbreviation;
 
   const teamObject: Team = {
     id: teamJson.id,
@@ -226,6 +223,7 @@ function buildTeam(teamJson: any): Team {
     alternateColor: teamJson.team.alternateColor,
     location: teamJson.team.location,
     record: teamRecord,
+    ranking: teamRank,
   };
 
   return teamObject;
@@ -237,11 +235,6 @@ function determineScore(score: string, gameStatus: string) {
   } else {
     return score;
   }
-}
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function teamDisplayName(teamRank: string, team: any): string {
-  return teamRank + team?.team?.displayName;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

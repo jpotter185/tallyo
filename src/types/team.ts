@@ -9,7 +9,7 @@ type Team = {
   location: string;
   record?: string;
   seed?: string;
-
+  ranking?: string;
   wins?: string;
   losses?: string;
   ties?: string;
