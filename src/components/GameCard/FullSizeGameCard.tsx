@@ -233,11 +233,11 @@ const FullSizeGameCard: React.FC<GameProps> = ({
                   {play.quarter}Q - {play.clock}
                 </div>
                 <div>
-                  {play.teamName}-{play.displayText}
+                  {play.teamName} {play.scoringType} - {play.displayText}
                 </div>
                 <div>
-                  {game.awayTeam.abbreviation} {play.awayScore}-{play.homeScore}{" "}
-                  {game.homeTeam.abbreviation}
+                  {game.awayTeam.abbreviation} {play.awayScore} -{" "}
+                  {play.homeScore} {game.homeTeam.abbreviation}
                 </div>
               </div>
             );
