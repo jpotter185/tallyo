@@ -26,4 +26,6 @@ type Game = {
   odds?: string;
   gameStatus: string;
   stats: { [k: string]: Stat };
+  homeWinPercentage?: string;
+  awayWinPercentage?: string;
 };

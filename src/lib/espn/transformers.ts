@@ -88,6 +88,10 @@ export async function getGamesFromJson(
         const date = dateFormatter.format(new Date(competition.startDate));
 
         const gameOdds = await getOdds(competition.id, league);
+        const homeWinPercentage =
+          competition.situation?.lastPlay?.probability?.homeWinPercentage;
+        const awayWinPercentage =
+          competition.situation?.lastPlay?.probability?.awayWinPercentage;
 
         const game: Game = {
           id: competition.id,
@@ -116,6 +120,8 @@ export async function getGamesFromJson(
           homeTimeouts: homeTimeouts,
           awayTimeouts: awayTimeouts,
           stats: {},
+          homeWinPercentage: homeWinPercentage,
+          awayWinPercentage: awayWinPercentage,
         };
         games.push(game);
       }

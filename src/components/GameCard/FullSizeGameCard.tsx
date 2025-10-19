@@ -188,6 +188,25 @@ const FullSizeGameCard: React.FC<GameProps> = ({
           <div>{game.lastPlay}</div>
         </div>
       )}
+      {game.lastPlay && game.awayWinPercentage && game.homeWinPercentage && (
+        <div>
+          {game.awayWinPercentage > game.homeWinPercentage ? (
+            <div className="p-2 flex flex-col place-items-center items-center justify-center">
+              {game.awayTeam.abbreviation} chance to win:
+              <div>
+                {(Number(game.awayWinPercentage) * 100).toFixed(1) + "%"}
+              </div>
+            </div>
+          ) : (
+            <div className="p-2 flex flex-col place-items-center items-center justify-center">
+              {game.homeTeam.abbreviation} chance to win:
+              <div>
+                {(Number(game.homeWinPercentage) * 100).toFixed(1) + "%"}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
       {scoringPlays && scoringPlays.length > 0 && (
         <div
           className="flex w-full items-center justify-between p-2"
