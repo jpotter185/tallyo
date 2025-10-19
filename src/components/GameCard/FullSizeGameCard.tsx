@@ -29,23 +29,15 @@ const FullSizeGameCard: React.FC<GameProps> = ({
   const [scoringPlays, setScoringPlays] = useState<ScoringPlay[] | null>(null);
 
   useEffect(() => {
-    let interval: NodeJS.Timeout | undefined;
     const handleHover = async () => {
       const fetched = await getStatsForGame(game);
       setStats(fetched.stats);
       setScoringPlays(fetched.scoringPlays);
     };
     handleHover();
-    if (
-      game.gameStatus !== "STATUS_FINAL" &&
-      game.gameStatus !== "STATUS_SCHEDULED" &&
-      game.gameStatus !== "STATUS_HALFTIME"
-    ) {
-      interval = setInterval(handleHover, 30000);
-    }
-
+    const interval = setInterval(handleHover, 30000);
     return () => {
-      if (interval) clearInterval(interval);
+      clearInterval(interval);
     };
   }, [isOpen, isScoringPlaysOpen, isStatsOpen, game, getStatsForGame]);
 
