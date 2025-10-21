@@ -14,7 +14,9 @@ const nextConfig: NextConfig = {
       { protocol: 'https', hostname: 'a7.espncdn.com' },
       { protocol: 'https', hostname: 'a8.espncdn.com' },
       { protocol: 'https', hostname: 'a9.espncdn.com' }
-    ]
+    ],
+    formats: ['image/webp'],
+    minimumCacheTTL: 2678400
   },
 };
 
