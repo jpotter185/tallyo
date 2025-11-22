@@ -34,12 +34,14 @@ const FullSizeGameCard: React.FC<GameProps> = ({
       setStats(fetched.stats);
       setScoringPlays(fetched.scoringPlays);
     };
-    handleHover();
-    const interval = setInterval(handleHover, 30000);
+    if (isOpen) {
+      handleHover();
+    }
+    const interval = setInterval(handleHover, 10000);
     return () => {
       clearInterval(interval);
     };
-  }, [isOpen, isScoringPlaysOpen, isStatsOpen, game, getStatsForGame]);
+  }, []);
 
   const gameStatNameTracker = new Set<string>();
   const defaultStat: Stat = {

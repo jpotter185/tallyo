@@ -50,9 +50,9 @@ export default function Home() {
       }
     };
     fetchNflGames();
-    const interval = setInterval(fetchNflGames, 30000);
+    const interval = setInterval(fetchNflGames, 10000);
     return () => clearInterval(interval);
-  }, [nflWeek, isNflOpen]);
+  }, []);
 
   useEffect(() => {
     const fetchCfbGames = async () => {
@@ -72,9 +72,9 @@ export default function Home() {
       }
     };
     fetchCfbGames();
-    const interval = setInterval(fetchCfbGames, 30000);
+    const interval = setInterval(fetchCfbGames, 10000);
     return () => clearInterval(interval);
-  }, [cfbWeek, isCfbOpen, cfbScoreboardGroup]);
+  }, []);
 
   let cfbFirst = true;
   const today = new Date();
