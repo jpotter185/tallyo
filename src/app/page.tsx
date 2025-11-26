@@ -52,7 +52,7 @@ export default function Home() {
     fetchNflGames();
     const interval = setInterval(fetchNflGames, 10000);
     return () => clearInterval(interval);
-  }, [nflWeek]);
+  }, [nflWeek, nflGames]);
 
   useEffect(() => {
     const fetchCfbGames = async () => {
@@ -74,7 +74,7 @@ export default function Home() {
     fetchCfbGames();
     const interval = setInterval(fetchCfbGames, 10000);
     return () => clearInterval(interval);
-  }, [cfbWeek, cfbScoreboardGroup]);
+  }, [cfbWeek, cfbScoreboardGroup, cfbGames]);
 
   let cfbFirst = true;
   const today = new Date();
