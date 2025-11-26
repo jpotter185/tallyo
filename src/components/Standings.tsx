@@ -5,9 +5,10 @@ import Image from "next/image";
 
 interface StandingsProps {
   standings: Standings[];
+  isLoading: boolean;
 }
 
-const Standings: React.FC<StandingsProps> = ({ standings }) => {
+const Standings: React.FC<StandingsProps> = ({ standings, isLoading }) => {
   const [openStandings, setOpenStandings] = useState<{ [id: string]: boolean }>(
     {}
   );
@@ -30,7 +31,9 @@ const Standings: React.FC<StandingsProps> = ({ standings }) => {
           }`}
         ></ChevronDown>
       </div>
+      {isStandingsOpen && isLoading && <div>Loading...</div>}
       {isStandingsOpen &&
+        !isLoading &&
         standings.map((standing) => {
           return (
             <div key={standing.groupName}>

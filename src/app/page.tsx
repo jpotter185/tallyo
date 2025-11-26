@@ -5,10 +5,9 @@ import Footer from "../components/Footer";
 import League from "@/components/League";
 import { cfbGroupIdMapping } from "@/lib/espn/transformers";
 import Standings from "@/components/Standings";
+import useSWR from "swr";
 
 export default function Home() {
-  const [nflGames, setNflGames] = useState<Game[]>([]);
-  const [cfbGames, setCfbGames] = useState<Game[]>([]);
   const [isContactOpen, setIsContactOpen] = useState<boolean>(false);
   const [isCfbOpen, setIsCfbOpen] = useState<boolean>(false);
   const [isNflOpen, setIsNflOpen] = useState<boolean>(false);
@@ -16,79 +15,45 @@ export default function Home() {
   const [cfbWeek, setCfbWeek] = useState<string>("");
   const [cfbScoreboardGroup, setCfbScoreboardGroup] = useState<string>("-1");
   const [openGames, setOpenGames] = useState<{ [id: string]: boolean }>({});
-  const [nflStandings, setNflStandings] = useState<Standings[]>([]);
-  const [isNflLoading, setIsNflLoading] = useState<boolean>(true);
-  const [isCfbLoading, setIsCfbLoading] = useState<boolean>(true);
   const toggleOpenGame = (id: string) => {
     setOpenGames((prev) => ({ ...prev, [id]: !prev[id] }));
   };
 
-  useEffect(() => {
-    const fetchNflStandings = async () => {
-      try {
-        const res = await fetch("/api/nfl-standings");
-        const data = await res.json();
-        setNflStandings(data);
-      } catch (error) {
-        console.error("failed to fetch scoreboard ", error);
-      }
-    };
-    fetchNflStandings();
-  }, []);
+  const fetcher = (url: string) => fetch(url).then((res) => res.json());
+
+  const { data: nflStandings, isLoading: isStatsLoading, } = useSWR(
+    "/api/nfl-standings",
+    fetcher
+  );
+
+  const { data: nflData, isLoading: isNflLoading } = useSWR(
+    `/api/games?league=nfl${nflWeek ? `&week=${nflWeek}` : ""}`,
+    fetcher,
+    { refreshInterval: 10000 }
+  );
+  const nflGames = nflData?.games ?? [];
 
   useEffect(() => {
-    const fetchNflGames = async (showLoading: boolean) => {
-      try {
-        if (showLoading) setIsNflLoading(true);
-        const res = await fetch(
-          `/api/games?league=nfl${nflWeek ? `&week=${nflWeek}` : ""}`
-        );
-        const data = await res.json();
+    if (!nflWeek && nflData?.dataWeek) {
+      setNflWeek(nflData.dataWeek.toString());
+    }
+  }, [nflData, nflWeek]);
 
-        setNflGames(data.games || []);
-        setNflWeek(data.dataWeek);
-        if (data.week?.number) setNflWeek(data.week.number.toString());
-      } catch (error) {
-        console.error("failed to fetch nfl games ", error);
-      } finally {
-        if (showLoading) setIsNflLoading(false);
-      }
-    };
-    fetchNflGames(true);
-    const interval = setInterval(() => fetchNflGames(false), 10000);
-    return () => clearInterval(interval);
-  }, [nflWeek]);
+  // CFB
+  const { data: cfbData, isLoading: isCfbLoading } = useSWR(
+    `/api/games?league=cfb${
+      cfbWeek ? `&week=${cfbWeek}` : ""
+    }&scoreboardGroupId=${cfbScoreboardGroup}`,
+    fetcher,
+    { refreshInterval: 10000 }
+  );
+  const cfbGames = cfbData?.games ?? [];
 
   useEffect(() => {
-    const fetchCfbGames = async (showLoading: boolean) => {
-      try {
-        if (showLoading) setIsCfbLoading(true);
-        const res = await fetch(
-          `/api/games?league=cfb${cfbWeek ? `&week=${cfbWeek}` : ""}${
-            cfbScoreboardGroup ? `&scoreboardGroupId=${cfbScoreboardGroup}` : ""
-          }`
-        );
-        const data = await res.json();
-        setCfbGames(data.games || []);
-        setCfbWeek(data.dataWeek);
-        setCfbScoreboardGroup(data.scoreboardGroupId);
-        if (data.week?.number) setCfbWeek(data.week.number.toString());
-      } catch (error) {
-        console.error("error getting cfb games ", error);
-      } finally {
-        if (showLoading) setIsCfbLoading(false);
-      }
-    };
-    fetchCfbGames(true);
-    const interval = setInterval(() => fetchCfbGames(false), 10000);
-    return () => clearInterval(interval);
-  }, [cfbWeek, cfbScoreboardGroup]);
-
-  let cfbFirst = true;
-  const today = new Date();
-  if (today.getDay() === 0 || today.getDay() === 1) {
-    cfbFirst = false;
-  }
+    if (!cfbWeek && cfbData?.dataWeek) {
+      setCfbWeek(cfbData.dataWeek.toString());
+    }
+  }, [cfbData, cfbWeek]);
 
   return (
     <div className="bg-sky-50 dark:bg-neutral-800 border border-gray-500 divide-y divide-x divide-gray-500">
@@ -127,7 +92,7 @@ export default function Home() {
         />
       </div>
 
-      <Standings standings={nflStandings} />
+      <Standings standings={nflStandings} isLoading={isStatsLoading} />
       <Footer isOpen={isContactOpen} setIsOpen={setIsContactOpen} />
     </div>
   );
