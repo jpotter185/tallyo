@@ -17,6 +17,8 @@ export default function Home() {
   const [cfbScoreboardGroup, setCfbScoreboardGroup] = useState<string>("-1");
   const [openGames, setOpenGames] = useState<{ [id: string]: boolean }>({});
   const [nflStandings, setNflStandings] = useState<Standings[]>([]);
+  const [isNflLoading, setIsNflLoading] = useState<boolean>(true);
+  const [isCfbLoading, setIsCfbLoading] = useState<boolean>(true);
   const toggleOpenGame = (id: string) => {
     setOpenGames((prev) => ({ ...prev, [id]: !prev[id] }));
   };
@@ -35,8 +37,9 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    const fetchNflGames = async () => {
+    const fetchNflGames = async (showLoading: boolean) => {
       try {
+        if (showLoading) setIsNflLoading(true);
         const res = await fetch(
           `/api/games?league=nfl${nflWeek ? `&week=${nflWeek}` : ""}`
         );
@@ -47,16 +50,19 @@ export default function Home() {
         if (data.week?.number) setNflWeek(data.week.number.toString());
       } catch (error) {
         console.error("failed to fetch nfl games ", error);
+      } finally {
+        if (showLoading) setIsNflLoading(false);
       }
     };
-    fetchNflGames();
-    const interval = setInterval(fetchNflGames, 10000);
+    fetchNflGames(true);
+    const interval = setInterval(() => fetchNflGames(false), 10000);
     return () => clearInterval(interval);
-  }, [nflWeek, nflGames]);
+  }, [nflWeek]);
 
   useEffect(() => {
-    const fetchCfbGames = async () => {
+    const fetchCfbGames = async (showLoading: boolean) => {
       try {
+        if (showLoading) setIsCfbLoading(true);
         const res = await fetch(
           `/api/games?league=cfb${cfbWeek ? `&week=${cfbWeek}` : ""}${
             cfbScoreboardGroup ? `&scoreboardGroupId=${cfbScoreboardGroup}` : ""
@@ -69,12 +75,14 @@ export default function Home() {
         if (data.week?.number) setCfbWeek(data.week.number.toString());
       } catch (error) {
         console.error("error getting cfb games ", error);
+      } finally {
+        if (showLoading) setIsCfbLoading(false);
       }
     };
-    fetchCfbGames();
-    const interval = setInterval(fetchCfbGames, 10000);
+    fetchCfbGames(true);
+    const interval = setInterval(() => fetchCfbGames(false), 10000);
     return () => clearInterval(interval);
-  }, [cfbWeek, cfbScoreboardGroup, cfbGames]);
+  }, [cfbWeek, cfbScoreboardGroup]);
 
   let cfbFirst = true;
   const today = new Date();
@@ -85,71 +93,39 @@ export default function Home() {
   return (
     <div className="bg-sky-50 dark:bg-neutral-800 border border-gray-500 divide-y divide-x divide-gray-500">
       <Header />
-      {cfbFirst ? (
-        <div>
-          <League
-            leagueName="CFB"
-            games={cfbGames}
-            isOpen={isCfbOpen}
-            setIsOpen={setIsCfbOpen}
-            week={cfbWeek}
-            setWeek={setCfbWeek}
-            numberOfWeeks={16}
-            scoreboardGroups={Array.from(cfbGroupIdMapping.keys())}
-            currentScoreboardGroup={cfbScoreboardGroup}
-            setCurrentScoreboardGroup={setCfbScoreboardGroup}
-            displayMap={cfbGroupIdMapping}
-            openGames={openGames}
-            toggleOpenGame={toggleOpenGame}
-          />
-          <League
-            leagueName="NFL"
-            games={nflGames}
-            isOpen={isNflOpen}
-            setIsOpen={setIsNflOpen}
-            week={nflWeek}
-            setWeek={setNflWeek}
-            numberOfWeeks={18}
-            scoreboardGroups={[]}
-            currentScoreboardGroup=""
-            setCurrentScoreboardGroup={() => undefined}
-            openGames={openGames}
-            toggleOpenGame={toggleOpenGame}
-          />
-        </div>
-      ) : (
-        <div>
-          <League
-            leagueName="NFL"
-            games={nflGames}
-            isOpen={isNflOpen}
-            setIsOpen={setIsNflOpen}
-            week={nflWeek}
-            setWeek={setNflWeek}
-            numberOfWeeks={18}
-            scoreboardGroups={[]}
-            currentScoreboardGroup=""
-            setCurrentScoreboardGroup={() => undefined}
-            openGames={openGames}
-            toggleOpenGame={toggleOpenGame}
-          />
-          <League
-            leagueName="CFB"
-            games={cfbGames}
-            isOpen={isCfbOpen}
-            setIsOpen={setIsCfbOpen}
-            week={cfbWeek}
-            setWeek={setCfbWeek}
-            numberOfWeeks={16}
-            scoreboardGroups={Array.from(cfbGroupIdMapping.keys())}
-            currentScoreboardGroup={cfbScoreboardGroup}
-            setCurrentScoreboardGroup={setCfbScoreboardGroup}
-            displayMap={cfbGroupIdMapping}
-            openGames={openGames}
-            toggleOpenGame={toggleOpenGame}
-          />
-        </div>
-      )}
+      <div>
+        <League
+          leagueName="CFB"
+          games={cfbGames}
+          isOpen={isCfbOpen}
+          setIsOpen={setIsCfbOpen}
+          week={cfbWeek}
+          setWeek={setCfbWeek}
+          numberOfWeeks={16}
+          scoreboardGroups={Array.from(cfbGroupIdMapping.keys())}
+          currentScoreboardGroup={cfbScoreboardGroup}
+          setCurrentScoreboardGroup={setCfbScoreboardGroup}
+          displayMap={cfbGroupIdMapping}
+          openGames={openGames}
+          toggleOpenGame={toggleOpenGame}
+          isLoading={isCfbLoading}
+        />
+        <League
+          leagueName="NFL"
+          games={nflGames}
+          isOpen={isNflOpen}
+          setIsOpen={setIsNflOpen}
+          week={nflWeek}
+          setWeek={setNflWeek}
+          numberOfWeeks={18}
+          scoreboardGroups={[]}
+          currentScoreboardGroup=""
+          setCurrentScoreboardGroup={() => undefined}
+          openGames={openGames}
+          toggleOpenGame={toggleOpenGame}
+          isLoading={isNflLoading}
+        />
+      </div>
 
       <Standings standings={nflStandings} />
       <Footer isOpen={isContactOpen} setIsOpen={setIsContactOpen} />

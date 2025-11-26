@@ -18,6 +18,7 @@ interface LeagueProps {
   displayMap?: Map<string, string>;
   openGames: Record<string, boolean>;
   toggleOpenGame: (id: string) => void;
+  isLoading: boolean;
 }
 
 const League: React.FC<LeagueProps> = ({
@@ -34,13 +35,13 @@ const League: React.FC<LeagueProps> = ({
   displayMap,
   openGames,
   toggleOpenGame,
+  isLoading,
 }) => {
-
   const fetchGameStats = async (game: Game) => {
     try {
       const res = await fetch(
         `/api/stats?league=${game.league}&gameId=${game.id}`
-      );      
+      );
       const { stats, scoringPlays } = await res.json();
       const map = new Map<string, Stat>(stats as [string, Stat][]);
       return { stats: map, scoringPlays: scoringPlays };
@@ -82,19 +83,25 @@ const League: React.FC<LeagueProps> = ({
               setCurrentValue={setWeek}
               displayString="Week"
             ></Selector>
-            <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 p-2">
-              {games.map((game) => {
-                return (
-                  <GameCard
-                    key={game.id}
-                    game={game}
-                    isOpen={!!openGames[game.id]}
-                    toggleOpenGame={() => toggleOpenGame(game.id)}
-                    getStatsForGame={fetchGameStats}
-                  />
-                );
-              })}
-            </div>
+            {isLoading ? (
+              <div>Loading...</div>
+            ) : games && games.length > 0 ? (
+              <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 p-2">
+                {games.map((game) => {
+                  return (
+                    <GameCard
+                      key={game.id}
+                      game={game}
+                      isOpen={!!openGames[game.id]}
+                      toggleOpenGame={() => toggleOpenGame(game.id)}
+                      getStatsForGame={fetchGameStats}
+                    />
+                  );
+                })}
+              </div>
+            ) : (
+              <div>No games match filter</div>
+            )}
           </div>
         </div>
       )}
