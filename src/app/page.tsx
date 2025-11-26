@@ -74,7 +74,7 @@ export default function Home() {
     fetchCfbGames();
     const interval = setInterval(fetchCfbGames, 10000);
     return () => clearInterval(interval);
-  }, [cfbWeek]);
+  }, [cfbWeek, cfbScoreboardGroup]);
 
   let cfbFirst = true;
   const today = new Date();
