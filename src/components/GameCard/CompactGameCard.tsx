@@ -15,13 +15,15 @@ const CompactGameCard: React.FC<GameCompactProps> = ({ game }) => {
             : ""
         }`}
       >
-        <Image
-          src={game.awayTeam.logo}
-          alt=""
-          width={24}
-          height={24}
-          className="pointer-events-none"
-        />
+        {game.awayTeam.logo && (
+          <Image
+            src={game.awayTeam.logo}
+            alt=""
+            width={24}
+            height={24}
+            className="pointer-events-none"
+          />
+        )}
         <div className="flex items-center gap-1 font-bold text-sm">
           <div>
             {game.awayTeam.ranking
@@ -49,13 +51,15 @@ const CompactGameCard: React.FC<GameCompactProps> = ({ game }) => {
             : ""
         }`}
       >
-        <Image
-          src={game.homeTeam.logo}
-          alt=""
-          width={24}
-          height={24}
-          className="pointer-events-none"
-        />
+        {game.homeTeam.logo && (
+          <Image
+            src={game.homeTeam.logo}
+            alt=""
+            width={24}
+            height={24}
+            className="pointer-events-none"
+          />
+        )}
         <div className="flex items-center gap-1 font-bold text-sm">
           <div>
             {game.homeTeam.ranking
@@ -84,6 +88,7 @@ const CompactGameCard: React.FC<GameCompactProps> = ({ game }) => {
           <div>{dateFormatter.format(new Date(game.isoDate))}</div>
         )}
         {game.shortPeriod !== "Final" && <div>{game.channel}</div>}
+        {game.headline && <div>{game.headline}</div>}
       </div>
     </div>
   );

@@ -60,13 +60,15 @@ const FullSizeGameCard: React.FC<GameProps> = ({
       <div className="grid grid-cols-[3fr_2fr_2fr_2fr_3fr] place-items-center items-center justify-center p-2">
         {/* Away team info */}
         <div className="flex flex-col">
-          <Image
-            src={game.awayTeam.logo}
-            alt=""
-            width={24}
-            height={24}
-            className="pointer-events-none"
-          />
+          {game.awayTeam.logo && (
+            <Image
+              src={game.awayTeam.logo}
+              alt=""
+              width={24}
+              height={24}
+              className="pointer-events-none"
+            />
+          )}
           <div className="text-nowrap">
             {game.awayTeam.ranking
               ? game.awayTeam.ranking + game.awayTeam.abbreviation
@@ -155,13 +157,15 @@ const FullSizeGameCard: React.FC<GameProps> = ({
         </div>
         {/* home team info */}
         <div className="flex flex-col">
-          <Image
-            src={game.homeTeam.logo}
-            alt=""
-            width={24}
-            height={24}
-            className="pointer-events-none"
-          />
+          {game.homeTeam.logo && (
+            <Image
+              src={game.homeTeam.logo}
+              alt=""
+              width={24}
+              height={24}
+              className="pointer-events-none"
+            />
+          )}
           <div className="text-nowrap">
             {game.homeTeam.ranking
               ? game.homeTeam.ranking + game.homeTeam.abbreviation
@@ -316,6 +320,8 @@ const FullSizeGameCard: React.FC<GameProps> = ({
         {game.gameStatus === "STATUS_SCHEDULED" && (
           <div>{dateFormatter.format(new Date(game.isoDate))}</div>
         )}
+        <div>{game.stadiumName}</div>
+        <div>{game.location}</div>
         <div>
           <Link
             href={game.espnLink}
