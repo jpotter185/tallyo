@@ -46,6 +46,26 @@ export async function getNflGames(week: string | undefined) {
   }
 }
 
+export async function getCurrentNflWeek() {
+  const data = await fetchEspnGameData("nfl");
+  if (data) {
+    const dataWeek = data?.week?.number;
+    return dataWeek;
+  } else {
+    return "";
+  }
+}
+
+export async function getCurrentCfbWeek() {
+  const data = await fetchEspnGameData("cfb");
+  if (data) {
+    const dataWeek = data?.week?.number;
+    return dataWeek;
+  } else {
+    return "";
+  }
+}
+
 export async function getNflStandings() {
   const data = await fetchStandings("nfl");
 

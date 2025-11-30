@@ -21,6 +21,20 @@ export default function Home() {
     fetcher
   );
 
+  const { data: cfbWeek } = useSWR("/api/week?league=cfb", fetcher);
+  useEffect(() => {
+    if (cfbWeek) {
+      cfb.setWeek(cfbWeek.toString());
+    }
+  }, [cfbWeek, cfb]);
+
+  const { data: nflWeek } = useSWR("/api/week?league=nfl", fetcher);
+  useEffect(() => {
+    if (nflWeek) {
+      nfl.setWeek(nflWeek.toString());
+    }
+  }, [nflWeek, nfl]);
+
   const { data: nflData, isLoading: isNflLoading } = useSWR(
     `/api/games?league=nfl${nfl.week ? `&week=${nfl.week}` : ""}`,
     fetcher,
@@ -32,9 +46,8 @@ export default function Home() {
     if (!nfl.week && nflData?.dataWeek) {
       nfl.setWeek(nflData.dataWeek.toString());
     }
-  }, [nflData, nfl.week]);
+  }, [nflData, nfl]);
 
-  // CFB
   const { data: cfbData, isLoading: isCfbLoading } = useSWR(
     `/api/games?league=cfb${
       cfb.week ? `&week=${cfb.week}` : ""
@@ -48,7 +61,7 @@ export default function Home() {
     if (!cfb.week && cfbData?.dataWeek) {
       cfb.setWeek(cfbData.dataWeek.toString());
     }
-  }, [cfbData, cfb.week]);
+  }, [cfbData, cfb]);
 
   return (
     <div className="bg-sky-50 dark:bg-neutral-800 border border-gray-500 divide-y divide-x divide-gray-500">
