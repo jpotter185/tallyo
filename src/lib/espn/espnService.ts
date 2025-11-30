@@ -2,7 +2,7 @@ import { fetchEspnGameData, fetchStandings } from "./client";
 import {
   defaultCfbGroupId,
   getGamesFromJson,
-  getNflStandingsFromJson,
+  getStandingsFromJson,
   getStatLeadersForGame,
 } from "./transformers";
 
@@ -70,7 +70,18 @@ export async function getNflStandings() {
   const data = await fetchStandings("nfl");
 
   if (data) {
-    const standings = getNflStandingsFromJson(data);
+    const standings = getStandingsFromJson(data);
+    return standings;
+  } else {
+    return [];
+  }
+}
+
+export async function getCfbStandings() {
+  const data = await fetchStandings("cfb");
+
+  if (data) {
+    const standings = getStandingsFromJson(data);
     return standings;
   } else {
     return [];

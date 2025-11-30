@@ -16,8 +16,13 @@ export default function Home() {
   const cfb = useCfbState();
   const nfl = useLeagueState();
 
-  const { data: nflStandings, isLoading: isStatsLoading } = useSWR(
-    "/api/nfl-standings",
+  const { data: nflStandings, isLoading: isNflStandingsLoading } = useSWR(
+    "/api/standings?league=nfl",
+    fetcher
+  );
+
+  const { data: cfbStandings, isLoading: isCfbStandingsLoading } = useSWR(
+    "/api/standings?league=cfb",
     fetcher
   );
 
@@ -100,7 +105,8 @@ export default function Home() {
         />
       </div>
 
-      <Standings standings={nflStandings} isLoading={isStatsLoading} />
+      <Standings standings={nflStandings} isLoading={isNflStandingsLoading} league={"NFL"}/>
+      <Standings standings={cfbStandings} isLoading={isCfbStandingsLoading} league={"CFB"}/>
       <Footer isOpen={isContactOpen} setIsOpen={setIsContactOpen} />
     </div>
   );

@@ -6,9 +6,14 @@ import Image from "next/image";
 interface StandingsProps {
   standings: Standings[];
   isLoading: boolean;
+  league: string;
 }
 
-const Standings: React.FC<StandingsProps> = ({ standings, isLoading }) => {
+const Standings: React.FC<StandingsProps> = ({
+  standings,
+  isLoading,
+  league,
+}) => {
   const [openStandings, setOpenStandings] = useState<{ [id: string]: boolean }>(
     {}
   );
@@ -17,13 +22,70 @@ const Standings: React.FC<StandingsProps> = ({ standings, isLoading }) => {
     setOpenStandings((prev) => ({ ...prev, [id]: !prev[id] }));
   };
 
+  const columns = [
+    {
+      id: "rank",
+      header: HeaderConstants.Rank,
+      render: (team: Team) => team.seed,
+    },
+    {
+      id: "team",
+      header: HeaderConstants.TeamName,
+      render: (team: Team) => (
+        <div className="grid grid-cols-[auto_1fr_auto] items-center gap-1">
+          <Image src={team.logo} alt="" width={24} height={24} />
+          {team.abbreviation}
+        </div>
+      ),
+    },
+
+    {
+      id: "record",
+      header: HeaderConstants.OverallRecord,
+      render: (t: Team) => t.record || t.total,
+    },
+  ];
+
+  // only NFL gets these columns
+  if (league === "NFL") {
+    columns.push({
+      id: "wp",
+      header: HeaderConstants.WinPercentage,
+      render: (t: Team) => t.winpercent,
+    });
+    columns.push({
+      id: "vsdiv",
+      header: HeaderConstants.DivisionRecord,
+      render: (t: Team) => t.vsdiv,
+    });
+  }
+
+  columns.push(
+    {
+      id: "vsconf",
+      header: HeaderConstants.ConferenceRecord,
+      render: (t: Team) => t.vsconf,
+    },
+    { id: "pf", header: HeaderConstants.PointsFor, render: (t) => t.pointsfor },
+    {
+      id: "pa",
+      header: HeaderConstants.PointsAgainst,
+      render: (t: Team) => t.pointsagainst,
+    },
+    {
+      id: "diff",
+      header: HeaderConstants.Differential,
+      render: (t: Team) => t.differential,
+    }
+  );
+
   return (
     <div className="divide-x divide-gray-500">
       <div
         className="p-2 text-xl font-bold flex w-full items-center justify-between p-2"
         onClick={() => setIsStandingsOpen(!isStandingsOpen)}
       >
-        Standings
+        {league ? `${league} Standings` : "Standings"}
         <ChevronDown
           textAnchor="end"
           className={`w-5 h-5 text-gray-500 transition-transform duration-300 ${
@@ -53,105 +115,37 @@ const Standings: React.FC<StandingsProps> = ({ standings, isLoading }) => {
                 <div className="overflow-x-auto">
                   <div className="min-w-[700px]">
                     <div
-                      className="px-1 grid grid-cols-9 border border-gray-500 divide-x divide-gray-500"
+                      className={`px-1 grid border border-gray-500 divide-x divide-gray-500`}
+                      style={{
+                        gridTemplateColumns: `repeat(${columns.length}, minmax(0, 1fr))`,
+                      }}
                       key="header"
                     >
-                      <div className="p-1 hidden md:inline">
-                        {HeaderConstants.Rank.long}
-                      </div>
-                      <div className="p-1 inline md:hidden">
-                        {HeaderConstants.Rank.short}
-                      </div>
-                      <div className="p-1 hidden md:inline">
-                        {HeaderConstants.TeamName.long}
-                      </div>
-                      <div className="p-1 inline md:hidden">
-                        {HeaderConstants.TeamName.short}
-                      </div>
-                      <div className="p-1 hidden md:inline">
-                        {HeaderConstants.WinPercentage.long}
-                      </div>
-                      <div className="p-1 inline md:hidden">
-                        {HeaderConstants.WinPercentage.short}
-                      </div>
-                      <div className="p-1 hidden md:inline">
-                        {HeaderConstants.OverallRecord.long}
-                      </div>
-                      <div className="p-1 inline md:hidden">
-                        {HeaderConstants.OverallRecord.short}
-                      </div>
-                      <div className="p-1 hidden md:inline">
-                        {HeaderConstants.ConferenceRecord.long}
-                      </div>
-                      <div className="p-1 inline md:hidden">
-                        {HeaderConstants.ConferenceRecord.short}
-                      </div>
-                      <div className="p-1 hidden md:inline">
-                        {HeaderConstants.DivisionRecord.long}
-                      </div>
-                      <div className="p-1 inline md:hidden">
-                        {HeaderConstants.DivisionRecord.short}
-                      </div>
-                      <div className="p-1 hidden md:inline">
-                        {HeaderConstants.PointsFor.long}
-                      </div>
-                      <div className="p-1 inline md:hidden">
-                        {HeaderConstants.PointsFor.short}
-                      </div>
-                      <div className="p-1 hidden md:inline">
-                        {HeaderConstants.PointsAgainst.long}
-                      </div>
-                      <div className="p-1 inline md:hidden">
-                        {HeaderConstants.PointsAgainst.short}
-                      </div>
-                      <div className="p-1 hidden md:inline">
-                        {HeaderConstants.Differential.long}
-                      </div>
-                      <div className="p-1 inline md:hidden">
-                        {HeaderConstants.Differential.short}
-                      </div>
+                      {columns.map((col) => (
+                        <div key={col.id} className="p-1">
+                          <div className="hidden md:inline">
+                            {col.header.long}
+                          </div>
+                          <div className="inline md:hidden">
+                            {col.header.short}
+                          </div>
+                        </div>
+                      ))}
                     </div>
                     {standing.teams.map((team) => {
                       return (
                         <div
-                          className="px-1 grid grid-cols-9 border border-gray-500 divide-x divide-gray-500"
+                          className={`px-1 grid border border-gray-500 divide-x divide-gray-500`}
+                          style={{
+                            gridTemplateColumns: `repeat(${columns.length}, minmax(0, 1fr))`,
+                          }}
                           key={team.id}
                         >
-                          <div className="p-1 items-center">{team.seed}</div>
-                          <div
-                            className={`p-1 grid grid-cols-[auto_1fr_auto] items-center gap-1 w-full h-auto object-contain`}
-                          >
-                            <Image
-                              src={team.logo}
-                              alt=""
-                              width={24}
-                              height={24}
-                            />
-                            <div className="p-1 items-center">
-                              {team.abbreviation}
+                          {columns.map((col) => (
+                            <div key={col.id} className="p-1">
+                              {col.render(team)}
                             </div>
-                          </div>
-                          <div className="p-1 items-center w-full h-auto object-contain">
-                            {team.winpercent}
-                          </div>
-                          <div className="p-1 items-center w-full h-auto object-contain">
-                            {team.record}
-                          </div>
-                          <div className="p-1 items-center w-full h-auto object-contain">
-                            {team.vsconf}
-                          </div>
-                          <div className="p-1 items-center w-full h-auto object-contain">
-                            {team.vsdiv}
-                          </div>
-                          <div className="p-1 items-center w-full h-auto object-contain">
-                            {team.pointsfor}
-                          </div>
-                          <div className="p-1 items-center w-full h-auto object-contain">
-                            {team.pointsagainst}
-                          </div>
-                          <div className="p-1 items-center w-full h-auto object-contain">
-                            {team.differential}
-                          </div>
+                          ))}
                         </div>
                       );
                     })}
