@@ -27,6 +27,7 @@ const Standings: React.FC<StandingsProps> = ({
       id: "rank",
       header: HeaderConstants.Rank,
       render: (team: Team) => team.seed,
+      sticky: false,
     },
     {
       id: "team",
@@ -37,12 +38,14 @@ const Standings: React.FC<StandingsProps> = ({
           {team.abbreviation}
         </div>
       ),
+      sticky: true,
     },
 
     {
       id: "record",
       header: HeaderConstants.OverallRecord,
       render: (t: Team) => t.record || t.total,
+      sticky: false,
     },
   ];
 
@@ -52,11 +55,13 @@ const Standings: React.FC<StandingsProps> = ({
       id: "wp",
       header: HeaderConstants.WinPercentage,
       render: (t: Team) => t.winpercent,
+      sticky: false,
     });
     columns.push({
       id: "vsdiv",
       header: HeaderConstants.DivisionRecord,
       render: (t: Team) => t.vsdiv,
+      sticky: false,
     });
   }
 
@@ -65,17 +70,25 @@ const Standings: React.FC<StandingsProps> = ({
       id: "vsconf",
       header: HeaderConstants.ConferenceRecord,
       render: (t: Team) => t.vsconf,
+      sticky: false,
     },
-    { id: "pf", header: HeaderConstants.PointsFor, render: (t) => t.pointsfor },
+    {
+      id: "pf",
+      header: HeaderConstants.PointsFor,
+      render: (t) => t.pointsfor,
+      sticky: false,
+    },
     {
       id: "pa",
       header: HeaderConstants.PointsAgainst,
       render: (t: Team) => t.pointsagainst,
+      sticky: false,
     },
     {
       id: "diff",
       header: HeaderConstants.Differential,
       render: (t: Team) => t.differential,
+      sticky: false,
     }
   );
 
@@ -122,7 +135,14 @@ const Standings: React.FC<StandingsProps> = ({
                       key="header"
                     >
                       {columns.map((col) => (
-                        <div key={col.id} className="p-1">
+                        <div
+                          key={col.id}
+                          className={`p-1 ${
+                            col.sticky
+                              ? "sticky left-0 z-20 bg-sky-50 dark:bg-neutral-800"
+                              : ""
+                          }`}
+                        >
                           <div className="hidden md:inline">
                             {col.header.long}
                           </div>
@@ -142,7 +162,14 @@ const Standings: React.FC<StandingsProps> = ({
                           key={team.id}
                         >
                           {columns.map((col) => (
-                            <div key={col.id} className="p-1">
+                            <div
+                              key={col.id}
+                              className={`p-1 ${
+                                col.sticky
+                                  ? "sticky left-0 z-10 bg-sky-50 dark:bg-neutral-800"
+                                  : ""
+                              }`}
+                            >
                               {col.render(team)}
                             </div>
                           ))}
