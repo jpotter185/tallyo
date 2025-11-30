@@ -6,7 +6,7 @@ interface FooterProps {
   setIsOpen: Dispatch<SetStateAction<boolean>>;
 }
 
-const Header: React.FC<FooterProps> = ({ isOpen, setIsOpen }) => {
+const Footer: React.FC<FooterProps> = ({ isOpen, setIsOpen }) => {
   return (
     <div className="font-mono px-1 border bg-sky-200 dark:bg-neutral-800 border border-gray-300 dark:border-gray-500">
       <div>Created by Jack Potter</div>
@@ -42,4 +42,4 @@ const Header: React.FC<FooterProps> = ({ isOpen, setIsOpen }) => {
   );
 };
 
-export default Header;
+export default Footer;

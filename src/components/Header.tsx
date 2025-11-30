@@ -1,12 +1,39 @@
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+
 const Header: React.FC = () => {
+  const links = [
+    { label: "Dashboard", href: "/" },
+    { label: "NFL", href: "/nfl" },
+    { label: "CFB", href: "/cfb" },
+  ];
+
+  const pathname = usePathname();
+
   return (
-    <div className="font-mono border bg-sky-200 dark:bg-neutral-800 border border-gray-300 dark:border-gray-500">
+    <div className="p-1 font-mono border bg-sky-200 dark:bg-neutral-800 border border-gray-300 dark:border-gray-500">
       <div className="p-1 text-4xl font-extrabold text-gray-900 dark:text-white bg-color-white">
         Tallyo
       </div>
       <div className="p-1 text-gray-900 dark:text-white">
         A simple scoreboard
       </div>
+      <nav className="space-x-4">
+        {links.map((link) => (
+          <Link
+            key={link.href}
+            href={link.href}
+            className={`p-1 rounded-md font-medium transition-colors duration-200 hover:text-white
+              ${
+                pathname === link.href
+                  ? "border border-gray-300 dark:border-gray-500"
+                  : ""
+              }`}
+          >
+            {link.label}
+          </Link>
+        ))}
+      </nav>
     </div>
   );
 };
