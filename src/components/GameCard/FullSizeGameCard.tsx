@@ -1,15 +1,12 @@
 import Image from "next/image";
 import Link from "next/link";
 import { dateFormatter } from "@/lib/espn/transformers";
-import { useEffect, useState } from "react";
 import { ChevronDown } from "lucide-react";
 
 interface GameProps {
   game: Game;
-  getStatsForGame: (
-    game: Game
-  ) => Promise<{ stats: Map<string, Stat>; scoringPlays: ScoringPlay[] }>;
-  isOpen: boolean;
+  stats: Map<string, Stat> | undefined;
+  scoringPlays: ScoringPlay[] | undefined;
   openScoringPlaysForGame: () => void;
   isScoringPlaysOpen: boolean;
   openStatsForGame: () => void;
@@ -18,31 +15,13 @@ interface GameProps {
 
 const FullSizeGameCard: React.FC<GameProps> = ({
   game,
-  getStatsForGame,
-  isOpen,
+  stats,
+  scoringPlays,
   openScoringPlaysForGame,
   isScoringPlaysOpen,
   openStatsForGame,
   isStatsOpen,
 }) => {
-  const [stats, setStats] = useState<Map<string, Stat> | null>(null);
-  const [scoringPlays, setScoringPlays] = useState<ScoringPlay[] | null>(null);
-
-  useEffect(() => {
-    const handleHover = async () => {
-      const fetched = await getStatsForGame(game);
-      setStats(fetched.stats);
-      setScoringPlays(fetched.scoringPlays);
-    };
-    if (isOpen) {
-      handleHover();
-    }
-    const interval = setInterval(handleHover, 10000);
-    return () => {
-      clearInterval(interval);
-    };
-  }, []);
-
   const gameStatNameTracker = new Set<string>();
   const defaultStat: Stat = {
     name: "",

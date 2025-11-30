@@ -6,54 +6,49 @@ import League from "@/components/League";
 import { cfbGroupIdMapping } from "@/lib/espn/transformers";
 import Standings from "@/components/Standings";
 import useSWR from "swr";
+import { useCfbState } from "../components/hooks/useCfbState";
+import { useLeagueState } from "../components/hooks/useLeagueState";
+import { fetcher } from "@/lib/api/fetcher";
 
 export default function Home() {
   const [isContactOpen, setIsContactOpen] = useState<boolean>(false);
-  const [isCfbOpen, setIsCfbOpen] = useState<boolean>(false);
-  const [isNflOpen, setIsNflOpen] = useState<boolean>(false);
-  const [nflWeek, setNflWeek] = useState<string>("");
-  const [cfbWeek, setCfbWeek] = useState<string>("");
-  const [cfbScoreboardGroup, setCfbScoreboardGroup] = useState<string>("-1");
-  const [openGames, setOpenGames] = useState<{ [id: string]: boolean }>({});
-  const toggleOpenGame = (id: string) => {
-    setOpenGames((prev) => ({ ...prev, [id]: !prev[id] }));
-  };
 
-  const fetcher = (url: string) => fetch(url).then((res) => res.json());
+  const cfb = useCfbState();
+  const nfl = useLeagueState();
 
-  const { data: nflStandings, isLoading: isStatsLoading, } = useSWR(
+  const { data: nflStandings, isLoading: isStatsLoading } = useSWR(
     "/api/nfl-standings",
     fetcher
   );
 
   const { data: nflData, isLoading: isNflLoading } = useSWR(
-    `/api/games?league=nfl${nflWeek ? `&week=${nflWeek}` : ""}`,
+    `/api/games?league=nfl${nfl.week ? `&week=${nfl.week}` : ""}`,
     fetcher,
     { refreshInterval: 10000 }
   );
   const nflGames = nflData?.games ?? [];
 
   useEffect(() => {
-    if (!nflWeek && nflData?.dataWeek) {
-      setNflWeek(nflData.dataWeek.toString());
+    if (!nfl.week && nflData?.dataWeek) {
+      nfl.setWeek(nflData.dataWeek.toString());
     }
-  }, [nflData, nflWeek]);
+  }, [nflData, nfl.week]);
 
   // CFB
   const { data: cfbData, isLoading: isCfbLoading } = useSWR(
     `/api/games?league=cfb${
-      cfbWeek ? `&week=${cfbWeek}` : ""
-    }&scoreboardGroupId=${cfbScoreboardGroup}`,
+      cfb.week ? `&week=${cfb.week}` : ""
+    }&scoreboardGroupId=${cfb.scoreboardGroup}`,
     fetcher,
     { refreshInterval: 10000 }
   );
   const cfbGames = cfbData?.games ?? [];
 
   useEffect(() => {
-    if (!cfbWeek && cfbData?.dataWeek) {
-      setCfbWeek(cfbData.dataWeek.toString());
+    if (!cfb.week && cfbData?.dataWeek) {
+      cfb.setWeek(cfbData.dataWeek.toString());
     }
-  }, [cfbData, cfbWeek]);
+  }, [cfbData, cfb.week]);
 
   return (
     <div className="bg-sky-50 dark:bg-neutral-800 border border-gray-500 divide-y divide-x divide-gray-500">
@@ -62,32 +57,32 @@ export default function Home() {
         <League
           leagueName="CFB"
           games={cfbGames}
-          isOpen={isCfbOpen}
-          setIsOpen={setIsCfbOpen}
-          week={cfbWeek}
-          setWeek={setCfbWeek}
+          isOpen={cfb.isOpen}
+          setIsOpen={cfb.setIsOpen}
+          week={cfb.week}
+          setWeek={cfb.setWeek}
           numberOfWeeks={16}
           scoreboardGroups={Array.from(cfbGroupIdMapping.keys())}
-          currentScoreboardGroup={cfbScoreboardGroup}
-          setCurrentScoreboardGroup={setCfbScoreboardGroup}
+          currentScoreboardGroup={cfb.scoreboardGroup}
+          setCurrentScoreboardGroup={cfb.setScoreboardGroup}
           displayMap={cfbGroupIdMapping}
-          openGames={openGames}
-          toggleOpenGame={toggleOpenGame}
+          openGames={cfb.openGames}
+          toggleOpenGame={cfb.toggleGame}
           isLoading={isCfbLoading}
         />
         <League
           leagueName="NFL"
           games={nflGames}
-          isOpen={isNflOpen}
-          setIsOpen={setIsNflOpen}
-          week={nflWeek}
-          setWeek={setNflWeek}
+          isOpen={nfl.isOpen}
+          setIsOpen={nfl.setIsOpen}
+          week={nfl.week}
+          setWeek={nfl.setWeek}
           numberOfWeeks={18}
           scoreboardGroups={[]}
           currentScoreboardGroup=""
           setCurrentScoreboardGroup={() => undefined}
-          openGames={openGames}
-          toggleOpenGame={toggleOpenGame}
+          openGames={nfl.openGames}
+          toggleOpenGame={nfl.toggleGame}
           isLoading={isNflLoading}
         />
       </div>

@@ -1,4 +1,4 @@
-import { getCfbGames, getNflGames } from "@/lib/espnService";
+import { getCfbGames, getNflGames } from "@/lib/espn/espnService";
 import { NextResponse } from "next/server";
 
 export async function GET(request: Request) {

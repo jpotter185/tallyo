@@ -1,4 +1,4 @@
-import { getCfbStatsForGame, getNflStatsForGame } from "@/lib/espnService";
+import { getCfbStatsForGame, getNflStatsForGame } from "@/lib/espn/espnService";
 import { NextResponse } from "next/server";
 
 export async function GET(request: Request) {

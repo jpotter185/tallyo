@@ -3,6 +3,7 @@ import GameCard from "./GameCard/GameCard";
 import Selector from "./Selector";
 import { Dispatch, SetStateAction } from "react";
 import { ChevronDown } from "lucide-react";
+import { fetchGameStats } from "@/lib/api/games";
 
 interface LeagueProps {
   games: Game[];
@@ -37,19 +38,7 @@ const League: React.FC<LeagueProps> = ({
   toggleOpenGame,
   isLoading,
 }) => {
-  const fetchGameStats = async (game: Game) => {
-    try {
-      const res = await fetch(
-        `/api/stats?league=${game.league}&gameId=${game.id}`
-      );
-      const { stats, scoringPlays } = await res.json();
-      const map = new Map<string, Stat>(stats as [string, Stat][]);
-      return { stats: map, scoringPlays: scoringPlays };
-    } catch (error) {
-      console.error("failed to fetch stats for game ", error);
-      return { stats: new Map<string, Stat>(), scoringPlays: [] };
-    }
-  };
+  
   return (
     <div>
       <button

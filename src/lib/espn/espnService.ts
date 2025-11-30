@@ -1,10 +1,10 @@
-import { fetchEspnGameData, fetchStandings } from "./espn/client";
+import { fetchEspnGameData, fetchStandings } from "./client";
 import {
   defaultCfbGroupId,
   getGamesFromJson,
   getNflStandingsFromJson,
   getStatLeadersForGame,
-} from "./espn/transformers";
+} from "./transformers";
 
 export async function getCfbGames(
   week: string | undefined,
