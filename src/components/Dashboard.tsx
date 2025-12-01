@@ -14,9 +14,13 @@ const Dashboard: React.FC = () => {
     setOpenGames((prev) => ({ ...prev, [id]: !prev[id] }));
   };
 
-  const { data: cfbData } = useSWR(`/api/games?league=cfb`, fetcher, {
-    refreshInterval: 10000,
-  });
+  const { data: cfbData, isLoading: isCfbLoading } = useSWR(
+    `/api/games?league=cfb`,
+    fetcher,
+    {
+      refreshInterval: 10000,
+    }
+  );
   const cfbGames: Game[] =
     cfbData?.games
       .filter(
@@ -27,9 +31,13 @@ const Dashboard: React.FC = () => {
         return new Date(a.date).getTime() - new Date(b.date).getTime();
       }) ?? [];
 
-  const { data: nflData } = useSWR(`/api/games?league=nfl`, fetcher, {
-    refreshInterval: 10000,
-  });
+  const { data: nflData, isLoading: isNflLoading } = useSWR(
+    `/api/games?league=nfl`,
+    fetcher,
+    {
+      refreshInterval: 10000,
+    }
+  );
   const nflGames: Game[] =
     nflData?.games
       .filter(
@@ -42,6 +50,16 @@ const Dashboard: React.FC = () => {
 
   return (
     <div className="p-4">
+      {isCfbLoading ? <div>Loading CFB games... Hi Jason</div> : <></>}
+      {isNflLoading ? <div>Loading NFL games... Hi Jason</div> : <></>}
+      {!isCfbLoading &&
+      !isNflLoading &&
+      cfbGames.length <= 0 &&
+      nflGames.length <= 0 ? (
+        <div>No live games right now...</div>
+      ) : (
+        <></>
+      )}
       {cfbGames.length > 0 && (
         <div>
           <button
