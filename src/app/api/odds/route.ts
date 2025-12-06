@@ -1,4 +1,4 @@
-import { getOddsForGame } from "@/lib/espn/espnService";
+import { getOddsForGameId } from "@/lib/espn/espnService";
 import { NextResponse } from "next/server";
 
 export async function GET(request: Request) {
@@ -14,11 +14,12 @@ export async function GET(request: Request) {
   }
 
   try {
-    const odds = await getOddsForGame(eventId, league);
+    const odds = await getOddsForGameId(league, eventId);
     return NextResponse.json(odds);
   } catch (error) {
     console.error(
       `Failed to get odds for league:${league} and eventId:${eventId}, error:${error}`,
     );
+    console.error(error);
   }
 }

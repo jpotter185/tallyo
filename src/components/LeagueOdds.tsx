@@ -62,13 +62,17 @@ const LeagueOdds: React.FC<LeagueOddsProps> = ({
                         </div>
                       </div>
 
-                      <div className="text-sm">
+                      <div
+                        className={`text-sm ${game.final && game.winner === game.awayTeam.id ? "border-2 border-sky-50 dark:border-neutral-800" : ""}`}
+                      >
                         <span className="text-xs block">Moneyline</span>
                         <span className="font-semibold">
                           {game.odds?.awayMoneyline}
                         </span>
                       </div>
-                      <div className="text-sm">
+                      <div
+                        className={`text-sm ${game.final && game.odds?.awayCover ? "border-2 border-sky-50 dark:border-neutral-800" : ""}`}
+                      >
                         <span className="text-xs block">Spread</span>
                         <span className="font-semibold">
                           {game.odds?.awayTeamSpread}
@@ -76,16 +80,39 @@ const LeagueOdds: React.FC<LeagueOddsProps> = ({
                       </div>
                     </div>
 
-                    <div className="flex flex-col items-center gap-3 px-4">
+                    <div className="flex flex-col items-center gap-3 px-4 text-sm">
                       <div className="text-center">
-                        <div className="font-semibold">
-                          O/U{game.odds?.overUnder}
-                        </div>
+                        {game.final && game.odds?.over && (
+                          <div>
+                            TOTAL {game.odds.total} OVR {game.odds.overUnder}
+                          </div>
+                        )}
+                        {game.final && game.odds?.under && (
+                          <div>
+                            TOTAL {game.odds.total} U {game.odds.overUnder}
+                          </div>
+                        )}
+                        {game.final && game.odds?.push && (
+                          <div>
+                            TOTAL {game.odds.total} PUSH {game.odds.overUnder}
+                          </div>
+                        )}
+                        {!game.final && (
+                          <div className="font-semibold">
+                            O/U{game.odds?.overUnder}
+                          </div>
+                        )}
                         <div className="text-xs">Total Points</div>
                         <br />
-                        <div className="text-xs">
-                          {dateFormatter.format(new Date(game.isoDate))}
-                        </div>
+                        {game.final === false ? (
+                          <div className="text-xs">
+                            {dateFormatter.format(new Date(game.isoDate))}
+                          </div>
+                        ) : (
+                          <div className="text-m">
+                            {game.awayScore} - {game.homeScore}
+                          </div>
+                        )}
                       </div>
                     </div>
 
@@ -109,13 +136,17 @@ const LeagueOdds: React.FC<LeagueOddsProps> = ({
                         />
                       </div>
 
-                      <div className="text-sm text-right">
+                      <div
+                        className={`text-sm text-right ${game.final && game.winner === game.homeTeam.id ? "border-2 border-sky-50 dark:border-neutral-800" : ""}`}
+                      >
                         <span className="text-xs block">Moneyline</span>
                         <span className="font-semibold">
                           {game.odds?.homeMoneyline}
                         </span>
                       </div>
-                      <div className="text-sm text-right">
+                      <div
+                        className={`text-sm text-right ${game.final && game.odds?.homeCover ? "border-2 border-sky-50 dark:border-neutral-800" : ""}`}
+                      >
                         <span className="text-xs block">Spread</span>
                         <span className="font-semibold">
                           {game.odds?.homeTeamSpread}

@@ -11,4 +11,10 @@ type Odds = {
   homeMoneyline: string;
   homeFavorite: boolean;
   awayFavorite: boolean;
+  homeCover?: boolean;
+  awayCover?: boolean;
+  over?: boolean;
+  under?: boolean;
+  push?: boolean;
+  total?: string;
 };

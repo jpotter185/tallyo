@@ -97,13 +97,28 @@ export async function getCfbStatsForGame(gameId: string) {
   return await getStatLeadersForGame("cfb", gameId);
 }
 
-export async function getOddsForGame(
-  eventId: string,
-  league: "nfl" | "cfb",
-): Promise<Odds | undefined> {
-  const oddsJson = await getOdds(eventId, league);
+export async function getOddsForGameId(league: "nfl" | "cfb", gameId: string) {
+  const oddsJson = await getOdds(gameId, league);
   if (oddsJson) {
-    const odds: Odds = getCleanedOdds(eventId, oddsJson);
+    const odds: Odds = getCleanedOdds(gameId, oddsJson);
+    return odds;
+  }
+  return undefined;
+}
+
+export async function getOddsForGameWithGameObject(
+  league: "nfl" | "cfb",
+  game: Game,
+): Promise<Odds | undefined> {
+  const oddsJson = await getOdds(game.id, league);
+  if (oddsJson) {
+    const odds: Odds = getCleanedOdds(
+      game.id,
+      oddsJson,
+      game.final,
+      game.homeScore,
+      game.awayScore,
+    );
     return odds;
   } else {
     return undefined;

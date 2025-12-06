@@ -1,5 +1,5 @@
 import { getStatsForGame } from "./client";
-import { getOddsForGame } from "./espnService";
+import { getOddsForGameWithGameObject } from "./espnService";
 
 export const dateFormatter = new Intl.DateTimeFormat("en-US", {
   year: "numeric",
@@ -88,10 +88,6 @@ export async function getGamesFromJson(
         const awayTimeouts = competition.situation?.awayTimeouts;
         const date = dateFormatter.format(new Date(competition.startDate));
 
-        const oddsObject: Odds | undefined = await getOddsForGame(
-          competition.id,
-          league,
-        );
         const homeWinPercentage =
           competition.situation?.lastPlay?.probability?.homeWinPercentage;
         const awayWinPercentage =
@@ -119,14 +115,21 @@ export async function getGamesFromJson(
           down: competition.situation?.shortDownDistanceText,
           ballLocation: competition.situation?.possessionText,
           winner: winner ? winner.id : undefined,
+          final: winner ? true : false,
           headline: headline,
-          odds: oddsObject,
           homeTimeouts: homeTimeouts,
           awayTimeouts: awayTimeouts,
           stats: {},
           homeWinPercentage: homeWinPercentage,
           awayWinPercentage: awayWinPercentage,
         };
+        const oddsObject: Odds | undefined = await getOddsForGameWithGameObject(
+          league,
+          game,
+        );
+        if (oddsObject) {
+          game.odds = oddsObject;
+        }
         games.push(game);
       }
     }
@@ -141,7 +144,6 @@ export async function getStatLeadersForGame(
   const { leaders, scoringPlays } = await getStatsForGame(league, gameId);
   const statMap: Map<string, Stat> = new Map<string, Stat>();
   if (!leaders && !scoringPlays) {
-    console.log("ending early");
     return { statMap, scoringPlays: [] };
   }
   for (const team of leaders) {
@@ -332,8 +334,14 @@ function populateTeamStats(team: Team, stats: any) {
   return team;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function getCleanedOdds(eventId: string, oddsJson: any): Odds {
+export function getCleanedOdds(
+  eventId: string,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  oddsJson: any,
+  final?: boolean,
+  homeScore?: string,
+  awayScore?: string,
+): Odds {
   const oddsJsonEntry = oddsJson.items[0];
   const cleanedOdds: Odds = {
     eventId: eventId,
@@ -358,5 +366,53 @@ export function getCleanedOdds(eventId: string, oddsJson: any): Odds {
     homeFavorite: oddsJsonEntry.homeTeamOdds?.favorite,
     awayFavorite: oddsJsonEntry.awayTeamOdds?.favorite,
   };
+  if (final && homeScore && awayScore) {
+    const total = parseInt(homeScore) + parseInt(awayScore);
+    cleanedOdds.total = String(total);
+    const ovrUnderFloat = parseFloat(cleanedOdds.overUnder);
+    if (total > ovrUnderFloat) {
+      cleanedOdds.over = true;
+      cleanedOdds.under = false;
+      cleanedOdds.push = false;
+    } else if (total < ovrUnderFloat) {
+      cleanedOdds.over = false;
+      cleanedOdds.under = true;
+      cleanedOdds.push = false;
+    } else {
+      cleanedOdds.over = false;
+      cleanedOdds.under = false;
+      cleanedOdds.push = true;
+    }
+    const diff = parseInt(homeScore) - parseInt(awayScore);
+    if (diff > 0) {
+      //home team wins
+      if (cleanedOdds.homeFavorite) {
+        //home team favored
+        if (diff > Math.abs(parseFloat(cleanedOdds.homeTeamSpread))) {
+          cleanedOdds.homeCover = true;
+          cleanedOdds.awayCover = false;
+        } else {
+          cleanedOdds.homeCover = false;
+          cleanedOdds.awayCover = true;
+        }
+      } else {
+        //away team favored
+        cleanedOdds.homeCover = true;
+        cleanedOdds.awayCover = false;
+      }
+    } else {
+      //away team wins
+      if (cleanedOdds.awayFavorite) {
+        if (Math.abs(diff) > Math.abs(parseFloat(cleanedOdds.awayTeamSpread))) {
+          cleanedOdds.awayCover = true;
+          cleanedOdds.homeCover = false;
+        } else {
+          cleanedOdds.homeCover = true;
+          cleanedOdds.awayCover = false;
+        }
+      }
+    }
+  }
+
   return cleanedOdds;
 }
