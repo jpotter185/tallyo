@@ -28,8 +28,8 @@ const Selector: React.FC<SelectorProps> = ({
               {displayString
                 ? displayString + " " + entry
                 : displayMap
-                ? displayMap.get(entry)
-                : entry}
+                  ? displayMap.get(entry)
+                  : entry}
             </option>
           );
         })}

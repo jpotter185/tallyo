@@ -47,7 +47,7 @@ export const defaultCfbGroupId = "-1";
 export async function getGamesFromJson(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   data: any,
-  league: "nfl" | "cfb"
+  league: "nfl" | "cfb",
 ): Promise<Game[]> {
   const games: Game[] = [];
   const events = data.events;
@@ -55,15 +55,15 @@ export async function getGamesFromJson(
     for (const event of events) {
       for (const competition of event.competitions) {
         const homeTeam = competition.competitors.find(
-          (c: { homeAway: string }) => c.homeAway === "home"
+          (c: { homeAway: string }) => c.homeAway === "home",
         );
 
         const awayTeam = competition.competitors.find(
-          (c: { homeAway: string }) => c.homeAway === "away"
+          (c: { homeAway: string }) => c.homeAway === "away",
         );
 
         const winner = competition.competitors.find(
-          (c: { winner: boolean }) => c.winner === true
+          (c: { winner: boolean }) => c.winner === true,
         );
 
         const homeTeamObject: Team = buildTeam(homeTeam);
@@ -74,7 +74,7 @@ export async function getGamesFromJson(
         const awayTeamScore = determineScore(awayTeam?.score, gameStatus);
         const posessionTeamId = competition.situation?.possession;
         const gameLocation = buildGameLocationString(
-          competition?.venue?.address
+          competition?.venue?.address,
         );
         const channel = competition.broadcast;
 
@@ -90,7 +90,7 @@ export async function getGamesFromJson(
 
         const oddsObject: Odds | undefined = await getOddsForGame(
           competition.id,
-          league
+          league,
         );
         const homeWinPercentage =
           competition.situation?.lastPlay?.probability?.homeWinPercentage;
@@ -136,7 +136,7 @@ export async function getGamesFromJson(
 
 export async function getStatLeadersForGame(
   league: "nfl" | "cfb",
-  gameId: string
+  gameId: string,
 ) {
   const { leaders, scoringPlays } = await getStatsForGame(league, gameId);
   const statMap: Map<string, Stat> = new Map<string, Stat>();
@@ -262,7 +262,7 @@ function parseConference(conferenceGroup: any) {
       const standingEntries = divisionGroup.standings.entries;
       for (const standingEntry of standingEntries) {
         conferenceTeams.push(
-          parseTeam(standingEntry, conferenceGroupName, divisionGroupName)
+          parseTeam(standingEntry, conferenceGroupName, divisionGroupName),
         );
       }
     }
@@ -270,7 +270,7 @@ function parseConference(conferenceGroup: any) {
     const standingEntries = conferenceGroup.standings.entries;
     for (const standingEntry of standingEntries) {
       conferenceTeams.push(
-        parseTeam(standingEntry, conferenceGroupName, undefined)
+        parseTeam(standingEntry, conferenceGroupName, undefined),
       );
     }
   }
@@ -296,7 +296,7 @@ function parseTeam(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   standingEntry: any,
   conferenceGroupName: string | undefined,
-  divisionGroupName: string | undefined
+  divisionGroupName: string | undefined,
 ) {
   const teamInfo = standingEntry.team;
   const teamStats = standingEntry.stats;
@@ -339,10 +339,10 @@ export function getCleanedOdds(eventId: string, oddsJson: any): Odds {
     eventId: eventId,
     spreadText: oddsJsonEntry.details,
     awayTeamSpread: String(
-      oddsJsonEntry.awayTeamOdds?.current?.pointSpread?.american
+      oddsJsonEntry.awayTeamOdds?.current?.pointSpread?.american,
     ),
     homeTeamSpread: String(
-      oddsJsonEntry.homeTeamOdds?.current?.pointSpread?.american
+      oddsJsonEntry.homeTeamOdds?.current?.pointSpread?.american,
     ),
     overUnder: String(oddsJsonEntry.overUnder),
     overOdds: String(oddsJsonEntry.overOdds),

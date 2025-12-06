@@ -38,7 +38,6 @@ const League: React.FC<LeagueProps> = ({
   toggleOpenGame,
   isLoading,
 }) => {
-  
   return (
     <div>
       <button
@@ -67,7 +66,7 @@ const League: React.FC<LeagueProps> = ({
             <Selector
               currentValue={week}
               data={Array.from({ length: numberOfWeeks }, (_, i) =>
-                String(i + 1)
+                String(i + 1),
               )}
               setCurrentValue={setWeek}
               displayString="Week"

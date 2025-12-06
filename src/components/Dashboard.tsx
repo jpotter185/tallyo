@@ -19,13 +19,13 @@ const Dashboard: React.FC = () => {
     fetcher,
     {
       refreshInterval: 10000,
-    }
+    },
   );
   const cfbGames: Game[] =
     cfbData?.games
       .filter(
         (game: Game) =>
-          !game.winner && !(game.gameStatus === "STATUS_SCHEDULED")
+          !game.winner && !(game.gameStatus === "STATUS_SCHEDULED"),
       )
       .sort((a: Game, b: Game) => {
         return new Date(a.date).getTime() - new Date(b.date).getTime();
@@ -36,13 +36,13 @@ const Dashboard: React.FC = () => {
     fetcher,
     {
       refreshInterval: 10000,
-    }
+    },
   );
   const nflGames: Game[] =
     nflData?.games
       .filter(
         (game: Game) =>
-          !game.winner && !(game.gameStatus === "STATUS_SCHEDULED")
+          !game.winner && !(game.gameStatus === "STATUS_SCHEDULED"),
       )
       .sort((a: Game, b: Game) => {
         return new Date(a.date).getTime() - new Date(b.date).getTime();

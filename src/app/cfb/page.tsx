@@ -16,7 +16,7 @@ export default function Cfb() {
 
   const { data: cfbStandings, isLoading: isCfbStandingsLoading } = useSWR(
     "/api/standings?league=cfb",
-    fetcher
+    fetcher,
   );
 
   const { data: cfbWeek } = useSWR("/api/week?league=cfb", fetcher);
@@ -26,13 +26,12 @@ export default function Cfb() {
     }
   }, [cfbWeek]);
 
-
   const { data: cfbData, isLoading: isCfbLoading } = useSWR(
     `/api/games?league=cfb${
       cfb.week ? `&week=${cfb.week}` : ""
     }&scoreboardGroupId=${cfb.scoreboardGroup}`,
     fetcher,
-    { refreshInterval: 10000 }
+    { refreshInterval: 10000 },
   );
   const cfbGames = cfbData?.games ?? [];
 
@@ -63,7 +62,11 @@ export default function Cfb() {
           isLoading={isCfbLoading}
         />
       </div>
-      <Standings standings={cfbStandings} isLoading={isCfbStandingsLoading} league={"CFB"}/>
+      <Standings
+        standings={cfbStandings}
+        isLoading={isCfbStandingsLoading}
+        league={"CFB"}
+      />
       <Footer isOpen={isContactOpen} setIsOpen={setIsContactOpen} />
     </div>
   );

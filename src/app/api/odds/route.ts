@@ -18,7 +18,7 @@ export async function GET(request: Request) {
     return NextResponse.json(odds);
   } catch (error) {
     console.error(
-      `Failed to get odds for league:${league} and eventId:${eventId}, error:${error}`
+      `Failed to get odds for league:${league} and eventId:${eventId}, error:${error}`,
     );
   }
 }

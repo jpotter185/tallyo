@@ -11,7 +11,7 @@ const ENDPOINTS = {
 export async function fetchEspnGameData(
   sport: "nfl" | "cfb",
   week?: string,
-  scoreboardGroupId?: string
+  scoreboardGroupId?: string,
 ) {
   const url = new URL(ENDPOINTS[sport]);
   if (week) url.searchParams.set("week", week);
@@ -29,7 +29,7 @@ export async function fetchEspnGameData(
 
 export async function getStatsForGame(
   league: "nfl" | "cfb",
-  gameId: string
+  gameId: string,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
 ): Promise<any> {
   if (gameId) {

@@ -75,8 +75,8 @@ const FullSizeGameCard: React.FC<GameProps> = ({
             game.winner && game.winner === game.awayTeam.id
               ? "font-extrabold"
               : game.winner
-              ? "font-thin"
-              : ""
+                ? "font-thin"
+                : ""
           }`}
         >
           {game.awayScore}
@@ -117,8 +117,8 @@ const FullSizeGameCard: React.FC<GameProps> = ({
             game.winner && game.winner === game.homeTeam.id
               ? "font-extrabold"
               : game.winner
-              ? "font-thin"
-              : ""
+                ? "font-thin"
+                : ""
           }`}
         >
           {game.possessionTeamId === game.homeTeam.id && (
@@ -260,13 +260,13 @@ const FullSizeGameCard: React.FC<GameProps> = ({
             } else {
               gameStatNameTracker.add(statName);
               let homeStat: Stat | undefined = stats.get(
-                `${statName}-${game.homeTeam.id}`
+                `${statName}-${game.homeTeam.id}`,
               );
               if (!homeStat) {
                 homeStat = defaultStat;
               }
               let awayStat: Stat | undefined = stats.get(
-                `${statName}-${game.awayTeam.id}`
+                `${statName}-${game.awayTeam.id}`,
               );
               if (!awayStat) {
                 awayStat = defaultStat;

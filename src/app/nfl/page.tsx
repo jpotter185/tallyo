@@ -15,7 +15,7 @@ export default function Nfl() {
 
   const { data: nflStandings, isLoading: isNflStandingsLoading } = useSWR(
     "/api/standings?league=nfl",
-    fetcher
+    fetcher,
   );
 
   const { data: nflWeek } = useSWR("/api/week?league=nfl", fetcher);
@@ -28,7 +28,7 @@ export default function Nfl() {
   const { data: nflData, isLoading: isNflLoading } = useSWR(
     `/api/games?league=nfl${nfl.week ? `&week=${nfl.week}` : ""}`,
     fetcher,
-    { refreshInterval: 10000 }
+    { refreshInterval: 10000 },
   );
   const nflGames = nflData?.games ?? [];
 

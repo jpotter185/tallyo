@@ -11,7 +11,7 @@ const OddsDashboard: React.FC = () => {
     fetcher,
     {
       refreshInterval: 30000,
-    }
+    },
   );
   const cfbGames: Game[] = cfbData?.games;
 
@@ -20,7 +20,7 @@ const OddsDashboard: React.FC = () => {
     fetcher,
     {
       refreshInterval: 30000,
-    }
+    },
   );
   const nflGames: Game[] = nflData?.games;
 

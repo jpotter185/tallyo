@@ -36,68 +36,92 @@ const LeagueOdds: React.FC<LeagueOddsProps> = ({
             <div>Loading {leagueName} games...</div>
           ) : (
             <div>
-              <div className="grid grid-cols-7 p-2">
-                <div>Away Team</div>
-                <div>Away Spread</div>
-                <div>Away Odds</div>
-                <div>Over Under</div>
-                <div>Home Odds</div>
-                <div>Home Spread</div>
-                <div>Home Team</div>
-              </div>
-              {games.map((game) => {
-                return (
-                  <div key={game.id} className="grid grid-cols-7">
-                    <div
-                      className={`grid grid-cols-[auto_1fr_auto] items-center gap-1 p-1 `}
-                    >
-                      {game.awayTeam.logo && (
+              {games.map((game) => (
+                <div
+                  key={game.id}
+                  className="border border-gray-300 dark:border-gray-600 rounded-xl shadow-md bg-neutral-300 dark:bg-neutral-500 p-4 mb-4"
+                >
+                  <div className="grid grid-cols-3 items-center">
+                    <div className="flex flex-col items-start gap-2">
+                      <div className="flex items-center gap-2">
                         <Image
                           src={game.awayTeam.logo}
                           alt=""
-                          width={24}
-                          height={24}
-                          className="pointer-events-none"
+                          width={32}
+                          height={32}
+                          className="rounded-md"
                         />
-                      )}
-                      <div className="flex items-center gap-1 font-bold text-sm">
                         <div>
-                          {game.awayTeam.ranking
-                            ? game.awayTeam.ranking + game.awayTeam.abbreviation
-                            : game.awayTeam.abbreviation}
+                          <div className="font-semibold">
+                            {game.awayTeam.ranking
+                              ? `${game.awayTeam.ranking} ${game.awayTeam.abbreviation}`
+                              : game.awayTeam.abbreviation}
+                          </div>
+                          <div className="text-xs">{game.awayTeam.record}</div>
                         </div>
-                        <div>{game.awayTeam.record}</div>
+                      </div>
+
+                      <div className="text-sm">
+                        <span className="text-xs block">Moneyline</span>
+                        <span className="font-semibold">
+                          {game.odds?.awayMoneyline}
+                        </span>
+                      </div>
+                      <div className="text-sm">
+                        <span className="text-xs block">Spread</span>
+                        <span className="font-semibold">
+                          {game.odds?.awayTeamSpread}
+                        </span>
                       </div>
                     </div>
-                    <div>{game.odds?.awayTeamSpread}</div>
-                    <div>{game.odds?.awayMoneyline}</div>
-                    <div>{game.odds?.overUnder}</div>
-                    <div>{game.odds?.homeMoneyline}</div>
-                    <div>{game.odds?.homeTeamSpread}</div>
-                    <div
-                      className={`grid grid-cols-[auto_1fr_auto] items-center gap-1 p-1 `}
-                    >
-                      {game.homeTeam.logo && (
+
+                    <div className="flex flex-col items-center gap-3 px-4">
+                      <div className="text-center">
+                        <div className="font-semibold">
+                          O/U{game.odds?.overUnder}
+                        </div>
+                        <div className="text-xs">Total Points</div>
+                        <br />
+                        <div className="text-xs">{game.date}</div>
+                      </div>
+                    </div>
+
+                    <div className="flex flex-col items-end gap-2">
+                      <div className="flex items-center gap-2">
+                        <div className="text-right">
+                          <div className="font-semibold">
+                            {game.homeTeam.ranking
+                              ? `${game.homeTeam.ranking} ${game.homeTeam.abbreviation}`
+                              : game.homeTeam.abbreviation}
+                          </div>
+                          <div className="text-xs">{game.homeTeam.record}</div>
+                        </div>
+
                         <Image
                           src={game.homeTeam.logo}
                           alt=""
-                          width={24}
-                          height={24}
-                          className="pointer-events-none"
+                          width={32}
+                          height={32}
+                          className="rounded-md"
                         />
-                      )}
-                      <div className="flex items-center gap-1 font-bold text-sm">
-                        <div>
-                          {game.homeTeam.ranking
-                            ? game.homeTeam.ranking + game.homeTeam.abbreviation
-                            : game.homeTeam.abbreviation}
-                        </div>
-                        <div>{game.homeTeam.record}</div>
+                      </div>
+
+                      <div className="text-sm text-right">
+                        <span className="text-xs block">Moneyline</span>
+                        <span className="font-semibold">
+                          {game.odds?.homeMoneyline}
+                        </span>
+                      </div>
+                      <div className="text-sm text-right">
+                        <span className="text-xs block">Spread</span>
+                        <span className="font-semibold">
+                          {game.odds?.homeTeamSpread}
+                        </span>
                       </div>
                     </div>
                   </div>
-                );
-              })}
+                </div>
+              ))}
             </div>
           )}
         </div>

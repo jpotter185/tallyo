@@ -10,10 +10,10 @@ export async function GET(request: Request) {
   }
   let standings: Standings[] = [];
   if (league === "nfl") {
-       standings = await getNflStandings();
-    } else if (league === "cfb") {
-      standings = await getCfbStandings();
-    }
+    standings = await getNflStandings();
+  } else if (league === "cfb") {
+    standings = await getCfbStandings();
+  }
 
   return NextResponse.json(standings);
 }

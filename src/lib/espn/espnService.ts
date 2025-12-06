@@ -9,7 +9,7 @@ import {
 
 export async function getCfbGames(
   week: string | undefined,
-  scoreboardGroup: string | undefined
+  scoreboardGroup: string | undefined,
 ) {
   let scoreboardGroupId = defaultCfbGroupId;
   if (scoreboardGroup) {
@@ -99,7 +99,7 @@ export async function getCfbStatsForGame(gameId: string) {
 
 export async function getOddsForGame(
   eventId: string,
-  league: "nfl" | "cfb"
+  league: "nfl" | "cfb",
 ): Promise<Odds | undefined> {
   const oddsJson = await getOdds(eventId, league);
   if (oddsJson) {

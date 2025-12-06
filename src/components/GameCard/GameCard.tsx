@@ -4,7 +4,7 @@ interface GameProps {
   game: Game;
   getStatsForGame: (
     league: "nfl" | "cfb",
-    gameId: string
+    gameId: string,
   ) => Promise<{ stats: Map<string, Stat>; scoringPlays: ScoringPlay[] }>;
   isOpen: boolean;
   toggleOpenGame: () => void;
@@ -14,11 +14,7 @@ import FullsizeGameCard from "./FullSizeGameCard";
 import CompactGameCard from "./CompactGameCard";
 import { useState } from "react";
 import { useGameStats } from "../hooks/useGameStats";
-const GameCard: React.FC<GameProps> = ({
-  game,
-  isOpen,
-  toggleOpenGame,
-}) => {
+const GameCard: React.FC<GameProps> = ({ game, isOpen, toggleOpenGame }) => {
   const [openStatsForGame, setOpenStatsForGame] = useState<{
     [id: string]: boolean;
   }>({});

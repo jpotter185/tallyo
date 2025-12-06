@@ -15,7 +15,7 @@ const Standings: React.FC<StandingsProps> = ({
   league,
 }) => {
   const [openStandings, setOpenStandings] = useState<{ [id: string]: boolean }>(
-    {}
+    {},
   );
   const [isStandingsOpen, setIsStandingsOpen] = useState<boolean>(false);
   const toggleOpenStandings = (id: string) => {
@@ -89,7 +89,7 @@ const Standings: React.FC<StandingsProps> = ({
       header: HeaderConstants.Differential,
       render: (t: Team) => t.differential,
       sticky: false,
-    }
+    },
   );
 
   return (
