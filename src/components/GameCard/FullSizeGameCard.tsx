@@ -1,7 +1,7 @@
-import Image from "next/image";
 import Link from "next/link";
 import { dateFormatter } from "@/lib/espn/transformers";
 import { ChevronDown } from "lucide-react";
+import FullsizeTeamCard from "../TeamCard/FullsizeTeamCard";
 
 interface GameProps {
   game: Game;
@@ -36,63 +36,15 @@ const FullSizeGameCard: React.FC<GameProps> = ({
   };
   return (
     <div>
-      <div className="grid grid-cols-[3fr_2fr_2fr_2fr_3fr] place-items-center items-center justify-center p-2">
+      <div className="grid grid-cols-3 place-items-center items-center justify-center p-2">
         {/* Away team info */}
-        <div className="flex flex-col">
-          {game.awayTeam.logo && (
-            <Image
-              src={game.awayTeam.logo}
-              alt=""
-              width={24}
-              height={24}
-              className="pointer-events-none"
-            />
-          )}
-          <div className="text-nowrap">
-            {game.awayTeam.ranking
-              ? game.awayTeam.ranking + game.awayTeam.abbreviation
-              : game.awayTeam.abbreviation}
-          </div>
-          <div className="text-xs">{game.awayTeam.record}</div>
-          {game.awayTimeouts && game.league === "nfl" && (
-            <div className="flex items-center gap-1">
-              {[...Array(3)].map((_, i) => (
-                <div
-                  key={i}
-                  className={`w-1 h-1 rounded-full ${
-                    i < game.awayTimeouts
-                      ? "bg-current"
-                      : "border border-gray-400"
-                  }`}
-                />
-              ))}
-            </div>
-          )}
-        </div>
-        {/* Away team score */}
-        <div
-          className={` ${
-            game.winner && game.winner === game.awayTeam.id
-              ? "font-extrabold"
-              : game.winner
-                ? "font-thin"
-                : ""
-          }`}
-        >
-          {game.awayScore}
-          {game.shortPeriod !== "Final" &&
-            game.possessionTeamId === game.awayTeam.id && (
-              <svg
-                width="20"
-                height="20"
-                viewBox="0 0 120 50"
-                xmlns="http://www.w3.org/2000/svg"
-                className="inline-block px-1 text-base"
-              >
-                <polygon points="10,25 60,5 110,25 60,45" fill="currentColor" />
-              </svg>
-            )}
-        </div>
+        <FullsizeTeamCard
+          team={game.awayTeam}
+          score={game.awayScore}
+          possessionTeamId={game.possessionTeamId}
+          league={game.league}
+          homeTeam={false}
+        />
 
         {/* Game info */}
         <div className="flex flex-col whitespace-nowrap place-items-center items-center justify-center">
@@ -112,60 +64,13 @@ const FullSizeGameCard: React.FC<GameProps> = ({
           )}
         </div>
         {/* Home team score */}
-        <div
-          className={` ${
-            game.winner && game.winner === game.homeTeam.id
-              ? "font-extrabold"
-              : game.winner
-                ? "font-thin"
-                : ""
-          }`}
-        >
-          {game.possessionTeamId === game.homeTeam.id && (
-            <svg
-              width="20"
-              height="20"
-              viewBox="0 0 120 50"
-              xmlns="http://www.w3.org/2000/svg"
-              className="inline-block px-1"
-            >
-              <polygon points="10,25 60,5 110,25 60,45" fill="currentColor" />
-            </svg>
-          )}
-          {game.homeScore}
-        </div>
-        {/* home team info */}
-        <div className="flex flex-col">
-          {game.homeTeam.logo && (
-            <Image
-              src={game.homeTeam.logo}
-              alt=""
-              width={24}
-              height={24}
-              className="pointer-events-none"
-            />
-          )}
-          <div className="text-nowrap">
-            {game.homeTeam.ranking
-              ? game.homeTeam.ranking + game.homeTeam.abbreviation
-              : game.homeTeam.abbreviation}
-          </div>
-          <div className="text-xs">{game.homeTeam.record}</div>
-          {game.homeTimeouts && game.league === "nfl" && (
-            <div className="flex items-center gap-1">
-              {[...Array(3)].map((_, i) => (
-                <div
-                  key={i}
-                  className={`w-1 h-1 rounded-full ${
-                    i < game.homeTimeouts
-                      ? "bg-current"
-                      : "border border-gray-400"
-                  }`}
-                />
-              ))}
-            </div>
-          )}
-        </div>
+        <FullsizeTeamCard
+          team={game.homeTeam}
+          score={game.homeScore}
+          possessionTeamId={game.possessionTeamId}
+          league={game.league}
+          homeTeam={true}
+        />
       </div>
       {game.lastPlay && (
         <div className="p-2 flex flex-col place-items-center items-center justify-center">
