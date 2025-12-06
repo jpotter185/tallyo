@@ -1,3 +1,4 @@
+import { dateFormatter } from "@/lib/espn/transformers";
 import { ChevronDown } from "lucide-react";
 import Image from "next/image";
 import { Dispatch, SetStateAction } from "react";
@@ -82,7 +83,9 @@ const LeagueOdds: React.FC<LeagueOddsProps> = ({
                         </div>
                         <div className="text-xs">Total Points</div>
                         <br />
-                        <div className="text-xs">{game.date}</div>
+                        <div className="text-xs">
+                          {dateFormatter.format(new Date(game.isoDate))}
+                        </div>
                       </div>
                     </div>
 
