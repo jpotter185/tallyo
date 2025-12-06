@@ -295,7 +295,7 @@ const FullSizeGameCard: React.FC<GameProps> = ({
         </div>
       )}
       <div className="flex flex-col place-items-center items-center justify-center">
-        <div>{game.odds}</div>
+        <div>{game.odds?.spreadText}</div>
         {game.gameStatus === "STATUS_SCHEDULED" && (
           <div>{dateFormatter.format(new Date(game.isoDate))}</div>
         )}

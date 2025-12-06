@@ -1,6 +1,7 @@
-import { fetchEspnGameData, fetchStandings } from "./client";
+import { fetchEspnGameData, fetchStandings, getOdds } from "./client";
 import {
   defaultCfbGroupId,
+  getCleanedOdds,
   getGamesFromJson,
   getStandingsFromJson,
   getStatLeadersForGame,
@@ -94,4 +95,17 @@ export async function getNflStatsForGame(gameId: string) {
 
 export async function getCfbStatsForGame(gameId: string) {
   return await getStatLeadersForGame("cfb", gameId);
+}
+
+export async function getOddsForGame(
+  eventId: string,
+  league: "nfl" | "cfb"
+): Promise<Odds | undefined> {
+  const oddsJson = await getOdds(eventId, league);
+  if (oddsJson) {
+    const odds: Odds = getCleanedOdds(eventId, oddsJson);
+    return odds;
+  } else {
+    return undefined;
+  }
 }

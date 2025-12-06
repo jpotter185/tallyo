@@ -1,4 +1,5 @@
 import { getStatsForGame } from "./client";
+import { getOddsForGame } from "./espnService";
 
 export const dateFormatter = new Intl.DateTimeFormat("en-US", {
   year: "numeric",
@@ -87,7 +88,10 @@ export async function getGamesFromJson(
         const awayTimeouts = competition.situation?.awayTimeouts;
         const date = dateFormatter.format(new Date(competition.startDate));
 
-        const gameOdds = await getOdds(competition.id, league);
+        const oddsObject: Odds | undefined = await getOddsForGame(
+          competition.id,
+          league
+        );
         const homeWinPercentage =
           competition.situation?.lastPlay?.probability?.homeWinPercentage;
         const awayWinPercentage =
@@ -116,7 +120,7 @@ export async function getGamesFromJson(
           ballLocation: competition.situation?.possessionText,
           winner: winner ? winner.id : undefined,
           headline: headline,
-          odds: gameOdds,
+          odds: oddsObject,
           homeTimeouts: homeTimeouts,
           awayTimeouts: awayTimeouts,
           stats: {},
@@ -178,20 +182,6 @@ export async function getStatLeadersForGame(
   }
 
   return { statMap, scoringPlays: scoringPlaysArray };
-}
-
-async function getOdds(eventId: string, league: "nfl" | "cfb") {
-  const ODDS_API_ENDPOINT = `https://sports.core.api.espn.com/v2/sports/football/leagues/${
-    league === "nfl" ? "nfl" : "college-football"
-  }/events/${eventId}/competitions/${eventId}/odds`;
-  try {
-    const response = await fetch(ODDS_API_ENDPOINT);
-    const data = await response?.json();
-    return data?.items[0]?.details;
-  } catch (error) {
-    console.error(error);
-    return undefined;
-  }
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -340,4 +330,33 @@ function populateTeamStats(team: Team, stats: any) {
     team.record = `${team.wins}-${team.losses}-${team.ties}`;
   }
   return team;
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function getCleanedOdds(eventId: string, oddsJson: any): Odds {
+  const oddsJsonEntry = oddsJson.items[0];
+  const cleanedOdds: Odds = {
+    eventId: eventId,
+    spreadText: oddsJsonEntry.details,
+    awayTeamSpread: String(
+      oddsJsonEntry.awayTeamOdds?.current?.pointSpread?.american
+    ),
+    homeTeamSpread: String(
+      oddsJsonEntry.homeTeamOdds?.current?.pointSpread?.american
+    ),
+    overUnder: String(oddsJsonEntry.overUnder),
+    overOdds: String(oddsJsonEntry.overOdds),
+    underOdds: String(oddsJsonEntry.underOdds),
+    awayMoneyline:
+      String(oddsJsonEntry.awayTeamOdds?.moneyLine).indexOf("-") > -1
+        ? String(oddsJsonEntry.awayTeamOdds?.moneyLine)
+        : "+" + String(oddsJsonEntry.awayTeamOdds?.moneyLine),
+    homeMoneyline:
+      String(oddsJsonEntry.homeTeamOdds?.moneyLine).indexOf("-") > -1
+        ? String(oddsJsonEntry.homeTeamOdds?.moneyLine)
+        : "+" + String(oddsJsonEntry.homeTeamOdds?.moneyLine),
+    homeFavorite: oddsJsonEntry.homeTeamOdds?.favorite,
+    awayFavorite: oddsJsonEntry.awayTeamOdds?.favorite,
+  };
+  return cleanedOdds;
 }

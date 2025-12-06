@@ -6,6 +6,7 @@ const Header: React.FC = () => {
     { label: "Dashboard", href: "/" },
     { label: "NFL", href: "/nfl" },
     { label: "CFB", href: "/cfb" },
+    { label: "Odds", href: "/odds" },
   ];
 
   const pathname = usePathname();

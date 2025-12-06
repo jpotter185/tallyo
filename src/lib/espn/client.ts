@@ -5,6 +5,7 @@ const ENDPOINTS = {
   cfbstandings: "https://cdn.espn.com/core/college-football/standings?xhr=1",
   nflstats: "https://cdn.espn.com/core/nfl/game?xhr=1&gameId=",
   cfbstats: "https://cdn.espn.com/core/college-football/game?xhr=1&gameId=",
+  odds: `https://sports.core.api.espn.com/v2/sports/football/leagues/`,
 };
 
 export async function fetchEspnGameData(
@@ -48,5 +49,20 @@ export async function fetchStandings(sport: "nfl" | "cfb") {
     return await response.json();
   } catch (error) {
     console.error(error);
+  }
+}
+
+export async function getOdds(eventId: string, league: "nfl" | "cfb") {
+  const ODDS_API_ENDPOINT =
+    ENDPOINTS.odds +
+    `${
+      league === "nfl" ? "nfl" : "college-football"
+    }/events/${eventId}/competitions/${eventId}/odds`;
+  try {
+    const response = await fetch(ODDS_API_ENDPOINT);
+    return await response?.json();
+  } catch (error) {
+    console.error(error);
+    return undefined;
   }
 }
