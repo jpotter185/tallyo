@@ -50,8 +50,8 @@ const Dashboard: React.FC = () => {
 
   return (
     <div className="p-4">
-      {isCfbLoading ? <div>Loading CFB games... Hi Jason</div> : <></>}
-      {isNflLoading ? <div>Loading NFL games... Hi Jason</div> : <></>}
+      {isCfbLoading ? <div>Loading CFB games...</div> : <></>}
+      {isNflLoading ? <div>Loading NFL games...</div> : <></>}
       {!isCfbLoading &&
       !isNflLoading &&
       cfbGames.length <= 0 &&
