@@ -84,17 +84,17 @@ const LeagueOdds: React.FC<LeagueOddsProps> = ({
                       <div className="text-center">
                         {game.final && game.odds?.over && (
                           <div>
-                            TOTAL {game.odds.total} OVR {game.odds.overUnder}
+                            TOTAL {game.odds.total} OVR{game.odds.overUnder}
                           </div>
                         )}
                         {game.final && game.odds?.under && (
                           <div>
-                            TOTAL {game.odds.total} U {game.odds.overUnder}
+                            TOTAL {game.odds.total} U{game.odds.overUnder}
                           </div>
                         )}
                         {game.final && game.odds?.push && (
                           <div>
-                            TOTAL {game.odds.total} PUSH {game.odds.overUnder}
+                            TOTAL {game.odds.total} PUSH{game.odds.overUnder}
                           </div>
                         )}
                         {!game.final && (
