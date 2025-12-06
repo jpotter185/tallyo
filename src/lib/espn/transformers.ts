@@ -183,11 +183,11 @@ export async function getStatLeadersForGame(
 async function getOdds(eventId: string, league: "nfl" | "cfb") {
   const ODDS_API_ENDPOINT = `https://sports.core.api.espn.com/v2/sports/football/leagues/${
     league === "nfl" ? "nfl" : "college-football"
-  }/events/${eventId}/competitions/${eventId}/odds/58`;
+  }/events/${eventId}/competitions/${eventId}/odds`;
   try {
     const response = await fetch(ODDS_API_ENDPOINT);
     const data = await response?.json();
-    return data?.details;
+    return data?.items[0]?.details;
   } catch (error) {
     console.error(error);
     return undefined;
