@@ -1,7 +1,7 @@
 import { dateFormatter } from "@/lib/espn/transformers";
-import { ChevronDown } from "lucide-react";
 import Image from "next/image";
 import { Dispatch, SetStateAction } from "react";
+import CollapsableSection from "./CollapsableSection";
 interface LeagueOddsProps {
   leagueName: string;
   games: Game[];
@@ -19,18 +19,11 @@ const LeagueOdds: React.FC<LeagueOddsProps> = ({
 }) => {
   return (
     <div>
-      <button
-        className="flex w-full items-center justify-between p-2 text-2xl font-bold mb-4"
-        onClick={() => setIsLeagueOpen(!isLeagueOpen)}
-      >
-        <span>{leagueName} Odds</span>
-        <ChevronDown
-          textAnchor="end"
-          className={`w-5 h-5 text-gray-500 transition-transform duration-300 ${
-            isLeagueOpen ? "rotate-180" : ""
-          }`}
-        ></ChevronDown>
-      </button>
+      <CollapsableSection
+        title={`${leagueName} Odds`}
+        isOpen={isLeagueOpen}
+        onToggle={() => setIsLeagueOpen(!isLeagueOpen)}
+      />
       {isLeagueOpen ? (
         <div>
           {isLoading ? (

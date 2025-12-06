@@ -3,7 +3,7 @@ import { useState } from "react";
 import useSWR from "swr";
 import GameCard from "./GameCard/GameCard";
 import { fetchGameStats } from "@/lib/api/games";
-import { ChevronDown } from "lucide-react";
+import CollapsableSection from "./CollapsableSection";
 
 const Dashboard: React.FC = () => {
   const [isCfbOpen, setIsCfbOpen] = useState(false);
@@ -62,18 +62,11 @@ const Dashboard: React.FC = () => {
       )}
       {cfbGames.length > 0 && (
         <div>
-          <button
-            className="flex w-full items-center justify-between p-2 text-2xl font-bold mb-4"
-            onClick={() => setIsCfbOpen(!isCfbOpen)}
-          >
-            <span>Live CFB Games</span>
-            <ChevronDown
-              textAnchor="end"
-              className={`w-5 h-5 text-gray-500 transition-transform duration-300 ${
-                isCfbOpen ? "rotate-180" : ""
-              }`}
-            ></ChevronDown>
-          </button>
+          <CollapsableSection
+            title={"Live CFB Games"}
+            isOpen={isCfbOpen}
+            onToggle={() => setIsCfbOpen(!isCfbOpen)}
+          />
           {isCfbOpen && (
             <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 p-2">
               {cfbGames.map((game) => {
@@ -93,18 +86,11 @@ const Dashboard: React.FC = () => {
       )}
       {nflGames.length > 0 && (
         <div>
-          <button
-            className="flex w-full items-center justify-between p-2 text-2xl font-bold mb-4"
-            onClick={() => setIsNflOpen(!isNflOpen)}
-          >
-            <span>Live NFL Games</span>
-            <ChevronDown
-              textAnchor="end"
-              className={`w-5 h-5 text-gray-500 transition-transform duration-300 ${
-                isNflOpen ? "rotate-180" : ""
-              }`}
-            ></ChevronDown>
-          </button>
+          <CollapsableSection
+            title={"Live NFL Games"}
+            isOpen={isNflOpen}
+            onToggle={() => setIsNflOpen(!isNflOpen)}
+          />
           {isNflOpen && (
             <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 p-2">
               {nflGames.map((game) => {

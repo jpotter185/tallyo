@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { ChevronDown } from "lucide-react";
 import { HeaderConstants } from "../types/StandingsConstants";
 import Image from "next/image";
+import CollapsableSection from "./CollapsableSection";
 
 interface StandingsProps {
   standings: Standings[];
@@ -35,7 +35,7 @@ const Standings: React.FC<StandingsProps> = ({
       render: (team: Team) => (
         <div className="grid grid-cols-[auto_1fr_auto] items-center gap-1">
           <Image src={team.logo} alt="" width={24} height={24} />
-          {team.abbreviation}
+          {team.ranking ? team.ranking + team.abbreviation : team.abbreviation}
         </div>
       ),
       sticky: true,
@@ -94,36 +94,23 @@ const Standings: React.FC<StandingsProps> = ({
 
   return (
     <div className="divide-x divide-gray-500">
-      <div
-        className="p-2 text-xl font-bold flex w-full items-center justify-between p-2"
-        onClick={() => setIsStandingsOpen(!isStandingsOpen)}
-      >
-        {league ? `${league} Standings` : "Standings"}
-        <ChevronDown
-          textAnchor="end"
-          className={`w-5 h-5 text-gray-500 transition-transform duration-300 ${
-            isStandingsOpen ? "rotate-180" : ""
-          }`}
-        ></ChevronDown>
-      </div>
+      <CollapsableSection
+        title={`${league} Standings`}
+        isOpen={isStandingsOpen}
+        onToggle={() => setIsStandingsOpen(!isStandingsOpen)}
+      />
       {isStandingsOpen && isLoading && <div>Loading...</div>}
       {isStandingsOpen &&
         !isLoading &&
         standings.map((standing) => {
           return (
             <div key={standing.groupName}>
-              <div
-                className="flex w-full items-center justify-between p-2"
-                onClick={() => toggleOpenStandings(standing.groupName)}
-              >
-                <div className="p-1">{standing.groupName}</div>
-                <ChevronDown
-                  textAnchor="end"
-                  className={`w-5 h-5 text-gray-500 transition-transform duration-300 ${
-                    openStandings[standing.groupName] ? "rotate-180" : ""
-                  }`}
-                ></ChevronDown>
-              </div>
+              <CollapsableSection
+                title={standing.groupName}
+                isOpen={openStandings[standing.groupName]}
+                onToggle={() => toggleOpenStandings(standing.groupName)}
+              />
+
               {openStandings[standing.groupName] && (
                 <div className="overflow-x-auto">
                   <div className="min-w-[700px]">

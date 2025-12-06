@@ -2,8 +2,8 @@
 import GameCard from "./GameCard/GameCard";
 import Selector from "./Selector";
 import { Dispatch, SetStateAction } from "react";
-import { ChevronDown } from "lucide-react";
 import { fetchGameStats } from "@/lib/api/games";
+import CollapsableSection from "./CollapsableSection";
 
 interface LeagueProps {
   games: Game[];
@@ -40,18 +40,11 @@ const League: React.FC<LeagueProps> = ({
 }) => {
   return (
     <div>
-      <button
-        className="flex w-full items-center justify-between p-2 text-2xl font-bold mb-4"
-        onClick={() => setIsOpen(!isOpen)}
-      >
-        <span>{leagueName} Games</span>
-        <ChevronDown
-          textAnchor="end"
-          className={`w-5 h-5 text-gray-500 transition-transform duration-300 ${
-            isOpen ? "rotate-180" : ""
-          }`}
-        ></ChevronDown>
-      </button>
+      <CollapsableSection
+        title={`${leagueName} Games`}
+        isOpen={isOpen}
+        onToggle={() => setIsOpen(!isOpen)}
+      />
       {isOpen && (
         <div>
           <div className="px-3">

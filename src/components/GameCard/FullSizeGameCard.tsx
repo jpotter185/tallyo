@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { dateFormatter } from "@/lib/espn/transformers";
-import { ChevronDown } from "lucide-react";
 import FullsizeTeamCard from "../TeamCard/FullsizeTeamCard";
+import CollapsableSection from "../CollapsableSection";
 
 interface GameProps {
   game: Game;
@@ -98,21 +98,11 @@ const FullSizeGameCard: React.FC<GameProps> = ({
         </div>
       )}
       {scoringPlays && scoringPlays.length > 0 && (
-        <div
-          className="flex w-full items-center justify-between p-2"
-          onClick={(e) => {
-            e.stopPropagation();
-            openScoringPlaysForGame();
-          }}
-        >
-          <div className="p-1">Scoring Plays</div>
-          <ChevronDown
-            textAnchor="end"
-            className={`w-5 h-5 transition-transform duration-300 ${
-              isScoringPlaysOpen ? "rotate-180" : ""
-            }`}
-          ></ChevronDown>
-        </div>
+        <CollapsableSection
+          title={`Scoring Plays`}
+          isOpen={isScoringPlaysOpen}
+          onToggle={() => openScoringPlaysForGame()}
+        />
       )}
       {isScoringPlaysOpen && (
         <div className="border rounded overflow-hidden divide-y">
@@ -135,21 +125,11 @@ const FullSizeGameCard: React.FC<GameProps> = ({
         </div>
       )}
       {stats && stats.size > 0 && (
-        <div
-          className="flex w-full items-center justify-between p-2"
-          onClick={(e) => {
-            e.stopPropagation();
-            openStatsForGame();
-          }}
-        >
-          <div className="p-1">Stats</div>
-          <ChevronDown
-            textAnchor="end"
-            className={`w-5 h-5 transition-transform duration-300 ${
-              isStatsOpen ? "rotate-180" : ""
-            }`}
-          ></ChevronDown>
-        </div>
+        <CollapsableSection
+          title={`Stats`}
+          isOpen={isStatsOpen}
+          onToggle={() => openStatsForGame()}
+        />
       )}
       {isStatsOpen && stats && (
         <div className="border rounded overflow-hidden divide-y">
