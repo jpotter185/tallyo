@@ -24,15 +24,15 @@ const LeagueOdds: React.FC<LeagueOddsProps> = ({
         onToggle={() => setIsLeagueOpen(!isLeagueOpen)}
       />
       {isLeagueOpen ? (
-        <div>
+        <div className="px-3">
           {isLoading ? (
             <div>Loading {leagueName} games...</div>
           ) : (
-            <div>
+            <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 p-2">
               {games.map((game) => (
                 <div
                   key={game.id}
-                  className="border border-gray-300 dark:border-gray-600 rounded-xl shadow-md bg-neutral-300 dark:bg-neutral-500 p-4 mb-4"
+                  className="border border-gray-300 dark:border-gray-500 p-5 rounded-lg shadow-lg bg-neutral-300 dark:bg-neutral-500"
                 >
                   <div className="grid grid-cols-3 items-center">
                     <div className="flex flex-col items-start gap-2">
