@@ -1,4 +1,4 @@
-import EspnService from "@/lib/espn/EspnService";
+import EspnService from "@/lib/espn/espnService";
 import { NextResponse } from "next/server";
 
 export async function GET(request: Request) {
