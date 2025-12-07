@@ -1,10 +1,9 @@
-import { dateFormatter } from "@/lib/espn/transformers";
+import { dateFormatter } from "@/lib/espn/enums/dateFormatter";
 import CompactTeamCard from "../TeamCard/CompactTeamCard";
 
 interface GameCompactProps {
   game: Game;
 }
-
 const CompactGameCard: React.FC<GameCompactProps> = ({ game }) => {
   return (
     <div>

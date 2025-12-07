@@ -1,7 +1,8 @@
-import { getCfbGames, getNflGames } from "@/lib/espn/espnService";
+import EspnService from "@/lib/espn/EspnService";
 import { NextResponse } from "next/server";
 
 export async function GET(request: Request) {
+  const espnService = new EspnService();
   const { searchParams } = new URL(request.url);
   const league = searchParams.get("league");
   if (league !== "nfl" && league !== "cfb") {
@@ -9,12 +10,7 @@ export async function GET(request: Request) {
   }
   const week = searchParams.get("week") || undefined;
   const scoreboardGroupId = searchParams.get("scoreboardGroupId") || undefined;
-  let games;
-  if (league === "nfl") {
-    games = await getNflGames(week);
-  }
-  if (league === "cfb") {
-    games = await getCfbGames(week, scoreboardGroupId);
-  }
-  return NextResponse.json(games);
+  const gameData = await espnService.getGames(league, week, scoreboardGroupId);
+
+  return NextResponse.json(gameData);
 }

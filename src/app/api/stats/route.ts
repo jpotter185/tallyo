@@ -1,24 +1,18 @@
-import { getCfbStatsForGame, getNflStatsForGame } from "@/lib/espn/espnService";
+import EspnService from "@/lib/espn/EspnService";
 import { NextResponse } from "next/server";
 
 export async function GET(request: Request) {
+  const espnService = new EspnService();
   const { searchParams } = new URL(request.url);
   const league = searchParams.get("league");
   if (league !== "nfl" && league !== "cfb") {
     return new Response("Bad request: Invalid league", { status: 400 });
   }
   const gameId = searchParams.get("gameId") || "";
-  if (league === "nfl") {
-    const { statMap, scoringPlays } = await getNflStatsForGame(gameId);
-    return NextResponse.json({
-      stats: Array.from(statMap.entries()),
-      scoringPlays: scoringPlays,
-    });
-  } else if (league === "cfb") {
-    const { statMap, scoringPlays } = await getCfbStatsForGame(gameId);
-    return NextResponse.json({
-      stats: Array.from(statMap.entries()),
-      scoringPlays: scoringPlays,
-    });
-  }
+  const { statMap, scoringPlays } = await espnService.getStats(gameId, league);
+
+  return NextResponse.json({
+    stats: Array.from(statMap.entries()),
+    scoringPlays: scoringPlays,
+  });
 }

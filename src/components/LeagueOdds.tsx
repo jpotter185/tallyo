@@ -1,7 +1,7 @@
-import { dateFormatter } from "@/lib/espn/transformers";
 import Image from "next/image";
 import { Dispatch, SetStateAction } from "react";
 import CollapsableSection from "./CollapsableSection";
+import { dateFormatter } from "@/lib/espn/enums/dateFormatter";
 interface LeagueOddsProps {
   leagueName: string;
   games: Game[];
@@ -9,7 +9,6 @@ interface LeagueOddsProps {
   isLeagueOpen: boolean;
   setIsLeagueOpen: Dispatch<SetStateAction<boolean>>;
 }
-
 const LeagueOdds: React.FC<LeagueOddsProps> = ({
   leagueName,
   games,

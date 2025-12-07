@@ -1,8 +1,7 @@
 import Link from "next/link";
-import { dateFormatter } from "@/lib/espn/transformers";
 import FullsizeTeamCard from "../TeamCard/FullsizeTeamCard";
 import CollapsableSection from "../CollapsableSection";
-
+import { dateFormatter } from "@/lib/espn/enums/dateFormatter";
 interface GameProps {
   game: Game;
   stats: Map<string, Stat> | undefined;

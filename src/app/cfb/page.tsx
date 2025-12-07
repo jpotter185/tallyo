@@ -1,13 +1,13 @@
 "use client";
 import { useEffect, useState } from "react";
 import League from "@/components/League";
-import { cfbGroupIdMapping } from "@/lib/espn/transformers";
 import Standings from "@/components/Standings";
 import useSWR from "swr";
 import { useCfbState } from "../../components/hooks/useCfbState";
 import { fetcher } from "@/lib/api/fetcher";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { cfbGroupIdMapping } from "@/lib/espn/enums/cfbScoreboardGroupIds";
 
 export default function Cfb() {
   const [isContactOpen, setIsContactOpen] = useState<boolean>(false);

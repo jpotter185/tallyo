@@ -1,126 +1,122 @@
-import { fetchEspnGameData, fetchStandings, getOdds } from "./client";
-import {
-  defaultCfbGroupId,
-  getCleanedOdds,
-  getGamesFromJson,
-  getStandingsFromJson,
-  getStatLeadersForGame,
-} from "./transformers";
+import GamesService from "../service/GamesService";
+import OddsService from "../service/OddsService";
+import StandingsService from "../service/StandingsService";
+import StatsService from "../service/StatsService";
+import { ENDPOINTS } from "./enums/espnEndpoints";
+import getGamesFromJson from "./mappers/gameMapper";
+import getCleanedOdds from "./mappers/oddsMapper";
+import getStandings from "./mappers/standingsMapper";
+import mapStats from "./mappers/statsMapper";
 
-export async function getCfbGames(
-  week: string | undefined,
-  scoreboardGroup: string | undefined,
-) {
-  let scoreboardGroupId = defaultCfbGroupId;
-  if (scoreboardGroup) {
-    scoreboardGroupId = scoreboardGroup;
+export default class EspnService
+  implements GamesService, StandingsService, StatsService, OddsService
+{
+  async getWeek(league: "nfl" | "cfb"): Promise<string> {
+    return (await this.getGames(league)).dataWeek;
   }
-  const data = await fetchEspnGameData("cfb", week, scoreboardGroupId);
-  if (data) {
-    const dataWeek = data.week.number;
-    let returnedScoreboardGroupId = scoreboardGroupId;
-    if (data.groups) {
-      returnedScoreboardGroupId = data.groups[0];
+
+  async getGames(
+    league: "nfl" | "cfb",
+    week?: string,
+    scoreboardGroupId?: string,
+  ): Promise<{
+    games: Game[];
+    dataWeek: string;
+    scoreboardGroupId: string | undefined;
+  }> {
+    const url = new URL(ENDPOINTS[league]);
+    if (week) url.searchParams.set("week", week);
+    if (scoreboardGroupId && scoreboardGroupId !== "-1")
+      url.searchParams.set("groups", String(scoreboardGroupId));
+
+    try {
+      const response = await fetch(url.toString(), { cache: "no-store" });
+      const data = await response.json();
+      const games = await getGamesFromJson(data, league);
+
+      for (const game of games) {
+        const oddsObject: Odds | undefined = await this.getOddsForGame(game);
+        if (oddsObject) {
+          game.odds = oddsObject;
+        }
+      }
+      const dataWeek = data.week.number;
+      let returnedScoreboardGroup = scoreboardGroupId;
+      if (league === "cfb" && data.groups) {
+        returnedScoreboardGroup = data.groups[0];
+      }
+      return {
+        games,
+        dataWeek,
+        scoreboardGroupId: returnedScoreboardGroup,
+      };
+    } catch (error) {
+      console.error(error);
+      return {
+        games: [],
+        dataWeek: week || "",
+        scoreboardGroupId: scoreboardGroupId,
+      };
     }
-    const games = await getGamesFromJson(data, "cfb");
-    return { games, dataWeek, scoreboardGroupId: returnedScoreboardGroupId };
-  } else {
-    return {
-      games: [],
-      dataWeek: week,
-      scoreboardGroupId: scoreboardGroupId,
-    };
   }
-}
-
-export async function getNflGames(week: string | undefined) {
-  const data = await fetchEspnGameData("nfl", week);
-  if (data) {
-    const dataWeek = data.week.number;
-    const games = await getGamesFromJson(data, "nfl");
-    return { games, dataWeek };
-  } else {
-    return {
-      games: [],
-      dataWeek: week,
-    };
+  async getStandings(league: "nfl" | "cfb"): Promise<Standings[]> {
+    try {
+      const response = await fetch(ENDPOINTS[`${league}standings`]);
+      const data = await response.json();
+      return getStandings(data);
+    } catch (error) {
+      console.error(error);
+      return [];
+    }
   }
-}
-
-export async function getCurrentNflWeek() {
-  const data = await fetchEspnGameData("nfl");
-  if (data) {
-    const dataWeek = data?.week?.number;
-    return dataWeek;
-  } else {
-    return "";
+  async getStats(
+    gameId: string,
+    league: "nfl" | "cfb",
+  ): Promise<{
+    statMap: Map<string, Stat>;
+    scoringPlays: ScoringPlay[];
+  }> {
+    if (gameId) {
+      const response = await fetch(ENDPOINTS[`${league}stats`] + gameId);
+      const responseJson = await response.json();
+      const leaders = responseJson.gamepackageJSON.leaders;
+      const scoringPlays = responseJson.gamepackageJSON.scoringPlays;
+      return mapStats(leaders, scoringPlays);
+    } else {
+      return { statMap: new Map(), scoringPlays: [] };
+    }
   }
-}
-
-export async function getCurrentCfbWeek() {
-  const data = await fetchEspnGameData("cfb");
-  if (data) {
-    const dataWeek = data?.week?.number;
-    return dataWeek;
-  } else {
-    return "";
+  async getOdds(
+    league: "nfl" | "cfb",
+    gameId: string,
+  ): Promise<Odds | undefined> {
+    const ODDS_API_ENDPOINT =
+      ENDPOINTS.odds +
+      `${
+        league === "nfl" ? "nfl" : "college-football"
+      }/events/${gameId}/competitions/${gameId}/odds`;
+    try {
+      const response = await fetch(ODDS_API_ENDPOINT);
+      const data = await response?.json();
+      return getCleanedOdds(gameId, data);
+    } catch (error) {
+      console.error(error);
+      return undefined;
+    }
   }
-}
-
-export async function getNflStandings() {
-  const data = await fetchStandings("nfl");
-
-  if (data) {
-    const standings = getStandingsFromJson(data);
-    return standings;
-  } else {
-    return [];
-  }
-}
-
-export async function getCfbStandings() {
-  const data = await fetchStandings("cfb");
-
-  if (data) {
-    const standings = getStandingsFromJson(data);
-    return standings;
-  } else {
-    return [];
-  }
-}
-
-export async function getNflStatsForGame(gameId: string) {
-  return await getStatLeadersForGame("nfl", gameId);
-}
-
-export async function getCfbStatsForGame(gameId: string) {
-  return await getStatLeadersForGame("cfb", gameId);
-}
-
-export async function getOddsForGameId(league: "nfl" | "cfb", gameId: string) {
-  const oddsJson = await getOdds(gameId, league);
-  if (oddsJson) {
-    const odds: Odds = getCleanedOdds(gameId, oddsJson);
-    return odds;
-  }
-  return undefined;
-}
-
-export async function getOddsForGameWithGameObject(
-  league: "nfl" | "cfb",
-  game: Game,
-): Promise<Odds | undefined> {
-  const oddsJson = await getOdds(game.id, league);
-  if (oddsJson) {
-    const odds: Odds = getCleanedOdds(
-      game.id,
-      oddsJson,
-      game.final,
-      game.homeScore,
-      game.awayScore,
-    );
-    return odds;
-  } else {
-    return undefined;
+  async getOddsForGame(game: Game): Promise<Odds | undefined> {
+    const ODDS_API_ENDPOINT =
+      ENDPOINTS.odds +
+      `${
+        game.league === "nfl" ? "nfl" : "college-football"
+      }/events/${game.id}/competitions/${game.id}/odds`;
+    try {
+      const response = await fetch(ODDS_API_ENDPOINT);
+      const data = await response?.json();
+      return getCleanedOdds(game.id, data, game);
+    } catch (error) {
+      console.error(error);
+      return undefined;
+    }
   }
 }
