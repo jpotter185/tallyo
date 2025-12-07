@@ -77,7 +77,9 @@ export default class EspnService
     scoringPlays: ScoringPlay[];
   }> {
     if (gameId) {
-      const response = await fetch(ENDPOINTS[`${league}stats`] + gameId);
+      const response = await fetch(ENDPOINTS[`${league}stats`] + gameId, {
+        cache: "no-store",
+      });
       const responseJson = await response.json();
       const leaders = responseJson.gamepackageJSON.leaders;
       const scoringPlays = responseJson.gamepackageJSON.scoringPlays;

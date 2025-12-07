@@ -2,7 +2,6 @@
 import GameCard from "./GameCard/GameCard";
 import Selector from "./Selector";
 import { Dispatch, SetStateAction } from "react";
-import { fetchGameStats } from "@/lib/api/games";
 import CollapsableSection from "./CollapsableSection";
 
 interface LeagueProps {
@@ -75,7 +74,6 @@ const League: React.FC<LeagueProps> = ({
                       game={game}
                       isOpen={!!openGames[game.id]}
                       toggleOpenGame={() => toggleOpenGame(game.id)}
-                      getStatsForGame={fetchGameStats}
                     />
                   );
                 })}

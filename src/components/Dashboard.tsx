@@ -2,7 +2,6 @@ import { fetcher } from "@/lib/api/fetcher";
 import { useState } from "react";
 import useSWR from "swr";
 import GameCard from "./GameCard/GameCard";
-import { fetchGameStats } from "@/lib/api/games";
 import CollapsableSection from "./CollapsableSection";
 
 const Dashboard: React.FC = () => {
@@ -76,7 +75,6 @@ const Dashboard: React.FC = () => {
                     game={game}
                     isOpen={!!openGames[game.id]}
                     toggleOpenGame={() => toggleGame(game.id)}
-                    getStatsForGame={fetchGameStats}
                   />
                 );
               })}
@@ -100,7 +98,6 @@ const Dashboard: React.FC = () => {
                     game={game}
                     isOpen={!!openGames[game.id]}
                     toggleOpenGame={() => toggleGame(game.id)}
-                    getStatsForGame={fetchGameStats}
                   />
                 );
               })}

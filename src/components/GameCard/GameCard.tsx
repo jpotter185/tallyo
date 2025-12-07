@@ -2,10 +2,6 @@
 
 interface GameProps {
   game: Game;
-  getStatsForGame: (
-    league: "nfl" | "cfb",
-    gameId: string,
-  ) => Promise<{ stats: Map<string, Stat>; scoringPlays: ScoringPlay[] }>;
   isOpen: boolean;
   toggleOpenGame: () => void;
 }
@@ -13,7 +9,8 @@ interface GameProps {
 import FullsizeGameCard from "./FullSizeGameCard";
 import CompactGameCard from "./CompactGameCard";
 import { useState } from "react";
-import { useGameStats } from "../hooks/useGameStats";
+import useSWR from "swr";
+import { fetcher } from "@/lib/api/fetcher";
 const GameCard: React.FC<GameProps> = ({ game, isOpen, toggleOpenGame }) => {
   const [openStatsForGame, setOpenStatsForGame] = useState<{
     [id: string]: boolean;
@@ -29,7 +26,15 @@ const GameCard: React.FC<GameProps> = ({ game, isOpen, toggleOpenGame }) => {
   const toggleOpenStatsForGame = (id: string) => {
     setOpenStatsForGame((prev) => ({ ...prev, [id]: !prev[id] }));
   };
-  const { data } = useGameStats(game.league, game.id, isOpen);
+  const { data: data } = useSWR(
+    `/api/stats?league=${game.league}&gameId=${game.id}`,
+    fetcher,
+    { refreshInterval: 10000 },
+  );
+  const formattedStats: Map<string, Stat> | undefined = data?.stats
+    ? new Map(data.stats)
+    : undefined;
+
   return (
     <div
       className={`border border-gray-300 dark:border-gray-500 p-5 rounded-lg shadow-lg bg-neutral-300 dark:bg-neutral-500 transition-transform duration-300 ${
@@ -40,7 +45,7 @@ const GameCard: React.FC<GameProps> = ({ game, isOpen, toggleOpenGame }) => {
       {isOpen ? (
         <FullsizeGameCard
           game={game}
-          stats={data?.stats}
+          stats={formattedStats}
           scoringPlays={data?.scoringPlays}
           openScoringPlaysForGame={() => toggleOpenScoringPlays(game.id)}
           isScoringPlaysOpen={!!openScoringPlaysForGame[game.id]}

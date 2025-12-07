@@ -10,7 +10,6 @@ export async function GET(request: Request) {
   }
   const gameId = searchParams.get("gameId") || "";
   const { statMap, scoringPlays } = await espnService.getStats(gameId, league);
-
   return NextResponse.json({
     stats: Array.from(statMap.entries()),
     scoringPlays: scoringPlays,
