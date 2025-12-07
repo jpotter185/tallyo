@@ -8,8 +8,9 @@ interface TeamCardProps {
   timeouts?: number;
   league: string;
   shortPeriod?: string;
-  homeTeam: boolean;
+  homeTeam: boolean; // false = away
 }
+
 const FullsizeTeamCard: React.FC<TeamCardProps> = ({
   team,
   score,
@@ -20,36 +21,30 @@ const FullsizeTeamCard: React.FC<TeamCardProps> = ({
   shortPeriod,
   homeTeam,
 }) => {
+  const hasPossession = shortPeriod !== "Final" && possessionTeamId === team.id;
+
   return (
-    <div className="grid grid-cols-2 place-items-center items-center justify-center p-2">
-      {homeTeam && <div>{score}</div>}
-      {homeTeam && shortPeriod !== "Final" && possessionTeamId === team.id && (
-        <svg
-          width="20"
-          height="20"
-          viewBox="0 0 120 50"
-          xmlns="http://www.w3.org/2000/svg"
-          className="inline-block px-1 text-base"
-        >
-          <polygon points="10,25 60,5 110,25 60,45" fill="currentColor" />
-        </svg>
-      )}
-      <div className="flex flex-col">
-        {team.logo && (
-          <Image
-            src={team.logo}
-            alt=""
-            width={24}
-            height={24}
-            className="pointer-events-none"
-          />
-        )}
+    <div
+      className={
+        !homeTeam
+          ? "flex justify-between items-center gap-2" // inner-edge to the LEFT
+          : "flex justify-between items-center gap-2 flex-row-reverse" // inner-edge to the RIGHT
+      }
+    >
+      {/* Team info (always on outer edge) */}
+      <div className="flex flex-col items-center text-center">
+        {team.logo && <Image src={team.logo} alt="" width={24} height={24} />}
+
         <div className="text-nowrap">
-          {team.ranking ? team.ranking + team.abbreviation : team.abbreviation}
+          {team.ranking
+            ? `${team.ranking}${team.abbreviation}`
+            : team.abbreviation}
         </div>
+
         <div className="text-xs">{team.record}</div>
+
         {timeouts && league === "nfl" && (
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-1 mt-1">
             {[...Array(3)].map((_, i) => (
               <div
                 key={i}
@@ -61,29 +56,24 @@ const FullsizeTeamCard: React.FC<TeamCardProps> = ({
           </div>
         )}
       </div>
-      <div
-        className={` ${
-          winner && winner === team.id
-            ? "font-extrabold"
-            : winner
-              ? "font-thin"
-              : ""
-        }`}
-      >
-        {!homeTeam && <div>{score}</div>}
-        {!homeTeam &&
-          shortPeriod !== "Final" &&
-          possessionTeamId === team.id && (
-            <svg
-              width="20"
-              height="20"
-              viewBox="0 0 120 50"
-              xmlns="http://www.w3.org/2000/svg"
-              className="inline-block px-1 text-base"
-            >
-              <polygon points="10,25 60,5 110,25 60,45" fill="currentColor" />
-            </svg>
-          )}
+
+      {/* INNER EDGE SCORE + POSSESSION */}
+      <div className="flex items-center gap-1 p-2">
+        {/* possession (left of score for home, right for away due to flex reversing) */}
+
+        {hasPossession && (
+          <svg width="18" height="18" viewBox="0 0 120 50">
+            <polygon points="10,25 60,5 110,25 60,45" fill="currentColor" />
+          </svg>
+        )}
+        {/* score */}
+        <span
+          className={`p-2 ${
+            winner === team.id ? "font-extrabold" : winner ? "font-thin" : ""
+          }`}
+        >
+          {score}
+        </span>
       </div>
     </div>
   );
