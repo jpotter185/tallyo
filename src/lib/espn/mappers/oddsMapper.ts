@@ -3,8 +3,9 @@ export default function getCleanedOdds(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   oddsJson: any,
   game?: Game,
-): Odds {
+): Odds | undefined {
   const oddsJsonEntry = oddsJson.items[0];
+  if (!oddsJsonEntry) return undefined;
   const cleanedOdds: Odds = {
     eventId: eventId,
     spreadText: oddsJsonEntry.details,

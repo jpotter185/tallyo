@@ -1,8 +1,7 @@
-import { Dispatch, SetStateAction } from "react";
 interface SelectorProps {
   data: string[];
   currentValue: string;
-  setCurrentValue: Dispatch<SetStateAction<string>>;
+  setCurrentValue: (str: string) => void;
   displayString?: string | undefined;
   displayMap?: Map<string, string> | undefined;
 }

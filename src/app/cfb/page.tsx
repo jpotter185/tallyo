@@ -52,7 +52,7 @@ export default function Cfb() {
           setIsOpen={cfb.setIsOpen}
           week={cfb.week}
           setWeek={cfb.setWeek}
-          numberOfWeeks={16}
+          numberOfWeeks={19}
           scoreboardGroups={Array.from(cfbGroupIdMapping.keys())}
           currentScoreboardGroup={cfb.scoreboardGroup}
           setCurrentScoreboardGroup={cfb.setScoreboardGroup}

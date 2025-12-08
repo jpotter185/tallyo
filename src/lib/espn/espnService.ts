@@ -25,7 +25,13 @@ export default class EspnService
     scoreboardGroupId: string | undefined;
   }> {
     const url = new URL(ENDPOINTS[league]);
-    if (week) url.searchParams.set("week", week);
+    if (week && week?.indexOf("BOWLS") > -1) {
+      url.searchParams.set("week", "1");
+      url.searchParams.set("seasontype", "3");
+    } else if (week && week?.indexOf("CFP") > -1) {
+      url.searchParams.set("week", "999");
+      url.searchParams.set("seasontype", "3");
+    } else if (week) url.searchParams.set("week", week);
     if (scoreboardGroupId && scoreboardGroupId !== "-1")
       url.searchParams.set("groups", String(scoreboardGroupId));
 

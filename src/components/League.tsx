@@ -1,8 +1,12 @@
 "use client";
 import GameCard from "./GameCard/GameCard";
 import Selector from "./Selector";
-import { Dispatch, SetStateAction } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import CollapsableSection from "./CollapsableSection";
+import {
+  cfbWeeksList,
+  cfbWeeksMap,
+} from "@/lib/espn/enums/cfbScoreboardGroupIds";
 
 interface LeagueProps {
   games: Game[];
@@ -37,6 +41,11 @@ const League: React.FC<LeagueProps> = ({
   toggleOpenGame,
   isLoading,
 }) => {
+  const [displayWeek, setDisplayWeek] = useState(week);
+  const setCfbWeek = (week: string) => {
+    setWeek(cfbWeeksMap.get(week) || "");
+    setDisplayWeek(week);
+  };
   return (
     <div>
       <CollapsableSection
@@ -47,22 +56,36 @@ const League: React.FC<LeagueProps> = ({
       {isOpen && (
         <div>
           <div className="px-3">
+            {leagueName === "CFB" &&
+              displayWeek != "Bowls" &&
+              displayWeek != "CFP" && (
+                <Selector
+                  currentValue={currentScoreboardGroup}
+                  data={scoreboardGroups}
+                  setCurrentValue={(value: string) =>
+                    setCurrentScoreboardGroup(value)
+                  }
+                  displayMap={displayMap}
+                ></Selector>
+              )}
             {leagueName === "CFB" && (
               <Selector
-                currentValue={currentScoreboardGroup}
-                data={scoreboardGroups}
-                setCurrentValue={setCurrentScoreboardGroup}
-                displayMap={displayMap}
+                currentValue={displayWeek}
+                data={cfbWeeksList}
+                setCurrentValue={setCfbWeek}
+                displayString={undefined}
               ></Selector>
             )}
-            <Selector
-              currentValue={week}
-              data={Array.from({ length: numberOfWeeks }, (_, i) =>
-                String(i + 1),
-              )}
-              setCurrentValue={setWeek}
-              displayString="Week"
-            ></Selector>
+            {leagueName === "NFL" && (
+              <Selector
+                currentValue={week}
+                data={Array.from({ length: numberOfWeeks }, (_, i) =>
+                  String(i + 1),
+                )}
+                setCurrentValue={setWeek}
+                displayString="Week"
+              ></Selector>
+            )}
             {isLoading ? (
               <div>Loading...</div>
             ) : games && games.length > 0 ? (
