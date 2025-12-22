@@ -23,6 +23,10 @@ interface LeagueProps {
   openGames: Record<string, boolean>;
   toggleOpenGame: (id: string) => void;
   isLoading: boolean;
+  seasonType: string;
+  setSeasonType: Dispatch<SetStateAction<string>>;
+  year: string;
+  setYear: Dispatch<SetStateAction<string>>;
 }
 
 const League: React.FC<LeagueProps> = ({
@@ -40,6 +44,10 @@ const League: React.FC<LeagueProps> = ({
   openGames,
   toggleOpenGame,
   isLoading,
+  seasonType,
+  setSeasonType,
+  year,
+  setYear,
 }) => {
   const [displayWeek, setDisplayWeek] = useState(week);
   const setCfbWeek = (week: string) => {
@@ -68,6 +76,36 @@ const League: React.FC<LeagueProps> = ({
                   displayMap={displayMap}
                 ></Selector>
               )}
+
+            <Selector
+              currentValue={year}
+              data={[
+                "2025",
+                "2024",
+                "2023",
+                "2022",
+                "2021",
+                "2020",
+                "2019",
+                "2018",
+                "2017",
+                "2016",
+                "2015",
+              ]}
+              setCurrentValue={(value: string) => setYear(value)}
+            ></Selector>
+            <Selector
+              currentValue={seasonType}
+              data={["1", "2", "3"]}
+              setCurrentValue={(value: string) => setSeasonType(value)}
+              displayMap={
+                new Map<string, string>([
+                  ["1", "Preseason"],
+                  ["2", "Regular Season"],
+                  ["3", "Postseason"],
+                ])
+              }
+            ></Selector>
             {leagueName === "CFB" && (
               <Selector
                 currentValue={displayWeek}

@@ -19,17 +19,10 @@ export default function Cfb() {
     fetcher,
   );
 
-  const { data: cfbWeek } = useSWR("/api/week?league=cfb", fetcher);
-  useEffect(() => {
-    if (cfbWeek) {
-      cfb.setWeek(cfbWeek.toString());
-    }
-  }, [cfbWeek]);
-
   const { data: cfbData, isLoading: isCfbLoading } = useSWR(
     `/api/games?league=cfb${
       cfb.week ? `&week=${cfb.week}` : ""
-    }&scoreboardGroupId=${cfb.scoreboardGroup}`,
+    }&scoreboardGroupId=${cfb.scoreboardGroup}&year=${cfb.year}${cfb.seasonType ? `&seasontype=${cfb.seasonType}` : ""}`,
     fetcher,
     { refreshInterval: 10000 },
   );
@@ -60,6 +53,10 @@ export default function Cfb() {
           openGames={cfb.openGames}
           toggleOpenGame={cfb.toggleGame}
           isLoading={isCfbLoading}
+          seasonType={cfb.seasonType}
+          setSeasonType={cfb.setSeasonType}
+          year={cfb.year}
+          setYear={cfb.setYear}
         />
       </div>
       <Standings

@@ -9,8 +9,16 @@ export async function GET(request: Request) {
     return new Response("Bad request: Invalid league", { status: 400 });
   }
   const week = searchParams.get("week") || undefined;
+  const seasonType = searchParams.get("seasonType") || undefined;
   const scoreboardGroupId = searchParams.get("scoreboardGroupId") || undefined;
-  const gameData = await espnService.getGames(league, week, scoreboardGroupId);
+  const year = searchParams.get("year") || new Date().getFullYear().toString();
+  const gameData = await espnService.getGames(
+    league,
+    week,
+    seasonType,
+    scoreboardGroupId,
+    year,
+  );
 
   return NextResponse.json(gameData);
 }
