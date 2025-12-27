@@ -4,7 +4,8 @@ import { NextResponse } from "next/server";
 export async function GET(request: Request) {
   const espnService = new EspnService();
   const { searchParams } = new URL(request.url);
-  const league = searchParams.get("league");
+  const leagueParam = searchParams.get("league");
+  const league = leagueParam === "NFL" || leagueParam === "nfl" ? "nfl" : "cfb";
   if (league !== "nfl" && league !== "cfb") {
     return new Response("Bad request: Invalid league", { status: 400 });
   }

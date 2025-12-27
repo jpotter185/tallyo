@@ -7,41 +7,30 @@ import { fetcher } from "@/lib/api/fetcher";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { useLeagueState } from "@/components/hooks/useLeagueState";
-import {
-  getWeekDateRange,
-  useCalendar,
-} from "@/components/context/CalendarContext";
 
 export default function Nfl() {
   const [isContactOpen, setIsContactOpen] = useState<boolean>(false);
 
   const nfl = useLeagueState();
-  const { nflCalendar } = useCalendar();
-
-  const dateRange =
-    nfl.week && nfl.seasonType
-      ? getWeekDateRange(nflCalendar, nfl.seasonType, nfl.week)
-      : null;
 
   const { data: nflStandings, isLoading: isNflStandingsLoading } = useSWR(
     "/api/standings?league=nfl",
-    fetcher,
+    fetcher
   );
 
   const { data: nflData, isLoading: isNflLoading } = useSWR(
-    dateRange
-      ? `/api/games?league=nfl&dates=${dateRange.startDate}-${dateRange.endDate}`
-      : `/api/games?league=nfl${nfl.week ? `&week=${nfl.week}` : ""}${nfl.seasonType ? `&seasonType=${nfl.seasonType}` : ""}${nfl.year ? `&year=${nfl.year}` : ""}`,
+    `/api/games?league=nfl${nfl.week ? `&week=${nfl.week}` : ""}${nfl.seasonType ? `&seasonType=${nfl.seasonType}` : ""}${nfl.year ? `&year=${nfl.year}` : ""}`,
     fetcher,
-    { refreshInterval: 10000 },
+    { refreshInterval: 10000 }
   );
-  const nflGames = nflData?.games ?? [];
+
+  const nflGames = nflData ?? [];
 
   useEffect(() => {
     if (!nfl.week && nflData?.dataWeek) {
       nfl.setWeek(nflData.dataWeek.toString());
     }
-  }, [nflData, nfl.week]);
+  }, [nflData, nfl]);
 
   return (
     <div className="bg-sky-50 dark:bg-neutral-800 border border-gray-500 divide-y divide-x divide-gray-500">

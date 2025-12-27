@@ -1,4 +1,3 @@
-// context/CalendarContext.tsx
 "use client";
 
 import { createContext, useContext, ReactNode } from "react";
@@ -9,10 +8,36 @@ interface CalendarContextType {
   nflCalendar: any[];
   cfbCalendar: any[];
   isLoading: boolean;
+  fetchCalendarForYear: (league: "nfl" | "cfb", year: number) => any[];
+}
+
+interface WeekEntry {
+  label: string;
+  alternateLabel: string;
+  detail: string;
+  value: string;
+  startDate: string;
+  endDate: string;
+}
+
+interface Calendar {
+  label: string;
+  value: string;
+  startDate: string;
+  endDate: string;
+  entries: WeekEntry[];
+}
+
+export interface WeekDetail {
+  seasonType: string;
+  week: string;
+  year: string;
+  startDate: string;
+  endDate: string;
 }
 
 const CalendarContext = createContext<CalendarContextType | undefined>(
-  undefined,
+  undefined
 );
 
 export function CalendarProvider({ children }: { children: ReactNode }) {
@@ -24,7 +49,7 @@ export function CalendarProvider({ children }: { children: ReactNode }) {
     {
       revalidateOnFocus: false,
       revalidateOnReconnect: false,
-    },
+    }
   );
 
   const { data: cfbData, isLoading: cfbLoading } = useSWR(
@@ -33,8 +58,17 @@ export function CalendarProvider({ children }: { children: ReactNode }) {
     {
       revalidateOnFocus: false,
       revalidateOnReconnect: false,
-    },
+    }
   );
+
+  const fetchCalendarForYear = (league: "nfl" | "cfb", year: number) => {
+    if (year === currentYear) {
+      return league === "nfl"
+        ? nflData?.calendar || []
+        : cfbData?.calendar || [];
+    }
+    return [];
+  };
 
   return (
     <CalendarContext.Provider
@@ -42,6 +76,7 @@ export function CalendarProvider({ children }: { children: ReactNode }) {
         nflCalendar: nflData?.calendar || [],
         cfbCalendar: cfbData?.calendar || [],
         isLoading: nflLoading || cfbLoading,
+        fetchCalendarForYear,
       }}
     >
       {children}
@@ -57,17 +92,16 @@ export function useCalendar() {
   return context;
 }
 
-// Helper function to get date range
 export function getWeekDateRange(
   calendar: any[],
   seasonType: string,
-  week: string,
+  week: string
 ) {
   const seasonCalendar = calendar.find((cal) => cal.value === seasonType);
   if (!seasonCalendar) return null;
 
   const weekEntry = seasonCalendar.entries?.find(
-    (entry: any) => entry.value === week,
+    (entry: any) => entry.value === week
   );
 
   return weekEntry
@@ -82,4 +116,35 @@ export function getWeekDateRange(
           .replace(/-/g, ""),
       }
     : null;
+}
+
+export function getWeekDetailForDate(
+  calendars: Calendar[],
+  date = new Date().toISOString()
+): WeekDetail {
+  const now = new Date(date).getTime();
+  for (const season of calendars) {
+    for (const week of season.entries) {
+      if (
+        new Date(week.startDate).getTime() <= now &&
+        new Date(week.endDate).getTime() > now
+      ) {
+        return {
+          seasonType: season.label,
+          year: new Date().getFullYear().toString(),
+          week: week.label,
+          startDate: new Date(week.startDate).toISOString(),
+          endDate: new Date(week.endDate).toISOString(),
+        };
+      }
+    }
+  }
+
+  return {
+    seasonType: "",
+    year: new Date().getFullYear().toString(),
+    week: "",
+    startDate: "",
+    endDate: "",
+  };
 }

@@ -5,6 +5,7 @@ interface TeamCardProps {
   score: string;
   winner?: string;
   possessionTeamId: string;
+  showScore: boolean;
 }
 
 const CompactTeamCard: React.FC<TeamCardProps> = ({
@@ -12,6 +13,7 @@ const CompactTeamCard: React.FC<TeamCardProps> = ({
   score,
   winner,
   possessionTeamId,
+  showScore,
 }) => {
   return (
     <div
@@ -46,7 +48,7 @@ const CompactTeamCard: React.FC<TeamCardProps> = ({
           </svg>
         )}
       </div>
-      <div>{score}</div>
+      <div>{showScore ? score : ""}</div>
     </div>
   );
 };

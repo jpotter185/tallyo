@@ -9,10 +9,13 @@ interface TeamCardProps {
   league: string;
   shortPeriod?: string;
   homeTeam: boolean; // false = away
+  showScore: boolean;
+  record: string;
 }
 
 const FullsizeTeamCard: React.FC<TeamCardProps> = ({
   team,
+  record,
   score,
   winner,
   possessionTeamId,
@@ -20,6 +23,7 @@ const FullsizeTeamCard: React.FC<TeamCardProps> = ({
   league,
   shortPeriod,
   homeTeam,
+  showScore,
 }) => {
   const hasPossession = shortPeriod !== "Final" && possessionTeamId === team.id;
 
@@ -41,7 +45,7 @@ const FullsizeTeamCard: React.FC<TeamCardProps> = ({
             : team.abbreviation}
         </div>
 
-        <div className="text-xs">{team.record}</div>
+        <div className="text-xs">{record}</div>
 
         {timeouts && league === "nfl" && (
           <div className="flex items-center gap-1 mt-1">
@@ -72,7 +76,7 @@ const FullsizeTeamCard: React.FC<TeamCardProps> = ({
             winner === team.id ? "font-extrabold" : winner ? "font-thin" : ""
           }`}
         >
-          {score}
+          {showScore ? score : ""}
         </span>
       </div>
     </div>
