@@ -14,38 +14,44 @@ const Dashboard: React.FC = () => {
   };
 
   const { data: cfbData, isLoading: isCfbLoading } = useSWR(
-    `/api/games?league=cfb`,
+    `/api/games/current?league=cfb`,
     fetcher,
     {
       refreshInterval: 10000,
     },
   );
-  const cfbGames: Game[] =
-    cfbData?.games
-      .filter(
-        (game: Game) =>
-          !game.winner && !(game.gameStatus === "STATUS_SCHEDULED"),
-      )
-      .sort((a: Game, b: Game) => {
-        return new Date(a.date).getTime() - new Date(b.date).getTime();
-      }) ?? [];
+  let cfbGames: Game[] = [];
+  if (cfbData) {
+    cfbGames =
+      cfbData
+        .filter(
+          (game: Game) =>
+            !game.winner && !(game.gameStatus === "STATUS_SCHEDULED"),
+        )
+        .sort((a: Game, b: Game) => {
+          return new Date(a.date).getTime() - new Date(b.date).getTime();
+        }) ?? [];
+  }
 
   const { data: nflData, isLoading: isNflLoading } = useSWR(
-    `/api/games?league=nfl`,
+    `/api/games/current?league=nfl`,
     fetcher,
     {
       refreshInterval: 10000,
     },
   );
-  const nflGames: Game[] =
-    nflData?.games
-      .filter(
-        (game: Game) =>
-          !game.winner && !(game.gameStatus === "STATUS_SCHEDULED"),
-      )
-      .sort((a: Game, b: Game) => {
-        return new Date(a.date).getTime() - new Date(b.date).getTime();
-      }) ?? [];
+  let nflGames: Game[] = [];
+  if (nflData) {
+    nflGames =
+      nflData
+        .filter(
+          (game: Game) =>
+            !game.winner && !(game.gameStatus === "STATUS_SCHEDULED"),
+        )
+        .sort((a: Game, b: Game) => {
+          return new Date(a.date).getTime() - new Date(b.date).getTime();
+        }) ?? [];
+  }
 
   return (
     <div className="p-4">

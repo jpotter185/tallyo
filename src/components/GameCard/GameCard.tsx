@@ -31,7 +31,7 @@ const GameCard: React.FC<GameProps> = ({ game, isOpen, toggleOpenGame }) => {
     fetcher,
     game.gameStatus !== "STATUS_FINAL" && game.gameStatus !== "STATUS_SCHEDULED"
       ? { refreshInterval: 10000 }
-      : undefined
+      : undefined,
   );
   const formattedStats: Map<string, Stat> | undefined = data?.stats
     ? new Map(data.stats)

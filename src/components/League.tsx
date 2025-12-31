@@ -1,12 +1,8 @@
 "use client";
 import GameCard from "./GameCard/GameCard";
 import Selector from "./Selector";
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction } from "react";
 import CollapsableSection from "./CollapsableSection";
-import {
-  cfbWeeksList,
-  cfbWeeksMap,
-} from "@/lib/espn/enums/cfbScoreboardGroupIds";
 
 interface LeagueProps {
   games: Game[];
@@ -14,12 +10,8 @@ interface LeagueProps {
   isOpen: boolean;
   setIsOpen: Dispatch<SetStateAction<boolean>>;
   week: string;
-  numberOfWeeks: number;
+  numberOfWeeks: Map<string, number>;
   setWeek: Dispatch<SetStateAction<string>>;
-  scoreboardGroups: string[];
-  currentScoreboardGroup: string;
-  setCurrentScoreboardGroup: Dispatch<SetStateAction<string>>;
-  displayMap?: Map<string, string>;
   openGames: Record<string, boolean>;
   toggleOpenGame: (id: string) => void;
   isLoading: boolean;
@@ -27,6 +19,7 @@ interface LeagueProps {
   setSeasonType: Dispatch<SetStateAction<string>>;
   year: string;
   setYear: Dispatch<SetStateAction<string>>;
+  seasonTypes: Map<string, string>;
 }
 
 const League: React.FC<LeagueProps> = ({
@@ -37,10 +30,6 @@ const League: React.FC<LeagueProps> = ({
   week,
   setWeek,
   numberOfWeeks,
-  scoreboardGroups,
-  currentScoreboardGroup,
-  setCurrentScoreboardGroup,
-  displayMap,
   openGames,
   toggleOpenGame,
   isLoading,
@@ -48,12 +37,8 @@ const League: React.FC<LeagueProps> = ({
   setSeasonType,
   year,
   setYear,
+  seasonTypes,
 }) => {
-  const [displayWeek, setDisplayWeek] = useState(week);
-  const setCfbWeek = (week: string) => {
-    setWeek(cfbWeeksMap.get(week) || "");
-    setDisplayWeek(week);
-  };
   return (
     <div>
       <CollapsableSection
@@ -64,19 +49,6 @@ const League: React.FC<LeagueProps> = ({
       {isOpen && (
         <div>
           <div className="px-3">
-            {leagueName === "CFB" &&
-              displayWeek != "Bowls" &&
-              displayWeek != "CFP" && (
-                <Selector
-                  currentValue={currentScoreboardGroup}
-                  data={scoreboardGroups}
-                  setCurrentValue={(value: string) =>
-                    setCurrentScoreboardGroup(value)
-                  }
-                  displayMap={displayMap}
-                ></Selector>
-              )}
-
             <Selector
               currentValue={year}
               data={[
@@ -96,34 +68,21 @@ const League: React.FC<LeagueProps> = ({
             ></Selector>
             <Selector
               currentValue={seasonType}
-              data={["1", "2", "3"]}
+              data={Array.from(seasonTypes.keys())}
               setCurrentValue={(value: string) => setSeasonType(value)}
-              displayMap={
-                new Map<string, string>([
-                  ["1", "Preseason"],
-                  ["2", "Regular Season"],
-                  ["3", "Postseason"],
-                ])
-              }
+              displayMap={seasonTypes}
             ></Selector>
-            {leagueName === "CFB" && (
-              <Selector
-                currentValue={displayWeek}
-                data={cfbWeeksList}
-                setCurrentValue={setCfbWeek}
-                displayString={undefined}
-              ></Selector>
-            )}
-            {leagueName === "NFL" && (
-              <Selector
-                currentValue={week}
-                data={Array.from({ length: numberOfWeeks }, (_, i) =>
-                  String(i + 1),
-                )}
-                setCurrentValue={setWeek}
-                displayString="Week"
-              ></Selector>
-            )}
+
+            <Selector
+              currentValue={week}
+              data={Array.from(
+                { length: numberOfWeeks.get(seasonType) || 18 },
+                (_, i) => String(i + 1),
+              )}
+              setCurrentValue={setWeek}
+              displayString="Week"
+            ></Selector>
+
             {isLoading ? (
               <div>Loading...</div>
             ) : games && games.length > 0 ? (

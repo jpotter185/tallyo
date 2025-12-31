@@ -26,12 +26,13 @@ const CompactGameCard: React.FC<GameCompactProps> = ({ game }) => {
         {game.gameStatus !== "STATUS_SCHEDULED" && (
           <div>{game.shortPeriod}</div>
         )}
-        {game.gameStatus === "STATUS_SCHEDULED" ||
-          (game.gameStatus === "STATUS_FINAL" && (
-            <div>{dateFormatter.format(new Date(game.isoDate))}</div>
-          ))}
-        {game.shortPeriod !== "Final" && <div>{game.channel}</div>}
+
         {game.headline && <div>{game.headline}</div>}
+        {(game.gameStatus === "STATUS_SCHEDULED" ||
+          game.gameStatus === "STATUS_FINAL") && (
+          <div>{dateFormatter.format(new Date(game.isoDate))}</div>
+        )}
+        {game.shortPeriod !== "Final" && <div>{game.channel}</div>}
       </div>
     </div>
   );

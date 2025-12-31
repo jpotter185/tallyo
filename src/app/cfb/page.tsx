@@ -11,6 +11,12 @@ import { cfbGroupIdMapping } from "@/lib/espn/enums/cfbScoreboardGroupIds";
 
 export default function Cfb() {
   const [isContactOpen, setIsContactOpen] = useState<boolean>(false);
+  const [contextInitialized, setContextInitialized] = useState<boolean>(false);
+
+  const cfbSeasonTypes = new Map<string, string>([
+    ["2", "Regular Season"],
+    ["3", "Postseason"],
+  ]);
 
   const cfb = useCfbState();
 
@@ -19,20 +25,52 @@ export default function Cfb() {
     fetcher,
   );
 
+  const { data: context, isLoading: isContextLoading } = useSWR<GameContext>(
+    `/api/context?league=cfb`,
+    fetcher,
+    {
+      revalidateOnFocus: false,
+      revalidateOnReconnect: false,
+      refreshInterval: 0,
+    },
+  );
+
+  useEffect(() => {
+    if (context && !contextInitialized) {
+      const { year, seasonType, week } = context;
+      console.log(context);
+      cfb.setSeasonType(seasonType);
+      cfb.setWeek(week);
+      cfb.setYear(year);
+      setContextInitialized(true);
+    }
+  }, [context, cfb, contextInitialized]);
+
+  useEffect(() => {
+    if (!cfb.seasonType || !context) return;
+
+    if (cfb.seasonType.toString() === context.seasonType.toString()) {
+      cfb.setWeek(context.week);
+      return;
+    }
+
+    // Otherwise use defaults for other season types
+    const defaultWeeks: Record<string, string> = {
+      "2": "1",
+      "3": "1",
+    };
+
+    cfb.setWeek(defaultWeeks[cfb.seasonType] || "1");
+  }, [cfb.seasonType, context]);
+
   const { data: cfbData, isLoading: isCfbLoading } = useSWR(
-    `/api/games?league=cfb${
-      cfb.week ? `&week=${cfb.week}` : ""
-    }&scoreboardGroupId=${cfb.scoreboardGroup}&year=${cfb.year}${cfb.seasonType ? `&seasontype=${cfb.seasonType}` : ""}`,
+    context
+      ? `/api/games?league=cfb&week=${cfb.week}&seasonType=${cfb.seasonType}&year=${cfb.year}`
+      : null,
     fetcher,
     { refreshInterval: 10000 },
   );
-  const cfbGames = cfbData?.games ?? [];
-
-  useEffect(() => {
-    if (!cfb.week && cfbData?.dataWeek) {
-      cfb.setWeek(cfbData.dataWeek.toString());
-    }
-  }, [cfbData, cfb.week]);
+  const cfbGames = cfbData ?? [];
 
   return (
     <div className="bg-sky-50 dark:bg-neutral-800 border border-gray-500 divide-y divide-x divide-gray-500">
@@ -45,11 +83,12 @@ export default function Cfb() {
           setIsOpen={cfb.setIsOpen}
           week={cfb.week}
           setWeek={cfb.setWeek}
-          numberOfWeeks={19}
-          scoreboardGroups={Array.from(cfbGroupIdMapping.keys())}
-          currentScoreboardGroup={cfb.scoreboardGroup}
-          setCurrentScoreboardGroup={cfb.setScoreboardGroup}
-          displayMap={cfbGroupIdMapping}
+          numberOfWeeks={
+            new Map<string, number>([
+              ["2", 15],
+              ["3", 1],
+            ])
+          }
           openGames={cfb.openGames}
           toggleOpenGame={cfb.toggleGame}
           isLoading={isCfbLoading}
@@ -57,6 +96,7 @@ export default function Cfb() {
           setSeasonType={cfb.setSeasonType}
           year={cfb.year}
           setYear={cfb.setYear}
+          seasonTypes={cfbSeasonTypes}
         />
       </div>
       <Standings

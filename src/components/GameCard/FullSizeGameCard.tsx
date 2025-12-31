@@ -148,13 +148,13 @@ const FullSizeGameCard: React.FC<GameProps> = ({
             } else {
               gameStatNameTracker.add(statName);
               let homeStat: Stat | undefined = stats.get(
-                `${statName}-${game.homeTeam.teamKey.teamId}`
+                `${statName}-${game.homeTeam.teamKey.teamId}`,
               );
               if (!homeStat) {
                 homeStat = defaultStat;
               }
               let awayStat: Stat | undefined = stats.get(
-                `${statName}-${game.awayTeam.teamKey.teamId}`
+                `${statName}-${game.awayTeam.teamKey.teamId}`,
               );
               if (!awayStat) {
                 awayStat = defaultStat;
@@ -183,11 +183,12 @@ const FullSizeGameCard: React.FC<GameProps> = ({
         </div>
       )}
       <div className="flex flex-col place-items-center items-center justify-center">
+        {game.headline && <div>{game.headline}</div>}
         <div>{game.odds?.spreadText}</div>
-        {game.gameStatus === "STATUS_SCHEDULED" ||
-          (game.gameStatus === "STATUS_FINAL" && (
-            <div>{dateFormatter.format(new Date(game.isoDate))}</div>
-          ))}
+        {(game.gameStatus === "STATUS_SCHEDULED" ||
+          game.gameStatus === "STATUS_FINAL") && (
+          <div>{dateFormatter.format(new Date(game.isoDate))}</div>
+        )}
         <div>{game.stadiumName}</div>
         <div>{game.location}</div>
         <div>

@@ -13,12 +13,18 @@ interface LeagueState {
   setYear: Dispatch<SetStateAction<string>>;
 }
 
-export function useLeagueState( ): LeagueState {
+interface LeagueStateInit {
+  week?: string;
+  seasonType?: string;
+  year?: string;
+}
+
+export function useLeagueState(init?: LeagueStateInit): LeagueState {
   const [isOpen, setIsOpen] = useState(false);
-  const [week, setWeek] = useState("17");
+  const [week, setWeek] = useState(init?.week ?? "");
   const [openGames, setOpenGames] = useState<Record<string, boolean>>({});
-  const [seasonType, setSeasonType] = useState("2");
-  const [year, setYear] = useState<string>("2025");
+  const [seasonType, setSeasonType] = useState(init?.seasonType ?? "");
+  const [year, setYear] = useState<string>(init?.year ?? "");
 
   const toggleGame = (id: string) => {
     setOpenGames((prev) => ({ ...prev, [id]: !prev[id] }));

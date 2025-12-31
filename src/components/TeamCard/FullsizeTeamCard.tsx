@@ -25,7 +25,9 @@ const FullsizeTeamCard: React.FC<TeamCardProps> = ({
   homeTeam,
   showScore,
 }) => {
-  const hasPossession = shortPeriod !== "Final" && possessionTeamId === team.id;
+  const hasPossession =
+    shortPeriod !== "Final" &&
+    `${possessionTeamId}` === `${team.teamKey.teamId}`;
 
   return (
     <div
@@ -73,7 +75,11 @@ const FullsizeTeamCard: React.FC<TeamCardProps> = ({
         {/* score */}
         <span
           className={`p-2 ${
-            winner === team.id ? "font-extrabold" : winner ? "font-thin" : ""
+            winner === team.teamKey.teamId.toString()
+              ? "font-extrabold"
+              : winner
+                ? "font-thin"
+                : ""
           }`}
         >
           {showScore ? score : ""}

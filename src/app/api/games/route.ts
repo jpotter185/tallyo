@@ -6,12 +6,12 @@ export async function GET(request: Request) {
   if (league !== "nfl" && league !== "cfb") {
     return new Response("Bad request: Invalid league", { status: 400 });
   }
-  const week = searchParams.get("week") || undefined;
-  const seasonType = searchParams.get("seasonType") || undefined;
-  const scoreboardGroupId = searchParams.get("scoreboardGroupId") || undefined;
+  const week = searchParams.get("week") || "";
+  const seasonType = searchParams.get("seasonType") || "";
   const year = searchParams.get("year") || new Date().getFullYear().toString();
+
   const games = await fetch(
-    `http://localhost:8080/api/v1/games?league=${league}&year=${year}&seasonType=${seasonType}&week=${week}`
+    `http://192.168.1.175:8080/api/v1/games?league=${league}&year=${year}&seasonType=${seasonType}&week=${week}`,
   );
   const body = await games.json();
   console.log(body);
