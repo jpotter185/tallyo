@@ -22,7 +22,7 @@ export default function Cfb() {
 
   const { data: cfbStandings, isLoading: isCfbStandingsLoading } = useSWR(
     "/api/standings?league=cfb",
-    fetcher,
+    fetcher
   );
 
   const { data: context, isLoading: isContextLoading } = useSWR<GameContext>(
@@ -32,13 +32,12 @@ export default function Cfb() {
       revalidateOnFocus: false,
       revalidateOnReconnect: false,
       refreshInterval: 0,
-    },
+    }
   );
 
   useEffect(() => {
     if (context && !contextInitialized) {
       const { year, seasonType, week } = context;
-      console.log(context);
       cfb.setSeasonType(seasonType);
       cfb.setWeek(week);
       cfb.setYear(year);
@@ -68,7 +67,7 @@ export default function Cfb() {
       ? `/api/games?league=cfb&week=${cfb.week}&seasonType=${cfb.seasonType}&year=${cfb.year}`
       : null,
     fetcher,
-    { refreshInterval: 10000 },
+    { refreshInterval: 10000 }
   );
   const cfbGames = cfbData ?? [];
 
