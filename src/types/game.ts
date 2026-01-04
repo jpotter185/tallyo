@@ -29,4 +29,6 @@ type Game = {
   homeWinPercentage?: string;
   awayWinPercentage?: string;
   final?: boolean;
+  homeRecordAtTimeOfGame: string;
+  awayRecordAtTimeOfGame: string;
 };

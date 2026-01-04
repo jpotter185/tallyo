@@ -8,5 +8,4 @@ export default interface GamesService {
     dataWeek: string;
     scoreboardGroupId: string | undefined;
   }>;
-  getWeek(league: "nfl" | "cfb"): Promise<string>;
 }

@@ -1,16 +1,19 @@
-import EspnService from "@/lib/espn/espnService";
 import { NextResponse } from "next/server";
 
 export async function GET(request: Request) {
-  const espnService = new EspnService();
   const { searchParams } = new URL(request.url);
   const league = searchParams.get("league");
   if (league !== "nfl" && league !== "cfb") {
     return new Response("Bad request: Invalid league", { status: 400 });
   }
-  const week = searchParams.get("week") || undefined;
-  const scoreboardGroupId = searchParams.get("scoreboardGroupId") || undefined;
-  const gameData = await espnService.getGames(league, week, scoreboardGroupId);
+  const week = searchParams.get("week") || "";
+  const seasonType = searchParams.get("seasonType") || "";
+  const year = searchParams.get("year") || new Date().getFullYear().toString();
 
-  return NextResponse.json(gameData);
+  const games = await fetch(
+    `https://api.tallyo.us/api/v1/games?league=${league}&year=${year}&seasonType=${seasonType}&week=${week}`,
+  );
+  const body = await games.json();
+
+  return NextResponse.json(body.content);
 }

@@ -3,68 +3,13 @@ import OddsService from "../service/OddsService";
 import StandingsService from "../service/StandingsService";
 import StatsService from "../service/StatsService";
 import { ENDPOINTS } from "./enums/espnEndpoints";
-import getGamesFromJson from "./mappers/gameMapper";
 import getCleanedOdds from "./mappers/oddsMapper";
 import getStandings from "./mappers/standingsMapper";
 import mapStats from "./mappers/statsMapper";
 
 export default class EspnService
-  implements GamesService, StandingsService, StatsService, OddsService
+  implements StandingsService, StatsService, OddsService
 {
-  async getWeek(league: "nfl" | "cfb"): Promise<string> {
-    return (await this.getGames(league)).dataWeek;
-  }
-
-  async getGames(
-    league: "nfl" | "cfb",
-    week?: string,
-    scoreboardGroupId?: string,
-  ): Promise<{
-    games: Game[];
-    dataWeek: string;
-    scoreboardGroupId: string | undefined;
-  }> {
-    const url = new URL(ENDPOINTS[league]);
-    if (week && week?.indexOf("BOWLS") > -1) {
-      url.searchParams.set("week", "1");
-      url.searchParams.set("seasontype", "3");
-    } else if (week && week?.indexOf("CFP") > -1) {
-      url.searchParams.set("week", "999");
-      url.searchParams.set("seasontype", "3");
-    } else if (week) url.searchParams.set("week", week);
-    if (scoreboardGroupId && scoreboardGroupId !== "-1")
-      url.searchParams.set("groups", String(scoreboardGroupId));
-
-    try {
-      const response = await fetch(url.toString(), { cache: "no-store" });
-      const data = await response.json();
-      const games = await getGamesFromJson(data, league);
-
-      for (const game of games) {
-        const oddsObject: Odds | undefined = await this.getOddsForGame(game);
-        if (oddsObject) {
-          game.odds = oddsObject;
-        }
-      }
-      const dataWeek = data.week.number;
-      let returnedScoreboardGroup = scoreboardGroupId;
-      if (league === "cfb" && data.groups) {
-        returnedScoreboardGroup = data.groups[0];
-      }
-      return {
-        games,
-        dataWeek,
-        scoreboardGroupId: returnedScoreboardGroup,
-      };
-    } catch (error) {
-      console.error(error);
-      return {
-        games: [],
-        dataWeek: week || "",
-        scoreboardGroupId: scoreboardGroupId,
-      };
-    }
-  }
   async getStandings(league: "nfl" | "cfb"): Promise<Standings[]> {
     try {
       const response = await fetch(ENDPOINTS[`${league}standings`]);

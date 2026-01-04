@@ -5,6 +5,7 @@ interface TeamCardProps {
   score: string;
   winner?: string;
   possessionTeamId: string;
+  showScore: boolean;
 }
 
 const CompactTeamCard: React.FC<TeamCardProps> = ({
@@ -12,11 +13,12 @@ const CompactTeamCard: React.FC<TeamCardProps> = ({
   score,
   winner,
   possessionTeamId,
+  showScore,
 }) => {
   return (
     <div
       className={`grid grid-cols-[auto_1fr_auto] items-center gap-1 p-1 ${
-        winner && winner === team.id
+        winner && winner.toString() === team.teamKey.teamId.toString()
           ? "border-2 border-sky-50 dark:border-neutral-800"
           : ""
       }`}
@@ -34,7 +36,7 @@ const CompactTeamCard: React.FC<TeamCardProps> = ({
         <div>
           {team.ranking ? team.ranking + team.abbreviation : team.abbreviation}
         </div>
-        {possessionTeamId === team.id && (
+        {possessionTeamId === team.teamKey.teamId.toString() && (
           <svg
             width="16"
             height="16"
@@ -46,7 +48,7 @@ const CompactTeamCard: React.FC<TeamCardProps> = ({
           </svg>
         )}
       </div>
-      <div>{score}</div>
+      <div>{showScore ? score : ""}</div>
     </div>
   );
 };

@@ -43,6 +43,8 @@ const FullSizeGameCard: React.FC<GameProps> = ({
           possessionTeamId={game.possessionTeamId}
           league={game.league}
           homeTeam={false}
+          showScore={game.gameStatus !== "STATUS_SCHEDULED"}
+          record={game.awayRecordAtTimeOfGame}
         />
 
         {/* Game info */}
@@ -69,6 +71,8 @@ const FullSizeGameCard: React.FC<GameProps> = ({
           possessionTeamId={game.possessionTeamId}
           league={game.league}
           homeTeam={true}
+          showScore={game.gameStatus !== "STATUS_SCHEDULED"}
+          record={game.homeRecordAtTimeOfGame}
         />
       </div>
       {game.lastPlay && (
@@ -144,13 +148,13 @@ const FullSizeGameCard: React.FC<GameProps> = ({
             } else {
               gameStatNameTracker.add(statName);
               let homeStat: Stat | undefined = stats.get(
-                `${statName}-${game.homeTeam.id}`,
+                `${statName}-${game.homeTeam.teamKey.teamId}`,
               );
               if (!homeStat) {
                 homeStat = defaultStat;
               }
               let awayStat: Stat | undefined = stats.get(
-                `${statName}-${game.awayTeam.id}`,
+                `${statName}-${game.awayTeam.teamKey.teamId}`,
               );
               if (!awayStat) {
                 awayStat = defaultStat;
@@ -179,8 +183,10 @@ const FullSizeGameCard: React.FC<GameProps> = ({
         </div>
       )}
       <div className="flex flex-col place-items-center items-center justify-center">
+        {game.headline && <div>{game.headline}</div>}
         <div>{game.odds?.spreadText}</div>
-        {game.gameStatus === "STATUS_SCHEDULED" && (
+        {(game.gameStatus === "STATUS_SCHEDULED" ||
+          game.gameStatus === "STATUS_FINAL") && (
           <div>{dateFormatter.format(new Date(game.isoDate))}</div>
         )}
         <div>{game.stadiumName}</div>

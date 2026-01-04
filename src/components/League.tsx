@@ -1,12 +1,8 @@
 "use client";
 import GameCard from "./GameCard/GameCard";
 import Selector from "./Selector";
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction } from "react";
 import CollapsableSection from "./CollapsableSection";
-import {
-  cfbWeeksList,
-  cfbWeeksMap,
-} from "@/lib/espn/enums/cfbScoreboardGroupIds";
 
 interface LeagueProps {
   games: Game[];
@@ -14,15 +10,16 @@ interface LeagueProps {
   isOpen: boolean;
   setIsOpen: Dispatch<SetStateAction<boolean>>;
   week: string;
-  numberOfWeeks: number;
+  numberOfWeeks: Map<string, number>;
   setWeek: Dispatch<SetStateAction<string>>;
-  scoreboardGroups: string[];
-  currentScoreboardGroup: string;
-  setCurrentScoreboardGroup: Dispatch<SetStateAction<string>>;
-  displayMap?: Map<string, string>;
   openGames: Record<string, boolean>;
   toggleOpenGame: (id: string) => void;
   isLoading: boolean;
+  seasonType: string;
+  setSeasonType: Dispatch<SetStateAction<string>>;
+  year: string;
+  setYear: Dispatch<SetStateAction<string>>;
+  seasonTypes: Map<string, string>;
 }
 
 const League: React.FC<LeagueProps> = ({
@@ -33,19 +30,15 @@ const League: React.FC<LeagueProps> = ({
   week,
   setWeek,
   numberOfWeeks,
-  scoreboardGroups,
-  currentScoreboardGroup,
-  setCurrentScoreboardGroup,
-  displayMap,
   openGames,
   toggleOpenGame,
   isLoading,
+  seasonType,
+  setSeasonType,
+  year,
+  setYear,
+  seasonTypes,
 }) => {
-  const [displayWeek, setDisplayWeek] = useState(week);
-  const setCfbWeek = (week: string) => {
-    setWeek(cfbWeeksMap.get(week) || "");
-    setDisplayWeek(week);
-  };
   return (
     <div>
       <CollapsableSection
@@ -56,36 +49,40 @@ const League: React.FC<LeagueProps> = ({
       {isOpen && (
         <div>
           <div className="px-3">
-            {leagueName === "CFB" &&
-              displayWeek != "Bowls" &&
-              displayWeek != "CFP" && (
-                <Selector
-                  currentValue={currentScoreboardGroup}
-                  data={scoreboardGroups}
-                  setCurrentValue={(value: string) =>
-                    setCurrentScoreboardGroup(value)
-                  }
-                  displayMap={displayMap}
-                ></Selector>
+            <Selector
+              currentValue={year}
+              data={[
+                "2025",
+                "2024",
+                "2023",
+                "2022",
+                "2021",
+                "2020",
+                "2019",
+                "2018",
+                "2017",
+                "2016",
+                "2015",
+              ]}
+              setCurrentValue={(value: string) => setYear(value)}
+            ></Selector>
+            <Selector
+              currentValue={seasonType}
+              data={Array.from(seasonTypes.keys())}
+              setCurrentValue={(value: string) => setSeasonType(value)}
+              displayMap={seasonTypes}
+            ></Selector>
+
+            <Selector
+              currentValue={week}
+              data={Array.from(
+                { length: numberOfWeeks.get(seasonType) || 18 },
+                (_, i) => String(i + 1),
               )}
-            {leagueName === "CFB" && (
-              <Selector
-                currentValue={displayWeek}
-                data={cfbWeeksList}
-                setCurrentValue={setCfbWeek}
-                displayString={undefined}
-              ></Selector>
-            )}
-            {leagueName === "NFL" && (
-              <Selector
-                currentValue={week}
-                data={Array.from({ length: numberOfWeeks }, (_, i) =>
-                  String(i + 1),
-                )}
-                setCurrentValue={setWeek}
-                displayString="Week"
-              ></Selector>
-            )}
+              setCurrentValue={setWeek}
+              displayString="Week"
+            ></Selector>
+
             {isLoading ? (
               <div>Loading...</div>
             ) : games && games.length > 0 ? (

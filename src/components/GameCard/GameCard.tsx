@@ -29,7 +29,9 @@ const GameCard: React.FC<GameProps> = ({ game, isOpen, toggleOpenGame }) => {
   const { data: data } = useSWR(
     `/api/stats?league=${game.league}&gameId=${game.id}`,
     fetcher,
-    { refreshInterval: 10000 },
+    game.gameStatus !== "STATUS_FINAL" && game.gameStatus !== "STATUS_SCHEDULED"
+      ? { refreshInterval: 10000 }
+      : undefined,
   );
   const formattedStats: Map<string, Stat> | undefined = data?.stats
     ? new Map(data.stats)
