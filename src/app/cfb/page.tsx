@@ -3,11 +3,10 @@ import { useEffect, useState } from "react";
 import League from "@/components/League";
 import Standings from "@/components/Standings";
 import useSWR from "swr";
-import { useCfbState } from "../../components/hooks/useCfbState";
 import { fetcher } from "@/lib/api/fetcher";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { cfbGroupIdMapping } from "@/lib/espn/enums/cfbScoreboardGroupIds";
+import { useLeagueState } from "@/components/hooks/useLeagueState";
 
 export default function Cfb() {
   const [isContactOpen, setIsContactOpen] = useState<boolean>(false);
@@ -18,11 +17,11 @@ export default function Cfb() {
     ["3", "Postseason"],
   ]);
 
-  const cfb = useCfbState();
+  const cfb = useLeagueState();
 
   const { data: cfbStandings, isLoading: isCfbStandingsLoading } = useSWR(
     "/api/standings?league=cfb",
-    fetcher
+    fetcher,
   );
 
   const { data: context, isLoading: isContextLoading } = useSWR<GameContext>(
@@ -32,7 +31,7 @@ export default function Cfb() {
       revalidateOnFocus: false,
       revalidateOnReconnect: false,
       refreshInterval: 0,
-    }
+    },
   );
 
   useEffect(() => {
@@ -67,7 +66,7 @@ export default function Cfb() {
       ? `/api/games?league=cfb&week=${cfb.week}&seasonType=${cfb.seasonType}&year=${cfb.year}`
       : null,
     fetcher,
-    { refreshInterval: 10000 }
+    { refreshInterval: 10000 },
   );
   const cfbGames = cfbData ?? [];
 

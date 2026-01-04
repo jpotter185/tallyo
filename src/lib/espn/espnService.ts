@@ -22,7 +22,7 @@ export default class EspnService
   }
   async getStats(
     gameId: string,
-    league: "nfl" | "cfb"
+    league: "nfl" | "cfb",
   ): Promise<{
     statMap: Map<string, Stat>;
     scoringPlays: ScoringPlay[];
@@ -41,7 +41,7 @@ export default class EspnService
   }
   async getOdds(
     league: "nfl" | "cfb",
-    gameId: string
+    gameId: string,
   ): Promise<Odds | undefined> {
     const ODDS_API_ENDPOINT =
       ENDPOINTS.odds +
