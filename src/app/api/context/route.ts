@@ -5,7 +5,7 @@ export async function GET(request: NextRequest) {
   const league = searchParams.get("league");
 
   const context = await fetch(
-    `https://api.tallyo.us/api/v1/games/context?league=${league}`,
+    `${process.env.BACKEND_URL}/api/v1/games/context?league=${league}`
   );
   const data = await context.json();
 

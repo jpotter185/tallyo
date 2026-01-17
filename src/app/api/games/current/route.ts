@@ -7,7 +7,7 @@ export async function GET(request: Request) {
     return new Response("Bad request: Invalid league", { status: 400 });
   }
   const games = await fetch(
-    `https://api.tallyo.us/api/v1/games/current?league=${league}`,
+    `${process.env.BACKEND_URL}/api/v1/games/current?league=${league}`,
   );
   const body = await games.json();
 
