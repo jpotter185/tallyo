@@ -10,7 +10,7 @@ export async function GET(request: NextRequest) {
       headers: {
         "x-api-key": process.env.API_KEY || "",
       },
-    }
+    },
   );
   const data = await context.json();
 

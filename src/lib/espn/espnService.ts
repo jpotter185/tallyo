@@ -3,13 +3,11 @@ import OddsService from "../service/OddsService";
 import StandingsService from "../service/StandingsService";
 import StatsService from "../service/StatsService";
 import { ENDPOINTS } from "./enums/espnEndpoints";
-import getCleanedOdds from "./mappers/oddsMapper";
+// import getCleanedOdds from "./mappers/oddsMapper";
 import getStandings from "./mappers/standingsMapper";
 import mapStats from "./mappers/statsMapper";
 
-export default class EspnService
-  implements StandingsService, StatsService, OddsService
-{
+export default class EspnService implements StandingsService, StatsService {
   async getStandings(league: "nfl" | "cfb"): Promise<Standings[]> {
     try {
       const response = await fetch(ENDPOINTS[`${league}standings`]);
@@ -39,37 +37,37 @@ export default class EspnService
       return { statMap: new Map(), scoringPlays: [] };
     }
   }
-  async getOdds(
-    league: "nfl" | "cfb",
-    gameId: string,
-  ): Promise<Odds | undefined> {
-    const ODDS_API_ENDPOINT =
-      ENDPOINTS.odds +
-      `${
-        league === "nfl" ? "nfl" : "college-football"
-      }/events/${gameId}/competitions/${gameId}/odds`;
-    try {
-      const response = await fetch(ODDS_API_ENDPOINT);
-      const data = await response?.json();
-      return getCleanedOdds(gameId, data);
-    } catch (error) {
-      console.error(error);
-      return undefined;
-    }
-  }
-  async getOddsForGame(game: Game): Promise<Odds | undefined> {
-    const ODDS_API_ENDPOINT =
-      ENDPOINTS.odds +
-      `${
-        game.league === "nfl" ? "nfl" : "college-football"
-      }/events/${game.id}/competitions/${game.id}/odds`;
-    try {
-      const response = await fetch(ODDS_API_ENDPOINT);
-      const data = await response?.json();
-      return getCleanedOdds(game.id, data, game);
-    } catch (error) {
-      console.error(error);
-      return undefined;
-    }
-  }
+  // async getOdds(
+  //   league: "nfl" | "cfb",
+  //   gameId: string,
+  // ): Promise<Odds | undefined> {
+  //   const ODDS_API_ENDPOINT =
+  //     ENDPOINTS.odds +
+  //     `${
+  //       league === "nfl" ? "nfl" : "college-football"
+  //     }/events/${gameId}/competitions/${gameId}/odds`;
+  //   try {
+  //     const response = await fetch(ODDS_API_ENDPOINT);
+  //     const data = await response?.json();
+  //     return getCleanedOdds(gameId, data);
+  //   } catch (error) {
+  //     console.error(error);
+  //     return undefined;
+  //   }
+  // }
+  // async getOddsForGame(game: Game): Promise<Odds | undefined> {
+  //   const ODDS_API_ENDPOINT =
+  //     ENDPOINTS.odds +
+  //     `${
+  //       game.league === "nfl" ? "nfl" : "college-football"
+  //     }/events/${game.id}/competitions/${game.id}/odds`;
+  //   try {
+  //     const response = await fetch(ODDS_API_ENDPOINT);
+  //     const data = await response?.json();
+  //     return getCleanedOdds(game.id, data, game);
+  //   } catch (error) {
+  //     console.error(error);
+  //     return undefined;
+  //   }
+  // }
 }

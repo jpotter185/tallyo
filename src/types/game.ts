@@ -23,7 +23,7 @@ type Game = {
   awayTimeouts: number;
   winner?: string;
   headline?: string;
-  odds?: Odds;
+  gameOdd?: Odds;
   gameStatus: string;
   stats: { [k: string]: Stat };
   homeWinPercentage?: string;

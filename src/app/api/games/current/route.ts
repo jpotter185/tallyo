@@ -12,7 +12,7 @@ export async function GET(request: Request) {
       headers: {
         "x-api-key": process.env.API_KEY || "",
       },
-    }
+    },
   );
   const body = await games.json();
 
