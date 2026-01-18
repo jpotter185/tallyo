@@ -8,6 +8,11 @@ export async function GET(request: Request) {
   }
   const games = await fetch(
     `${process.env.BACKEND_URL}/api/v1/games/current?league=${league}`,
+    {
+      headers: {
+        "x-api-key": process.env.API_KEY || "",
+      },
+    }
   );
   const body = await games.json();
 

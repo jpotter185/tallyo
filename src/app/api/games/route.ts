@@ -11,9 +11,14 @@ export async function GET(request: Request) {
   const year = searchParams.get("year") || new Date().getFullYear().toString();
 
   const games = await fetch(
-    `${process.env.BACKEND_URL}/api/v1/games?league=${league}&year=${year}&seasonType=${seasonType}&week=${week}`
+    `${process.env.BACKEND_URL}/api/v1/games?league=${league}&year=${year}&seasonType=${seasonType}&week=${week}`,
+    {
+      headers: {
+        "x-api-key": process.env.API_KEY || "",
+      },
+    },
   );
-    const body = await games.json();
+  const body = await games.json();
 
   return NextResponse.json(body.content);
 }

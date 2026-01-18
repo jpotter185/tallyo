@@ -5,7 +5,12 @@ export async function GET(request: NextRequest) {
   const league = searchParams.get("league");
 
   const context = await fetch(
-    `${process.env.BACKEND_URL}/api/v1/games/context?league=${league}`
+    `${process.env.BACKEND_URL}/api/v1/games/context?league=${league}`,
+    {
+      headers: {
+        "x-api-key": process.env.API_KEY || "",
+      },
+    }
   );
   const data = await context.json();
 
