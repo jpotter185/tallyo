@@ -159,7 +159,7 @@ const FullSizeGameCard: React.FC<GameProps> = ({
       )}
       {stats && stats.size > 0 && (
         <CollapsableSection
-          title={`Stats`}
+          title={`Player Stats`}
           isOpen={isStatsOpen}
           onToggle={() => openStatsForGame()}
         />
