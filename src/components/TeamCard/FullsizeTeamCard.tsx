@@ -48,8 +48,7 @@ const FullsizeTeamCard: React.FC<TeamCardProps> = ({
         </div>
 
         <div className="text-xs">{record}</div>
-
-        {timeouts && league === "nfl" && (
+        {timeouts && league === "NFL" && (
           <div className="flex items-center gap-1 mt-1">
             {[...Array(3)].map((_, i) => (
               <div

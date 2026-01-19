@@ -45,6 +45,7 @@ const FullSizeGameCard: React.FC<GameProps> = ({
           homeTeam={false}
           showScore={game.gameStatus !== "STATUS_SCHEDULED"}
           record={game.awayRecordAtTimeOfGame}
+          timeouts={game.awayTimeouts}
         />
 
         {/* Game info */}
@@ -73,6 +74,7 @@ const FullSizeGameCard: React.FC<GameProps> = ({
           homeTeam={true}
           showScore={game.gameStatus !== "STATUS_SCHEDULED"}
           record={game.homeRecordAtTimeOfGame}
+          timeouts={game.homeTimeouts}
         />
       </div>
       {game.lastPlay && (
