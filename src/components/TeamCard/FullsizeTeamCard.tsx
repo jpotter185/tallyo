@@ -8,7 +8,7 @@ interface TeamCardProps {
   timeouts?: number;
   league: string;
   shortPeriod?: string;
-  homeTeam: boolean; // false = away
+  homeTeam: boolean;
   showScore: boolean;
   record: string;
 }
@@ -48,7 +48,7 @@ const FullsizeTeamCard: React.FC<TeamCardProps> = ({
         </div>
 
         <div className="text-xs">{record}</div>
-        {timeouts && league === "NFL" && (
+        {timeouts !== undefined && league === "NFL" && (
           <div className="flex items-center gap-1 mt-1">
             {[...Array(3)].map((_, i) => (
               <div
