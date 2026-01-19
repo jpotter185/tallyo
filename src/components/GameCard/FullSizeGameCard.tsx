@@ -14,14 +14,6 @@ interface GameProps {
   isTeamStatsOpen: boolean;
 }
 
-function toTitleCase(str: string): string {
-  return str
-    .replace(/([A-Z])/g, " $1")
-    .split(" ")
-    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(" ");
-}
-
 const FullSizeGameCard: React.FC<GameProps> = ({
   game,
   stats,
@@ -61,6 +53,15 @@ const FullSizeGameCard: React.FC<GameProps> = ({
     ["fourthDownEff", "Fourth Down Efficiency "],
     ["totalPenaltiesYards", "Penalties"],
   ]);
+
+  const hasTeamStats =
+    !!game.stats &&
+    Array.from(statsToDisplay.keys()).some(
+      (stat) =>
+        game.stats.homeStats?.[stat] != null ||
+        game.stats.awayStats?.[stat] != null,
+    );
+
   return (
     <div>
       <div className="grid grid-cols-3 place-items-center items-center justify-center p-2">
@@ -212,14 +213,16 @@ const FullSizeGameCard: React.FC<GameProps> = ({
           })}
         </div>
       )}
-      {game.stats && (game.stats.homeStats || game.stats.awayStats) && (
-        <CollapsableSection
-          title={`Team Stats`}
-          isOpen={isTeamStatsOpen}
-          onToggle={() => openTeamStatsForGame()}
-        />
-      )}
-      {isTeamStatsOpen && (
+      {hasTeamStats &&
+        game.stats &&
+        (game.stats.homeStats || game.stats.awayStats) && (
+          <CollapsableSection
+            title={`Team Stats`}
+            isOpen={isTeamStatsOpen}
+            onToggle={() => openTeamStatsForGame()}
+          />
+        )}
+      {hasTeamStats && isTeamStatsOpen && (
         <div className="border rounded overflow-hidden divide-y">
           <div className="grid grid-cols-3 text-center divide-x font-semibold">
             <div>{game.awayTeam.abbreviation}</div>
