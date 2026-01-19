@@ -52,6 +52,7 @@ const League: React.FC<LeagueProps> = ({
             <Selector
               currentValue={year}
               data={[
+                "2026",
                 "2025",
                 "2024",
                 "2023",
