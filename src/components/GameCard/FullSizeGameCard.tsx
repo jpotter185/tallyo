@@ -58,7 +58,7 @@ const FullSizeGameCard: React.FC<GameProps> = ({
     ["firstDownsPassing", "Passing First Downs"],
     ["firstDownsRushing", "Rushing First Downs"],
     ["thirdDownEff", "Third Down Efficiency"],
-    ["fourthDownEff", "Fourth DownEfficiency "],
+    ["fourthDownEff", "Fourth Down Efficiency "],
     ["totalPenaltiesYards", "Penalties"],
   ]);
   return (
