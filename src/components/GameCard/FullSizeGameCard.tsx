@@ -10,6 +10,16 @@ interface GameProps {
   isScoringPlaysOpen: boolean;
   openStatsForGame: () => void;
   isStatsOpen: boolean;
+  openTeamStatsForGame: () => void;
+  isTeamStatsOpen: boolean;
+}
+
+function toTitleCase(str: string): string {
+  return str
+    .replace(/([A-Z])/g, " $1")
+    .split(" ")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
 }
 
 const FullSizeGameCard: React.FC<GameProps> = ({
@@ -20,6 +30,8 @@ const FullSizeGameCard: React.FC<GameProps> = ({
   isScoringPlaysOpen,
   openStatsForGame,
   isStatsOpen,
+  openTeamStatsForGame,
+  isTeamStatsOpen,
 }) => {
   const gameStatNameTracker = new Set<string>();
   const defaultStat: Stat = {
@@ -33,6 +45,22 @@ const FullSizeGameCard: React.FC<GameProps> = ({
     playerShortName: "",
     teamId: "",
   };
+  const statsToDisplay = new Map([
+    ["possessionTime", "Possession Time"],
+    ["totalDrives", "Total Drives"],
+    ["totalYards", "Total Yards"],
+    ["netPassingYards", "Passing Yards"],
+    ["yardsPerPass", "Yards Per Pass"],
+    ["rushingYards", "Total Rushing Yards"],
+    ["yardsPerRushAttempt", "Yards Per Rush"],
+    ["turnovers", "Turnovers"],
+    ["firstDowns", "First Downs"],
+    ["firstDownsPassing", "Passing First Downs"],
+    ["firstDownsRushing", "Rushing First Downs"],
+    ["thirdDownEff", "Third Down Efficiency"],
+    ["fourthDownEff", "Fourth DownEfficiency "],
+    ["totalPenaltiesYards", "Penalties"],
+  ]);
   return (
     <div>
       <div className="grid grid-cols-3 place-items-center items-center justify-center p-2">
@@ -184,6 +212,35 @@ const FullSizeGameCard: React.FC<GameProps> = ({
           })}
         </div>
       )}
+      {game.stats && (game.stats.homeStats || game.stats.awayStats) && (
+        <CollapsableSection
+          title={`Team Stats`}
+          isOpen={isTeamStatsOpen}
+          onToggle={() => openTeamStatsForGame()}
+        />
+      )}
+      {isTeamStatsOpen && (
+        <div className="border rounded overflow-hidden divide-y">
+          <div className="grid grid-cols-3 text-center divide-x font-semibold">
+            <div>{game.awayTeam.abbreviation}</div>
+            <div>Team Stats</div>
+            <div>{game.homeTeam.abbreviation}</div>
+          </div>
+          {Array.from(statsToDisplay.entries()).map((stat) => {
+            return (
+              <div
+                className="grid grid-cols-3 text-center divide-x"
+                key={stat + game.id}
+              >
+                <div>{game.stats.awayStats[stat[0]]}</div>
+                <div>{stat[1]}</div>
+                <div>{game.stats.homeStats[stat[0]]}</div>
+              </div>
+            );
+          })}
+        </div>
+      )}
+      <br />
       <div className="flex flex-col place-items-center items-center justify-center">
         {game.headline && <div>{game.headline}</div>}
         <div>{game.gameOdd?.spreadText}</div>

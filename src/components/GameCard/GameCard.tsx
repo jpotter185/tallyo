@@ -18,6 +18,9 @@ const GameCard: React.FC<GameProps> = ({ game, isOpen, toggleOpenGame }) => {
   const [openScoringPlaysForGame, setOpenScoringPlaysForGame] = useState<{
     [id: string]: boolean;
   }>({});
+  const [openTeamStatsForGame, setOpenTeamStatsForGame] = useState<{
+    [id: string]: boolean;
+  }>({});
 
   const toggleOpenScoringPlays = (id: string) => {
     setOpenScoringPlaysForGame((prev) => ({ ...prev, [id]: !prev[id] }));
@@ -25,6 +28,9 @@ const GameCard: React.FC<GameProps> = ({ game, isOpen, toggleOpenGame }) => {
 
   const toggleOpenStatsForGame = (id: string) => {
     setOpenStatsForGame((prev) => ({ ...prev, [id]: !prev[id] }));
+  };
+  const toggleOpenTeamStatsForGame = (id: string) => {
+    setOpenTeamStatsForGame((prev) => ({ ...prev, [id]: !prev[id] }));
   };
   const { data: data } = useSWR(
     `/api/stats?league=${game.league}&gameId=${game.id}`,
@@ -53,6 +59,8 @@ const GameCard: React.FC<GameProps> = ({ game, isOpen, toggleOpenGame }) => {
           isScoringPlaysOpen={!!openScoringPlaysForGame[game.id]}
           openStatsForGame={() => toggleOpenStatsForGame(game.id)}
           isStatsOpen={!!openStatsForGame[game.id]}
+          openTeamStatsForGame={() => toggleOpenTeamStatsForGame(game.id)}
+          isTeamStatsOpen={!!openTeamStatsForGame[game.id]}
         />
       ) : (
         <CompactGameCard game={game} />

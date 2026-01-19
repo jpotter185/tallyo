@@ -25,10 +25,16 @@ type Game = {
   headline?: string;
   gameOdd?: Odds;
   gameStatus: string;
-  stats: { [k: string]: Stat };
+  stats: TeamStats;
   homeWinPercentage?: string;
   awayWinPercentage?: string;
   final?: boolean;
   homeRecordAtTimeOfGame: string;
   awayRecordAtTimeOfGame: string;
 };
+
+type TeamStats = {
+  homeStats: Record<string,string>;
+  awayStats: Record<string,string>;
+};
+
