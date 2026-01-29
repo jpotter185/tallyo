@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const league = searchParams.get("league");
-  if (league !== "nfl" && league !== "cfb") {
+  if (!["nfl", "cfb", "nhl"].includes(String(league))) {
     return new Response("Bad request: Invalid league", { status: 400 });
   }
   const games = await fetch(

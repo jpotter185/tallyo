@@ -32,13 +32,14 @@ const GameCard: React.FC<GameProps> = ({ game, isOpen, toggleOpenGame }) => {
   const toggleOpenTeamStatsForGame = (id: string) => {
     setOpenTeamStatsForGame((prev) => ({ ...prev, [id]: !prev[id] }));
   };
-  const { data: data } = useSWR(
-    `/api/stats?league=${game.league}&gameId=${game.id}`,
-    fetcher,
-    game.gameStatus !== "STATUS_FINAL" && game.gameStatus !== "STATUS_SCHEDULED"
-      ? { refreshInterval: 10000 }
-      : undefined,
-  );
+  const data = { stats: [], scoringPlays: [] };
+  // const { data: data } = useSWR(
+  //   `/api/stats?league=${game.league}&gameId=${game.id}`,
+  //   fetcher,
+  //   game.gameStatus !== "STATUS_FINAL" && game.gameStatus !== "STATUS_SCHEDULED"
+  //     ? { refreshInterval: 10000 }
+  //     : undefined,
+  // );
   const formattedStats: Map<string, Stat> | undefined = data?.stats
     ? new Map(data.stats)
     : undefined;

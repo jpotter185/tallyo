@@ -20,6 +20,9 @@ interface LeagueProps {
   year: string;
   setYear: Dispatch<SetStateAction<string>>;
   seasonTypes: Map<string, string>;
+  customSelectorValue?: string;
+  customSelectorMap?: Map<string, string>;
+  setCustomSelectorValue?: Dispatch<SetStateAction<string>>;
 }
 
 const League: React.FC<LeagueProps> = ({
@@ -38,6 +41,9 @@ const League: React.FC<LeagueProps> = ({
   year,
   setYear,
   seasonTypes,
+  customSelectorValue,
+  customSelectorMap,
+  setCustomSelectorValue,
 }) => {
   return (
     <div>
@@ -49,40 +55,65 @@ const League: React.FC<LeagueProps> = ({
       {isOpen && (
         <div>
           <div className="px-3">
-            <Selector
-              currentValue={year}
-              data={[
-                "2026",
-                "2025",
-                "2024",
-                "2023",
-                "2022",
-                "2021",
-                "2020",
-                "2019",
-                "2018",
-                "2017",
-                "2016",
-                "2015",
-              ]}
-              setCurrentValue={(value: string) => setYear(value)}
-            ></Selector>
-            <Selector
-              currentValue={seasonType}
-              data={Array.from(seasonTypes.keys())}
-              setCurrentValue={(value: string) => setSeasonType(value)}
-              displayMap={seasonTypes}
-            ></Selector>
-
-            <Selector
-              currentValue={week}
-              data={Array.from(
-                { length: numberOfWeeks.get(seasonType) || 18 },
-                (_, i) => String(i + 1),
+            {customSelectorMap != undefined &&
+              customSelectorMap.size > 0 &&
+              customSelectorValue != undefined &&
+              setCustomSelectorValue != undefined && (
+                <Selector
+                  currentValue={
+                    // Convert ISO date to pretty date for display
+                    [...customSelectorMap.entries()].find(
+                      ([pretty, iso]) => iso === customSelectorValue,
+                    )?.[0] || ""
+                  }
+                  data={Array.from(customSelectorMap.keys())}
+                  setCurrentValue={(prettyDate) =>
+                    setCustomSelectorValue(
+                      customSelectorMap.get(prettyDate) || "",
+                    )
+                  }
+                />
               )}
-              setCurrentValue={setWeek}
-              displayString="Week"
-            ></Selector>
+            {leagueName != "NHL" && (
+              <Selector
+                currentValue={year}
+                data={[
+                  "2026",
+                  "2025",
+                  "2024",
+                  "2023",
+                  "2022",
+                  "2021",
+                  "2020",
+                  "2019",
+                  "2018",
+                  "2017",
+                  "2016",
+                  "2015",
+                ]}
+                setCurrentValue={(value: string) => setYear(value)}
+              ></Selector>
+            )}
+            {seasonTypes.entries.length > 0 && (
+              <Selector
+                currentValue={seasonType}
+                data={Array.from(seasonTypes.keys())}
+                setCurrentValue={(value: string) => setSeasonType(value)}
+                displayMap={seasonTypes}
+              ></Selector>
+            )}
+
+            {numberOfWeeks.entries.length > 0 && (
+              <Selector
+                currentValue={week}
+                data={Array.from(
+                  { length: numberOfWeeks.get(seasonType) || 18 },
+                  (_, i) => String(i + 1),
+                )}
+                setCurrentValue={setWeek}
+                displayString="Week"
+              ></Selector>
+            )}
 
             {isLoading ? (
               <div>Loading...</div>

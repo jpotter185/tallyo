@@ -4,6 +4,7 @@ import { usePathname } from "next/navigation";
 const Header: React.FC = () => {
   const links = [
     { label: "Dashboard", href: "/" },
+    { label: "NHL", href: "/nhl" },
     { label: "NFL", href: "/nfl" },
     { label: "CFB", href: "/cfb" },
     { label: "Odds", href: "/odds" },
