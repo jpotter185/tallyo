@@ -3,6 +3,10 @@ import GameCard from "./GameCard/GameCard";
 import Selector from "./Selector";
 import { Dispatch, SetStateAction } from "react";
 import CollapsableSection from "./CollapsableSection";
+import {
+  footballStatsToDisplay,
+  hockeyStatsToDisplay,
+} from "@/lib/espn/enums/statDisplayMaps";
 
 interface LeagueProps {
   games: Game[];
@@ -61,7 +65,6 @@ const League: React.FC<LeagueProps> = ({
               setCustomSelectorValue != undefined && (
                 <Selector
                   currentValue={
-                    // Convert ISO date to pretty date for display
                     [...customSelectorMap.entries()].find(
                       ([pretty, iso]) => iso === customSelectorValue,
                     )?.[0] || ""
@@ -94,7 +97,7 @@ const League: React.FC<LeagueProps> = ({
                 setCurrentValue={(value: string) => setYear(value)}
               ></Selector>
             )}
-            {seasonTypes.entries.length > 0 && (
+            {seasonTypes.size > 0 && (
               <Selector
                 currentValue={seasonType}
                 data={Array.from(seasonTypes.keys())}
@@ -103,17 +106,19 @@ const League: React.FC<LeagueProps> = ({
               ></Selector>
             )}
 
-            {numberOfWeeks.entries.length > 0 && (
-              <Selector
-                currentValue={week}
-                data={Array.from(
-                  { length: numberOfWeeks.get(seasonType) || 18 },
-                  (_, i) => String(i + 1),
-                )}
-                setCurrentValue={setWeek}
-                displayString="Week"
-              ></Selector>
-            )}
+            {numberOfWeeks &&
+              numberOfWeeks.size > 0 &&
+              numberOfWeeks.get(seasonType) !== undefined && (
+                <Selector
+                  currentValue={week}
+                  data={Array.from(
+                    { length: numberOfWeeks.get(seasonType) || 18 },
+                    (_, i) => String(i + 1),
+                  )}
+                  setCurrentValue={setWeek}
+                  displayString="Week"
+                ></Selector>
+              )}
 
             {isLoading ? (
               <div>Loading...</div>
@@ -126,6 +131,11 @@ const League: React.FC<LeagueProps> = ({
                       game={game}
                       isOpen={!!openGames[game.id]}
                       toggleOpenGame={() => toggleOpenGame(game.id)}
+                      statsToDisplay={
+                        leagueName === "NHL"
+                          ? hockeyStatsToDisplay
+                          : footballStatsToDisplay
+                      }
                     />
                   );
                 })}

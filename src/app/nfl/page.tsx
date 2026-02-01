@@ -38,7 +38,7 @@ export default function Nfl() {
     if (context && !isInitialized) {
       nfl.setWeek(context.week);
       nfl.setYear(context.year);
-      nfl.setSeasonType(context.seasonType);
+      nfl.setSeasonType(context.seasonType.toString());
       setIsInitialized(true);
     }
   }, [context, isInitialized]);

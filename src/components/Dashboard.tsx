@@ -3,6 +3,10 @@ import { useState } from "react";
 import useSWR from "swr";
 import GameCard from "./GameCard/GameCard";
 import CollapsableSection from "./CollapsableSection";
+import {
+  footballStatsToDisplay,
+  hockeyStatsToDisplay,
+} from "@/lib/espn/enums/statDisplayMaps";
 
 const Dashboard: React.FC = () => {
   const [isCfbOpen, setIsCfbOpen] = useState(false);
@@ -78,6 +82,7 @@ const Dashboard: React.FC = () => {
     <div className="p-4">
       {isCfbLoading ? <div>Loading CFB games...</div> : <></>}
       {isNflLoading ? <div>Loading NFL games...</div> : <></>}
+      {isNhlLoading ? <div>Loading NHL games...</div> : <></>}
       {!isCfbLoading &&
       !isNflLoading &&
       nhlGames.length <= 0 &&
@@ -103,6 +108,7 @@ const Dashboard: React.FC = () => {
                     game={game}
                     isOpen={!!openGames[game.id]}
                     toggleOpenGame={() => toggleGame(game.id)}
+                    statsToDisplay={footballStatsToDisplay}
                   />
                 );
               })}
@@ -126,6 +132,7 @@ const Dashboard: React.FC = () => {
                     game={game}
                     isOpen={!!openGames[game.id]}
                     toggleOpenGame={() => toggleGame(game.id)}
+                    statsToDisplay={footballStatsToDisplay}
                   />
                 );
               })}
@@ -149,6 +156,7 @@ const Dashboard: React.FC = () => {
                     game={game}
                     isOpen={!!openGames[game.id]}
                     toggleOpenGame={() => toggleGame(game.id)}
+                    statsToDisplay={hockeyStatsToDisplay}
                   />
                 );
               })}

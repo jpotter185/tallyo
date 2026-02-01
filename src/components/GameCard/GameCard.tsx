@@ -4,6 +4,7 @@ interface GameProps {
   game: Game;
   isOpen: boolean;
   toggleOpenGame: () => void;
+  statsToDisplay: Map<string, string>;
 }
 
 import FullsizeGameCard from "./FullSizeGameCard";
@@ -11,7 +12,12 @@ import CompactGameCard from "./CompactGameCard";
 import { useState } from "react";
 import useSWR from "swr";
 import { fetcher } from "@/lib/api/fetcher";
-const GameCard: React.FC<GameProps> = ({ game, isOpen, toggleOpenGame }) => {
+const GameCard: React.FC<GameProps> = ({
+  game,
+  isOpen,
+  toggleOpenGame,
+  statsToDisplay,
+}) => {
   const [openStatsForGame, setOpenStatsForGame] = useState<{
     [id: string]: boolean;
   }>({});
@@ -32,14 +38,21 @@ const GameCard: React.FC<GameProps> = ({ game, isOpen, toggleOpenGame }) => {
   const toggleOpenTeamStatsForGame = (id: string) => {
     setOpenTeamStatsForGame((prev) => ({ ...prev, [id]: !prev[id] }));
   };
-  const data = { stats: [], scoringPlays: [] };
-  // const { data: data } = useSWR(
-  //   `/api/stats?league=${game.league}&gameId=${game.id}`,
-  //   fetcher,
-  //   game.gameStatus !== "STATUS_FINAL" && game.gameStatus !== "STATUS_SCHEDULED"
-  //     ? { refreshInterval: 10000 }
-  //     : undefined,
-  // );
+  let data = {
+    stats: [],
+    scoringPlays: [],
+  };
+  if (game.league.toLowerCase() !== "nhl") {
+    const { data: statData } = useSWR(
+      `/api/stats?league=${game.league}&gameId=${game.id}`,
+      fetcher,
+      game.gameStatus !== "STATUS_FINAL" &&
+        game.gameStatus !== "STATUS_SCHEDULED"
+        ? { refreshInterval: 10000 }
+        : undefined,
+    );
+    data = statData;
+  }
   const formattedStats: Map<string, Stat> | undefined = data?.stats
     ? new Map(data.stats)
     : undefined;
@@ -62,6 +75,7 @@ const GameCard: React.FC<GameProps> = ({ game, isOpen, toggleOpenGame }) => {
           isStatsOpen={!!openStatsForGame[game.id]}
           openTeamStatsForGame={() => toggleOpenTeamStatsForGame(game.id)}
           isTeamStatsOpen={!!openTeamStatsForGame[game.id]}
+          statsToDisplay={statsToDisplay}
         />
       ) : (
         <CompactGameCard game={game} />

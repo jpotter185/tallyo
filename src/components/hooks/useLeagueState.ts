@@ -23,7 +23,7 @@ export function useLeagueState(init?: LeagueStateInit): LeagueState {
   const [isOpen, setIsOpen] = useState(false);
   const [week, setWeek] = useState(init?.week ?? "");
   const [openGames, setOpenGames] = useState<Record<string, boolean>>({});
-  const [seasonType, setSeasonType] = useState(init?.seasonType ?? "");
+  const [seasonType, setSeasonType] = useState(init?.seasonType ?? "2");
   const [year, setYear] = useState<string>(init?.year ?? "");
 
   const toggleGame = (id: string) => {

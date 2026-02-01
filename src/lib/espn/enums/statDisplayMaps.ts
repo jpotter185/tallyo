@@ -1,0 +1,32 @@
+export const footballStatsToDisplay = new Map([
+  ["possessionTime", "Possession Time"],
+  ["totalDrives", "Total Drives"],
+  ["totalYards", "Total Yards"],
+  ["netPassingYards", "Passing Yards"],
+  ["yardsPerPass", "Yards Per Pass"],
+  ["rushingYards", "Total Rushing Yards"],
+  ["yardsPerRushAttempt", "Yards Per Rush"],
+  ["turnovers", "Turnovers"],
+  ["firstDowns", "First Downs"],
+  ["firstDownsPassing", "Passing First Downs"],
+  ["firstDownsRushing", "Rushing First Downs"],
+  ["thirdDownEff", "Third Down Efficiency"],
+  ["fourthDownEff", "Fourth Down Efficiency "],
+  ["totalPenaltiesYards", "Penalties"],
+]);
+
+export const hockeyStatsToDisplay = new Map([
+  ["shotsTotal", "Total Shots"],
+  ["faceoffPercent", "Faceoff Percentage"],
+  ["faceoffsWon", "Faceoffs Won"],
+  ["penalties", "Penalties"],
+  ["powerPlayPct", "Power Play Percentage"],
+  ["powerPlayOpportunities", "Power Play Opportunities"],
+  ["powerPlayGoals", "Power Play Goals"],
+  ["takeaways", "Takeaways"],
+  ["giveaways", "Giveaways"],
+  ["hits", "Hits"],
+  ["blockedShots", "Blocked Shots"],
+  ["shortHandedGoals", "Short Handed Goals"],
+  ["powerPlayGoals", "Power Play Goals"],
+]);

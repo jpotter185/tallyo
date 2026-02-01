@@ -12,6 +12,7 @@ interface GameProps {
   isStatsOpen: boolean;
   openTeamStatsForGame: () => void;
   isTeamStatsOpen: boolean;
+  statsToDisplay: Map<string, string>;
 }
 
 const FullSizeGameCard: React.FC<GameProps> = ({
@@ -24,6 +25,7 @@ const FullSizeGameCard: React.FC<GameProps> = ({
   isStatsOpen,
   openTeamStatsForGame,
   isTeamStatsOpen,
+  statsToDisplay
 }) => {
   const gameStatNameTracker = new Set<string>();
   const defaultStat: Stat = {
@@ -37,22 +39,6 @@ const FullSizeGameCard: React.FC<GameProps> = ({
     playerShortName: "",
     teamId: "",
   };
-  const statsToDisplay = new Map([
-    ["possessionTime", "Possession Time"],
-    ["totalDrives", "Total Drives"],
-    ["totalYards", "Total Yards"],
-    ["netPassingYards", "Passing Yards"],
-    ["yardsPerPass", "Yards Per Pass"],
-    ["rushingYards", "Total Rushing Yards"],
-    ["yardsPerRushAttempt", "Yards Per Rush"],
-    ["turnovers", "Turnovers"],
-    ["firstDowns", "First Downs"],
-    ["firstDownsPassing", "Passing First Downs"],
-    ["firstDownsRushing", "Rushing First Downs"],
-    ["thirdDownEff", "Third Down Efficiency"],
-    ["fourthDownEff", "Fourth Down Efficiency "],
-    ["totalPenaltiesYards", "Penalties"],
-  ]);
 
   const hasTeamStats =
     !!game.stats &&
