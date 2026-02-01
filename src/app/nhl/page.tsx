@@ -33,17 +33,21 @@ export default function Nhl() {
       setIsInitialized(true);
 
       const today = new Date().getTime();
-      const closestDate = nhlDates
-        .map((date: string) => ({
-          date,
-          diff: Math.abs(new Date(date).getTime() - today),
-        }))
-        .sort(
-          (
-            a: { date: string; diff: number },
-            b: { date: string; diff: number },
-          ) => a.diff - b.diff,
-        )[0].date;
+      const closestDate = nhlDates.includes(
+        new Date().toLocaleDateString("en-CA"),
+      )
+        ? new Date().toLocaleDateString("en-CA")
+        : nhlDates
+            .map((date: string) => ({
+              date,
+              diff: Math.abs(new Date(date).getTime() - today),
+            }))
+            .sort(
+              (
+                a: { date: string; diff: number },
+                b: { date: string; diff: number },
+              ) => a.diff - b.diff,
+            )[0].date;
 
       setGameday(closestDate);
     }
