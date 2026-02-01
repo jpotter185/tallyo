@@ -13,10 +13,12 @@ export default function Nhl() {
   const [nhlGamedays, setNhlGamedays] = useState<string[]>([]);
   const [gameday, setGameday] = useState<string>("");
 
+  const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
   const nhl = useLeagueState();
 
   const { data: nhlDates, isLoading: isContextLoading } = useSWR(
-    "/api/context?league=nhl",
+    `/api/context?league=nhl&timezone=${userTimeZone}`,
     fetcher,
     {
       revalidateOnFocus: false,
@@ -48,7 +50,9 @@ export default function Nhl() {
   }, [nhlDates, isInitialized]);
 
   const { data: nhlData, isLoading: isNhlLoading } = useSWR(
-    isInitialized ? `/api/games?league=nhl&date=${gameday}` : null,
+    isInitialized
+      ? `/api/games?league=nhl&date=${gameday}&timezone=${userTimeZone}`
+      : null,
     fetcher,
   );
 
@@ -86,7 +90,7 @@ export default function Nhl() {
                       day: "numeric",
                       year: "numeric",
                     }),
-                    isoDate,
+                    new Date(isoDate).toLocaleDateString("en-CA"),
                   ]),
               )
             }
