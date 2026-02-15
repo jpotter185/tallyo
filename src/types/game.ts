@@ -34,7 +34,6 @@ type Game = {
 };
 
 type TeamStats = {
-  homeStats: Record<string,string>;
-  awayStats: Record<string,string>;
+  homeStats: Record<string, string>;
+  awayStats: Record<string, string>;
 };
-

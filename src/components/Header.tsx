@@ -1,12 +1,11 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { HEADER_LEAGUE_LINKS } from "@/lib/leagues/leagueConfig";
 
 const Header: React.FC = () => {
   const links = [
     { label: "Dashboard", href: "/" },
-    { label: "NHL", href: "/nhl" },
-    { label: "NFL", href: "/nfl" },
-    { label: "CFB", href: "/cfb" },
+    ...HEADER_LEAGUE_LINKS,
     { label: "Odds", href: "/odds" },
   ];
 

@@ -1,3 +1,5 @@
+import { LeagueId } from "../leagues/leagueConfig";
+
 export default interface StandingsService {
-  getStandings(league: "nfl" | "cfb"): Promise<Standings[]>;
+  getStandings(league: LeagueId): Promise<Standings[]>;
 }

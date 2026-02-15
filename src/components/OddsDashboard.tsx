@@ -1,11 +1,6 @@
-import { fetcher } from "@/lib/api/fetcher";
-import useSWR from "swr";
 // import LeagueOdds from "./LeagueOdds";
-import { useState } from "react";
 
 const OddsDashboard: React.FC = () => {
-  const [isCfbOpen, setIsCfbOpen] = useState(false);
-  const [isNflOpen, setIsNflOpen] = useState(false);
   // const { data: cfbData, isLoading: isCfbLoading } = useSWR(
   //   `/api/games/current?league=cfb`,
   //   fetcher,

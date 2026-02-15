@@ -25,7 +25,7 @@ const FullSizeGameCard: React.FC<GameProps> = ({
   isStatsOpen,
   openTeamStatsForGame,
   isTeamStatsOpen,
-  statsToDisplay
+  statsToDisplay,
 }) => {
   const gameStatNameTracker = new Set<string>();
   const defaultStat: Stat = {

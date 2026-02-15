@@ -42,17 +42,15 @@ const GameCard: React.FC<GameProps> = ({
     stats: [],
     scoringPlays: [],
   };
-  if (game.league.toLowerCase() !== "nhl") {
-    const { data: statData } = useSWR(
-      `/api/stats?league=${game.league}&gameId=${game.id}`,
-      fetcher,
-      game.gameStatus !== "STATUS_FINAL" &&
-        game.gameStatus !== "STATUS_SCHEDULED"
-        ? { refreshInterval: 10000 }
-        : undefined,
-    );
-    data = statData;
-  }
+  const { data: statData } = useSWR(
+    `/api/stats?league=${game.league}&gameId=${game.id}`,
+    fetcher,
+    game.gameStatus !== "STATUS_FINAL" && game.gameStatus !== "STATUS_SCHEDULED"
+      ? { refreshInterval: 10000 }
+      : undefined,
+  );
+  data = statData;
+
   const formattedStats: Map<string, Stat> | undefined = data?.stats
     ? new Map(data.stats)
     : undefined;

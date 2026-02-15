@@ -1,6 +1,8 @@
+import { LeagueId } from "../leagues/leagueConfig";
+
 export default interface GamesService {
   getGames(
-    league: "nfl" | "cfb",
+    league: LeagueId,
     week?: string,
     scoreboardGroup?: string,
   ): Promise<{

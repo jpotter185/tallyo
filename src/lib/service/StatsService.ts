@@ -1,7 +1,9 @@
+import { LeagueId } from "../leagues/leagueConfig";
+
 export default interface StatsService {
   getStats(
     gameId: string,
-    league: "nfl" | "cfb",
+    league: LeagueId,
   ): Promise<{
     statMap: Map<string, Stat>;
     scoringPlays: ScoringPlay[];

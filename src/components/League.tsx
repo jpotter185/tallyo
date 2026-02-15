@@ -3,10 +3,6 @@ import GameCard from "./GameCard/GameCard";
 import Selector from "./Selector";
 import { Dispatch, SetStateAction } from "react";
 import CollapsableSection from "./CollapsableSection";
-import {
-  footballStatsToDisplay,
-  hockeyStatsToDisplay,
-} from "@/lib/espn/enums/statDisplayMaps";
 
 interface LeagueProps {
   games: Game[];
@@ -27,6 +23,9 @@ interface LeagueProps {
   customSelectorValue?: string;
   customSelectorMap?: Map<string, string>;
   setCustomSelectorValue?: Dispatch<SetStateAction<string>>;
+  showYearSelector?: boolean;
+  yearOptions?: string[];
+  statsToDisplay: Map<string, string>;
 }
 
 const League: React.FC<LeagueProps> = ({
@@ -48,6 +47,9 @@ const League: React.FC<LeagueProps> = ({
   customSelectorValue,
   customSelectorMap,
   setCustomSelectorValue,
+  showYearSelector = true,
+  yearOptions = [],
+  statsToDisplay,
 }) => {
   return (
     <div>
@@ -66,7 +68,7 @@ const League: React.FC<LeagueProps> = ({
                 <Selector
                   currentValue={
                     [...customSelectorMap.entries()].find(
-                      ([pretty, iso]) => iso === customSelectorValue,
+                      ([, iso]) => iso === customSelectorValue,
                     )?.[0] || ""
                   }
                   data={Array.from(customSelectorMap.keys())}
@@ -77,23 +79,10 @@ const League: React.FC<LeagueProps> = ({
                   }
                 />
               )}
-            {leagueName != "NHL" && (
+            {showYearSelector && yearOptions.length > 0 && (
               <Selector
                 currentValue={year}
-                data={[
-                  "2026",
-                  "2025",
-                  "2024",
-                  "2023",
-                  "2022",
-                  "2021",
-                  "2020",
-                  "2019",
-                  "2018",
-                  "2017",
-                  "2016",
-                  "2015",
-                ]}
+                data={yearOptions}
                 setCurrentValue={(value: string) => setYear(value)}
               ></Selector>
             )}
@@ -131,11 +120,7 @@ const League: React.FC<LeagueProps> = ({
                       game={game}
                       isOpen={!!openGames[game.id]}
                       toggleOpenGame={() => toggleOpenGame(game.id)}
-                      statsToDisplay={
-                        leagueName === "NHL"
-                          ? hockeyStatsToDisplay
-                          : footballStatsToDisplay
-                      }
+                      statsToDisplay={statsToDisplay}
                     />
                   );
                 })}
