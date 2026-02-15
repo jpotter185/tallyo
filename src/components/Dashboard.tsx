@@ -4,6 +4,7 @@ import {
   LEAGUE_IDS,
   LeagueId,
 } from "@/lib/leagues/leagueConfig";
+import { isLiveDashboardGame } from "@/lib/gameStatus";
 import { useState } from "react";
 import useSWR from "swr";
 import GameCard from "./GameCard/GameCard";
@@ -70,10 +71,7 @@ const Dashboard: React.FC = () => {
             `/api/games/current?league=${league}&timezone=${userTimeZone}`,
           );
           const games: Game[] = (data ?? [])
-            .filter(
-              (game: Game) =>
-                !game.winner && !(game.gameStatus === "STATUS_SCHEDULED"),
-            )
+            .filter((game: Game) => isLiveDashboardGame(game))
             .sort((a: Game, b: Game) => {
               return new Date(a.date).getTime() - new Date(b.date).getTime();
             });

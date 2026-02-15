@@ -12,6 +12,7 @@ import CompactGameCard from "./CompactGameCard";
 import { useState } from "react";
 import useSWR from "swr";
 import { fetcher } from "@/lib/api/fetcher";
+import { shouldPollGameStats } from "@/lib/gameStatus";
 const GameCard: React.FC<GameProps> = ({
   game,
   isOpen,
@@ -45,7 +46,7 @@ const GameCard: React.FC<GameProps> = ({
   const { data: statData } = useSWR(
     `/api/stats?league=${game.league}&gameId=${game.id}`,
     fetcher,
-    game.gameStatus !== "STATUS_FINAL" && game.gameStatus !== "STATUS_SCHEDULED"
+    shouldPollGameStats(game.gameStatus)
       ? { refreshInterval: 10000 }
       : undefined,
   );

@@ -1,4 +1,10 @@
 import { dateFormatter } from "@/lib/espn/enums/dateFormatter";
+import {
+  shouldShowGameChannel,
+  shouldShowGameScore,
+  shouldShowScheduledOrFinalDate,
+  isScheduledGame,
+} from "@/lib/gameStatus";
 import CompactTeamCard from "../TeamCard/CompactTeamCard";
 
 interface GameCompactProps {
@@ -12,27 +18,24 @@ const CompactGameCard: React.FC<GameCompactProps> = ({ game }) => {
         score={game.awayScore}
         winner={game.winner}
         possessionTeamId={game.possessionTeamId}
-        showScore={game.gameStatus !== "STATUS_SCHEDULED"}
+        showScore={shouldShowGameScore(game.gameStatus)}
       />
       <CompactTeamCard
         team={game.homeTeam}
         score={game.homeScore}
         winner={game.winner}
         possessionTeamId={game.possessionTeamId}
-        showScore={game.gameStatus !== "STATUS_SCHEDULED"}
+        showScore={shouldShowGameScore(game.gameStatus)}
       />
 
       <div className="flex flex-col">
-        {game.gameStatus !== "STATUS_SCHEDULED" && (
-          <div>{game.shortPeriod}</div>
-        )}
+        {!isScheduledGame(game.gameStatus) && <div>{game.shortPeriod}</div>}
 
         {game.headline && <div>{game.headline}</div>}
-        {(game.gameStatus === "STATUS_SCHEDULED" ||
-          game.gameStatus === "STATUS_FINAL") && (
+        {shouldShowScheduledOrFinalDate(game.gameStatus) && (
           <div>{dateFormatter.format(new Date(game.isoDate))}</div>
         )}
-        {game.shortPeriod !== "Final" && <div>{game.channel}</div>}
+        {shouldShowGameChannel(game.gameStatus) && <div>{game.channel}</div>}
       </div>
     </div>
   );

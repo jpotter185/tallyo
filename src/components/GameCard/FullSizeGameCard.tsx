@@ -2,6 +2,13 @@ import Link from "next/link";
 import FullsizeTeamCard from "../TeamCard/FullsizeTeamCard";
 import CollapsableSection from "../CollapsableSection";
 import { dateFormatter } from "@/lib/espn/enums/dateFormatter";
+import {
+  isScheduledGame,
+  shouldShowGameChannel,
+  shouldShowGameScore,
+  shouldShowLiveGameDetails,
+  shouldShowScheduledOrFinalDate,
+} from "@/lib/gameStatus";
 interface GameProps {
   game: Game;
   stats: Map<string, Stat> | undefined;
@@ -57,26 +64,23 @@ const FullSizeGameCard: React.FC<GameProps> = ({
           score={game.awayScore}
           possessionTeamId={game.possessionTeamId}
           league={game.league}
+          gameStatus={game.gameStatus}
           homeTeam={false}
-          showScore={game.gameStatus !== "STATUS_SCHEDULED"}
+          showScore={shouldShowGameScore(game.gameStatus)}
           record={game.awayRecordAtTimeOfGame}
           timeouts={game.awayTimeouts}
         />
 
         {/* Game info */}
         <div className="flex flex-col whitespace-nowrap place-items-center items-center justify-center">
-          {game.gameStatus !== "STATUS_SCHEDULED" && (
-            <div>{game.shortPeriod}</div>
+          {!isScheduledGame(game.gameStatus) && <div>{game.shortPeriod}</div>}
+          {shouldShowLiveGameDetails(game.gameStatus) && (
+            <div className="text-xs">{game.down}</div>
           )}
-          {game.shortPeriod !== "Final" &&
-            game.gameStatus !== "STATUS_SCHEDULED" && (
-              <div className="text-xs">{game.down}</div>
-            )}
-          {game.shortPeriod !== "Final" &&
-            game.gameStatus !== "STATUS_SCHEDULED" && (
-              <div className="text-xs">{game.ballLocation}</div>
-            )}
-          {game.shortPeriod !== "Final" && (
+          {shouldShowLiveGameDetails(game.gameStatus) && (
+            <div className="text-xs">{game.ballLocation}</div>
+          )}
+          {shouldShowGameChannel(game.gameStatus) && (
             <div className="text-xs">{game.channel}</div>
           )}
         </div>
@@ -86,8 +90,9 @@ const FullSizeGameCard: React.FC<GameProps> = ({
           score={game.homeScore}
           possessionTeamId={game.possessionTeamId}
           league={game.league}
+          gameStatus={game.gameStatus}
           homeTeam={true}
-          showScore={game.gameStatus !== "STATUS_SCHEDULED"}
+          showScore={shouldShowGameScore(game.gameStatus)}
           record={game.homeRecordAtTimeOfGame}
           timeouts={game.homeTimeouts}
         />
@@ -233,8 +238,7 @@ const FullSizeGameCard: React.FC<GameProps> = ({
       <div className="flex flex-col place-items-center items-center justify-center">
         {game.headline && <div>{game.headline}</div>}
         <div>{game.gameOdd?.spreadText}</div>
-        {(game.gameStatus === "STATUS_SCHEDULED" ||
-          game.gameStatus === "STATUS_FINAL") && (
+        {shouldShowScheduledOrFinalDate(game.gameStatus) && (
           <div>{dateFormatter.format(new Date(game.isoDate))}</div>
         )}
         <div>{game.stadiumName}</div>

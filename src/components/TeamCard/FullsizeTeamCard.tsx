@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { shouldShowLiveGameDetails } from "@/lib/gameStatus";
 
 interface TeamCardProps {
   team: Team;
@@ -7,7 +8,7 @@ interface TeamCardProps {
   possessionTeamId: string;
   timeouts?: number;
   league: string;
-  shortPeriod?: string;
+  gameStatus?: string;
   homeTeam: boolean;
   showScore: boolean;
   record: string;
@@ -21,12 +22,12 @@ const FullsizeTeamCard: React.FC<TeamCardProps> = ({
   possessionTeamId,
   timeouts,
   league,
-  shortPeriod,
+  gameStatus,
   homeTeam,
   showScore,
 }) => {
   const hasPossession =
-    shortPeriod !== "Final" &&
+    shouldShowLiveGameDetails(gameStatus) &&
     `${possessionTeamId}` === `${team.teamKey.teamId}`;
 
   return (
