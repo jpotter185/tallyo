@@ -60,12 +60,15 @@ const Dashboard: React.FC = () => {
   const liveLeagues = LEAGUE_IDS.filter(
     (id) => LEAGUE_CONFIG[id].showInDashboard,
   );
+  const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
   const { data: liveGamesByLeague, isLoading } = useSWR(
-    ["live-games", ...liveLeagues],
+    ["live-games", userTimeZone, ...liveLeagues],
     async () => {
       const entries = await Promise.all(
         liveLeagues.map(async (league) => {
-          const data = await fetcher(`/api/games/current?league=${league}`);
+          const data = await fetcher(
+            `/api/games/current?league=${league}&timezone=${userTimeZone}`,
+          );
           const games: Game[] = (data ?? [])
             .filter(
               (game: Game) =>
