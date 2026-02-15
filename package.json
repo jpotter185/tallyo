@@ -6,7 +6,8 @@
     "dev": "next dev --turbopack",
     "build": "next build --turbopack",
     "start": "next start",
-    "lint": "eslint --fix"
+    "lint": "eslint --fix",
+    "gen:api-types": "ruby scripts/generate-api-types.rb ../tallyo-backend/openapi.yaml src/types/api.generated.ts"
   },
   "dependencies": {
     "@vercel/analytics": "^1.5.0",

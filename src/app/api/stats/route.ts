@@ -10,9 +10,21 @@ export async function GET(request: Request) {
     return new Response("Bad request: Invalid league", { status: 400 });
   }
   const gameId = searchParams.get("gameId") || "";
-  const { statMap, scoringPlays } = await espnService.getStats(gameId, league);
-  return NextResponse.json({
-    stats: Array.from(statMap.entries()),
-    scoringPlays: scoringPlays,
-  });
+  try {
+    const { statMap, scoringPlays } = await espnService.getStats(
+      gameId,
+      league,
+    );
+    return NextResponse.json({
+      stats: Array.from(statMap.entries()),
+      scoringPlays: scoringPlays,
+    });
+  } catch (error) {
+    const message =
+      error instanceof Error ? error.message : "Failed to fetch stats";
+    return NextResponse.json(
+      { code: "UPSTREAM_ERROR", message, details: "Stats service failure" },
+      { status: 502 },
+    );
+  }
 }

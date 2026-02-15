@@ -7,7 +7,7 @@ import Standings from "@/components/Standings";
 import { useLeagueState } from "@/components/hooks/useLeagueState";
 import { fetcher } from "@/lib/api/fetcher";
 import { LEAGUE_CONFIG, LeagueId } from "@/lib/leagues/leagueConfig";
-import { GameContext } from "@/types/GameContext";
+import { CurrentContextResponse } from "@/types/api-contract";
 import useSWR from "swr";
 import { useEffect, useMemo, useState } from "react";
 
@@ -78,9 +78,9 @@ export default function SportPage({ league }: SportPageProps) {
       "year" in context &&
       "seasonType" in context
     ) {
-      const seasonContext = context as GameContext;
-      setWeek(seasonContext.week);
-      setYear(seasonContext.year);
+      const seasonContext = context as CurrentContextResponse;
+      setWeek(String(seasonContext.week));
+      setYear(String(seasonContext.year));
       setSeasonType(seasonContext.seasonType.toString());
     }
 

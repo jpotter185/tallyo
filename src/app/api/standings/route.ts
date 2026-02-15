@@ -9,6 +9,15 @@ export async function GET(request: Request) {
   if (!league || !LEAGUE_CONFIG[league].supportsStandings) {
     return new Response("Bad request: Invalid league", { status: 400 });
   }
-  const standings: Standings[] = await espnService.getStandings(league);
-  return NextResponse.json(standings);
+  try {
+    const standings: Standings[] = await espnService.getStandings(league);
+    return NextResponse.json(standings);
+  } catch (error) {
+    const message =
+      error instanceof Error ? error.message : "Failed to fetch standings";
+    return NextResponse.json(
+      { code: "UPSTREAM_ERROR", message, details: "Standings service failure" },
+      { status: 502 },
+    );
+  }
 }
