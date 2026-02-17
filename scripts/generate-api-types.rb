@@ -2,7 +2,6 @@
 # frozen_string_literal: true
 
 require "yaml"
-require "time"
 
 input_path = ARGV[0]
 output_path = ARGV[1]
@@ -83,7 +82,7 @@ require "set"
 
 output_lines = []
 output_lines << "// AUTO-GENERATED FILE. DO NOT EDIT."
-output_lines << "// Generated from #{input_path} at #{Time.now.utc.iso8601}"
+output_lines << "// Generated from OpenAPI schema. Run `npm run gen:api-types`."
 output_lines << ""
 output_lines << "export interface components {"
 output_lines << "  schemas: {"
