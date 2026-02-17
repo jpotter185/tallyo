@@ -14,6 +14,9 @@ export interface LeagueRuntimeConfig {
   label: string;
   path: `/${string}`;
   supportsStandings: boolean;
+  supportsOdds: boolean;
+  supportsLiveDetails: boolean;
+  teamOrder: "away-left" | "home-left";
   showInHeader: boolean;
   showInDashboard: boolean;
   contextMode: LeagueContextMode;
@@ -51,6 +54,9 @@ const DEFAULT_LEAGUE_METADATA: LeagueMetadata[] = [
     supportsYearFilter: true,
     supportsWeekFilter: true,
     statsProfile: "football",
+    teamOrder: "away-left",
+    supportsOdds: true,
+    supportsLiveDetails: true,
     showInHeader: true,
     showInDashboard: true,
   },
@@ -63,6 +69,9 @@ const DEFAULT_LEAGUE_METADATA: LeagueMetadata[] = [
     supportsYearFilter: true,
     supportsWeekFilter: true,
     statsProfile: "football",
+    teamOrder: "away-left",
+    supportsOdds: true,
+    supportsLiveDetails: true,
     showInHeader: true,
     showInDashboard: true,
   },
@@ -75,6 +84,9 @@ const DEFAULT_LEAGUE_METADATA: LeagueMetadata[] = [
     supportsYearFilter: false,
     supportsWeekFilter: false,
     statsProfile: "hockey",
+    teamOrder: "away-left",
+    supportsOdds: false,
+    supportsLiveDetails: false,
     showInHeader: true,
     showInDashboard: true,
   },
@@ -87,6 +99,9 @@ const DEFAULT_LEAGUE_METADATA: LeagueMetadata[] = [
     supportsYearFilter: false,
     supportsWeekFilter: false,
     statsProfile: "soccer",
+    teamOrder: "home-left",
+    supportsOdds: false,
+    supportsLiveDetails: false,
     showInHeader: true,
     showInDashboard: true,
   },
@@ -158,6 +173,9 @@ export function buildLeagueConfigs(
       label: league.label,
       path: league.path as `/${string}`,
       supportsStandings: league.supportsStandings,
+      supportsOdds: league.supportsOdds,
+      supportsLiveDetails: league.supportsLiveDetails,
+      teamOrder: league.teamOrder,
       showInHeader: league.showInHeader,
       showInDashboard: league.showInDashboard,
       contextMode: league.contextMode as LeagueContextMode,
@@ -190,5 +208,15 @@ export function parseLeagueId(value?: string | null): LeagueId | null {
 
 export function isHomeTeamLeftAligned(leagueId: string): boolean {
   const league = getLeagueConfigById(leagueId);
-  return league?.statsProfile === "soccer";
+  return league?.teamOrder === "home-left";
+}
+
+export function supportsOddsForLeague(leagueId: string): boolean {
+  const league = getLeagueConfigById(leagueId);
+  return !!league?.supportsOdds;
+}
+
+export function supportsLiveDetailsForLeague(leagueId: string): boolean {
+  const league = getLeagueConfigById(leagueId);
+  return !!league?.supportsLiveDetails;
 }

@@ -10,6 +10,10 @@ import {
   shouldShowScheduledOrFinalDate,
 } from "@/lib/gameStatus";
 import { getGameSides } from "@/lib/gameLayout";
+import {
+  supportsLiveDetailsForLeague,
+  supportsOddsForLeague,
+} from "@/lib/leagues/leagueConfig";
 interface GameProps {
   game: Game;
   stats: Map<string, Stat> | undefined;
@@ -36,6 +40,11 @@ const FullSizeGameCard: React.FC<GameProps> = ({
   statsToDisplay,
 }) => {
   const { left, right } = getGameSides(game);
+  const leagueSupportsLiveDetails = supportsLiveDetailsForLeague(game.league);
+  const canShowLiveDetails =
+    leagueSupportsLiveDetails && shouldShowLiveGameDetails(game.gameStatus);
+  const canShowOdds =
+    supportsOddsForLeague(game.league) && !!game.gameOdd?.spreadText;
   const gameStatNameTracker = new Set<string>();
   const defaultStat: Stat = {
     name: "",
@@ -71,15 +80,14 @@ const FullSizeGameCard: React.FC<GameProps> = ({
           showScore={shouldShowGameScore(game.gameStatus)}
           record={left.record}
           timeouts={left.timeouts}
+          supportsLiveDetails={leagueSupportsLiveDetails}
         />
 
         {/* Game info */}
         <div className="flex flex-col whitespace-nowrap place-items-center items-center justify-center">
           {!isScheduledGame(game.gameStatus) && <div>{game.shortPeriod}</div>}
-          {shouldShowLiveGameDetails(game.gameStatus) && (
-            <div className="text-xs">{game.down}</div>
-          )}
-          {shouldShowLiveGameDetails(game.gameStatus) && (
+          {canShowLiveDetails && <div className="text-xs">{game.down}</div>}
+          {canShowLiveDetails && (
             <div className="text-xs">{game.ballLocation}</div>
           )}
           {shouldShowGameChannel(game.gameStatus) && (
@@ -97,6 +105,7 @@ const FullSizeGameCard: React.FC<GameProps> = ({
           showScore={shouldShowGameScore(game.gameStatus)}
           record={right.record}
           timeouts={right.timeouts}
+          supportsLiveDetails={leagueSupportsLiveDetails}
         />
       </div>
       {game.lastPlay && (
@@ -245,7 +254,7 @@ const FullSizeGameCard: React.FC<GameProps> = ({
       <br />
       <div className="flex flex-col place-items-center items-center justify-center">
         {game.headline && <div>{game.headline}</div>}
-        <div>{game.gameOdd?.spreadText}</div>
+        {canShowOdds && <div>{game.gameOdd?.spreadText}</div>}
         {shouldShowScheduledOrFinalDate(game.gameStatus) && (
           <div>{dateFormatter.format(new Date(game.isoDate))}</div>
         )}

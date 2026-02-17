@@ -12,6 +12,7 @@ interface TeamCardProps {
   homeTeam: boolean;
   showScore: boolean;
   record: string;
+  supportsLiveDetails: boolean;
 }
 
 const FullsizeTeamCard: React.FC<TeamCardProps> = ({
@@ -25,8 +26,10 @@ const FullsizeTeamCard: React.FC<TeamCardProps> = ({
   gameStatus,
   homeTeam,
   showScore,
+  supportsLiveDetails,
 }) => {
   const hasPossession =
+    supportsLiveDetails &&
     shouldShowLiveGameDetails(gameStatus) &&
     `${possessionTeamId}` === `${team.teamKey.teamId}`;
 

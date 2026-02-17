@@ -82,6 +82,9 @@ export interface components {
           "supportsYearFilter": boolean;
           "supportsWeekFilter": boolean;
           "statsProfile": "football" | "hockey" | "soccer";
+          "teamOrder": "away-left" | "home-left";
+          "supportsOdds": boolean;
+          "supportsLiveDetails": boolean;
           "showInHeader": boolean;
           "showInDashboard": boolean;
         };
