@@ -15,7 +15,7 @@ jobs:
       - name: Checkout Backend Spec
         uses: actions/checkout@v4
         with:
-          repository: jackpotter/tallyo-backend
+          repository: jpotter185/tallyo-backend
           path: tallyo-backend
 
       - name: Setup Node
