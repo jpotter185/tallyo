@@ -5,24 +5,27 @@ import {
   shouldShowScheduledOrFinalDate,
   isScheduledGame,
 } from "@/lib/gameStatus";
+import { getGameSides } from "@/lib/gameLayout";
 import CompactTeamCard from "../TeamCard/CompactTeamCard";
 
 interface GameCompactProps {
   game: Game;
 }
 const CompactGameCard: React.FC<GameCompactProps> = ({ game }) => {
+  const { left, right } = getGameSides(game);
+
   return (
     <div>
       <CompactTeamCard
-        team={game.awayTeam}
-        score={game.awayScore}
+        team={left.team}
+        score={left.score}
         winner={game.winner}
         possessionTeamId={game.possessionTeamId}
         showScore={shouldShowGameScore(game.gameStatus)}
       />
       <CompactTeamCard
-        team={game.homeTeam}
-        score={game.homeScore}
+        team={right.team}
+        score={right.score}
         winner={game.winner}
         possessionTeamId={game.possessionTeamId}
         showScore={shouldShowGameScore(game.gameStatus)}

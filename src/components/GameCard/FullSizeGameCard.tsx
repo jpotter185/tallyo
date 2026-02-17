@@ -9,6 +9,7 @@ import {
   shouldShowLiveGameDetails,
   shouldShowScheduledOrFinalDate,
 } from "@/lib/gameStatus";
+import { getGameSides } from "@/lib/gameLayout";
 interface GameProps {
   game: Game;
   stats: Map<string, Stat> | undefined;
@@ -34,6 +35,7 @@ const FullSizeGameCard: React.FC<GameProps> = ({
   isTeamStatsOpen,
   statsToDisplay,
 }) => {
+  const { left, right } = getGameSides(game);
   const gameStatNameTracker = new Set<string>();
   const defaultStat: Stat = {
     name: "",
@@ -58,17 +60,17 @@ const FullSizeGameCard: React.FC<GameProps> = ({
   return (
     <div>
       <div className="grid grid-cols-3 place-items-center items-center justify-center p-2">
-        {/* Away team info */}
+        {/* Left-side team info */}
         <FullsizeTeamCard
-          team={game.awayTeam}
-          score={game.awayScore}
+          team={left.team}
+          score={left.score}
           possessionTeamId={game.possessionTeamId}
           league={game.league}
           gameStatus={game.gameStatus}
           homeTeam={false}
           showScore={shouldShowGameScore(game.gameStatus)}
-          record={game.awayRecordAtTimeOfGame}
-          timeouts={game.awayTimeouts}
+          record={left.record}
+          timeouts={left.timeouts}
         />
 
         {/* Game info */}
@@ -84,17 +86,17 @@ const FullSizeGameCard: React.FC<GameProps> = ({
             <div className="text-xs">{game.channel}</div>
           )}
         </div>
-        {/* Home team score */}
+        {/* Right-side team info */}
         <FullsizeTeamCard
-          team={game.homeTeam}
-          score={game.homeScore}
+          team={right.team}
+          score={right.score}
           possessionTeamId={game.possessionTeamId}
           league={game.league}
           gameStatus={game.gameStatus}
           homeTeam={true}
           showScore={shouldShowGameScore(game.gameStatus)}
-          record={game.homeRecordAtTimeOfGame}
-          timeouts={game.homeTimeouts}
+          record={right.record}
+          timeouts={right.timeouts}
         />
       </div>
       {game.lastPlay && (
@@ -141,8 +143,15 @@ const FullSizeGameCard: React.FC<GameProps> = ({
                   {play.teamName} {play.scoringType} - {play.displayText}
                 </div>
                 <div>
-                  {game.awayTeam.abbreviation} {play.awayScore} -{" "}
-                  {play.homeScore} {game.homeTeam.abbreviation}
+                  {left.team.abbreviation}{" "}
+                  {left.statSide === "homeStats"
+                    ? play.homeScore
+                    : play.awayScore}{" "}
+                  -{" "}
+                  {right.statSide === "homeStats"
+                    ? play.homeScore
+                    : play.awayScore}{" "}
+                  {right.team.abbreviation}
                 </div>
               </div>
             );
@@ -159,9 +168,9 @@ const FullSizeGameCard: React.FC<GameProps> = ({
       {isStatsOpen && stats && (
         <div className="border rounded overflow-hidden divide-y">
           <div className="grid grid-cols-3 text-center divide-x font-semibold">
-            <div>{game.awayTeam.abbreviation}</div>
+            <div>{left.team.abbreviation}</div>
             <div>Stat</div>
-            <div>{game.homeTeam.abbreviation}</div>
+            <div>{right.team.abbreviation}</div>
           </div>
           {Array.from(stats.keys()).map((stat) => {
             const statName = stat.split("-")[0];
@@ -169,34 +178,33 @@ const FullSizeGameCard: React.FC<GameProps> = ({
               return;
             } else {
               gameStatNameTracker.add(statName);
-              let homeStat: Stat | undefined = stats.get(
-                `${statName}-${game.homeTeam.teamKey.teamId}`,
+              const leftStat: Stat | undefined = stats.get(
+                `${statName}-${left.team.teamKey.teamId}`,
               );
-              if (!homeStat) {
-                homeStat = defaultStat;
-              }
-              let awayStat: Stat | undefined = stats.get(
-                `${statName}-${game.awayTeam.teamKey.teamId}`,
+              const rightStat: Stat | undefined = stats.get(
+                `${statName}-${right.team.teamKey.teamId}`,
               );
-              if (!awayStat) {
-                awayStat = defaultStat;
-              }
-              if (awayStat.name === "" && homeStat.name === "") {
+              const safeLeftStat = leftStat ?? defaultStat;
+              const safeRightStat = rightStat ?? defaultStat;
+              if (safeLeftStat.name === "" && safeRightStat.name === "") {
                 return;
               }
+
               return (
                 <div
                   key={statName}
                   className="grid grid-cols-3 text-center divide-x"
                 >
                   <div>
-                    <div>{awayStat.playerShortName}</div>
-                    <div>{awayStat.displayValue}</div>
+                    <div>{safeLeftStat.playerShortName}</div>
+                    <div>{safeLeftStat.displayValue}</div>
                   </div>
-                  <div>{awayStat.displayName || homeStat.displayName}</div>
                   <div>
-                    <div>{homeStat.playerShortName}</div>
-                    <div>{homeStat.displayValue}</div>
+                    {safeLeftStat.displayName || safeRightStat.displayName}
+                  </div>
+                  <div>
+                    <div>{safeRightStat.playerShortName}</div>
+                    <div>{safeRightStat.displayValue}</div>
                   </div>
                 </div>
               );
@@ -216,9 +224,9 @@ const FullSizeGameCard: React.FC<GameProps> = ({
       {hasTeamStats && isTeamStatsOpen && (
         <div className="border rounded overflow-hidden divide-y">
           <div className="grid grid-cols-3 text-center divide-x font-semibold">
-            <div>{game.awayTeam.abbreviation}</div>
+            <div>{left.team.abbreviation}</div>
             <div>Team Stats</div>
-            <div>{game.homeTeam.abbreviation}</div>
+            <div>{right.team.abbreviation}</div>
           </div>
           {Array.from(statsToDisplay.entries()).map((stat) => {
             return (
@@ -226,9 +234,9 @@ const FullSizeGameCard: React.FC<GameProps> = ({
                 className="grid grid-cols-3 text-center divide-x"
                 key={stat + game.id}
               >
-                <div>{game.stats.awayStats[stat[0]]}</div>
+                <div>{game.stats[left.statSide][stat[0]]}</div>
                 <div>{stat[1]}</div>
-                <div>{game.stats.homeStats[stat[0]]}</div>
+                <div>{game.stats[right.statSide][stat[0]]}</div>
               </div>
             );
           })}

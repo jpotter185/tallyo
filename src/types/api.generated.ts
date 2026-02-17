@@ -35,7 +35,7 @@ export interface components {
         };
         "Game": {
           "id": string;
-          "league": "nfl" | "cfb" | "nhl";
+          "league": "nfl" | "cfb" | "nhl" | "mls";
           "homeTeam": components["schemas"]["Team"];
           "awayTeam": components["schemas"]["Team"];
           "stadiumName"?: string;
@@ -81,7 +81,7 @@ export interface components {
           "contextMode": "season" | "date";
           "supportsYearFilter": boolean;
           "supportsWeekFilter": boolean;
-          "statsProfile": "football" | "hockey";
+          "statsProfile": "football" | "hockey" | "soccer";
           "showInHeader": boolean;
           "showInDashboard": boolean;
         };

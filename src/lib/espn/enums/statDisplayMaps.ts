@@ -30,3 +30,15 @@ export const hockeyStatsToDisplay = new Map([
   ["shortHandedGoals", "Short Handed Goals"],
   ["powerPlayGoals", "Power Play Goals"],
 ]);
+
+export const soccerStatsToDisplay = new Map([
+  ["shotsTotal", "Total Shots"],
+  ["shotsOnTarget", "Shots On Target"],
+  ["possessionPct", "Possession"],
+  ["foulsCommitted", "Fouls"],
+  ["yellowCards", "Yellow Cards"],
+  ["redCards", "Red Cards"],
+  ["cornerKicks", "Corners"],
+  ["offsides", "Offsides"],
+  ["saves", "Saves"],
+]);

@@ -2,6 +2,7 @@ import { components } from "@/types/api.generated";
 import {
   footballStatsToDisplay,
   hockeyStatsToDisplay,
+  soccerStatsToDisplay,
 } from "@/lib/espn/enums/statDisplayMaps";
 
 export type LeagueId = string;
@@ -16,6 +17,7 @@ export interface LeagueRuntimeConfig {
   showInHeader: boolean;
   showInDashboard: boolean;
   contextMode: LeagueContextMode;
+  statsProfile?: string;
   seasonTypes: Map<string, string>;
   numberOfWeeks: Map<string, number>;
   yearOptions: string[];
@@ -76,6 +78,18 @@ const DEFAULT_LEAGUE_METADATA: LeagueMetadata[] = [
     showInHeader: true,
     showInDashboard: true,
   },
+  {
+    id: "mls",
+    label: "MLS",
+    path: "/mls",
+    supportsStandings: false,
+    contextMode: "date",
+    supportsYearFilter: false,
+    supportsWeekFilter: false,
+    statsProfile: "soccer",
+    showInHeader: true,
+    showInDashboard: true,
+  },
 ];
 
 const UI_PRESETS: Record<
@@ -122,6 +136,9 @@ function getStatsMapForProfile(profile?: string): Map<string, string> {
   if (profile === "hockey") {
     return hockeyStatsToDisplay;
   }
+  if (profile === "soccer") {
+    return soccerStatsToDisplay;
+  }
   return footballStatsToDisplay;
 }
 
@@ -144,6 +161,7 @@ export function buildLeagueConfigs(
       showInHeader: league.showInHeader,
       showInDashboard: league.showInDashboard,
       contextMode: league.contextMode as LeagueContextMode,
+      statsProfile: league.statsProfile,
       seasonTypes: preset.seasonTypes,
       numberOfWeeks: preset.numberOfWeeks,
       yearOptions: preset.yearOptions,
@@ -168,4 +186,9 @@ export function parseLeagueId(value?: string | null): LeagueId | null {
     return null;
   }
   return normalized;
+}
+
+export function isHomeTeamLeftAligned(leagueId: string): boolean {
+  const league = getLeagueConfigById(leagueId);
+  return league?.statsProfile === "soccer";
 }
