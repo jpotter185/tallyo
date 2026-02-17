@@ -1,5 +1,5 @@
 // AUTO-GENERATED FILE. DO NOT EDIT.
-// Generated from ../tallyo-backend/openapi.yaml at 2026-02-15T22:11:18Z
+// Generated from ../tallyo-backend/openapi.yaml at 2026-02-17T01:54:52Z
 
 export interface components {
   schemas: {
@@ -72,6 +72,18 @@ export interface components {
       seasonType: number;
       date: string;
       week: number;
+    };
+    LeagueMetadata: {
+      id: string;
+      label: string;
+      path: string;
+      supportsStandings: boolean;
+      contextMode: "season" | "date";
+      supportsYearFilter: boolean;
+      supportsWeekFilter: boolean;
+      statsProfile: "football" | "hockey";
+      showInHeader: boolean;
+      showInDashboard: boolean;
     };
     GamesPage: {
       content: components["schemas"]["Game"][];

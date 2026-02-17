@@ -1,26 +1,28 @@
+import { components } from "@/types/api.generated";
 import {
   footballStatsToDisplay,
   hockeyStatsToDisplay,
 } from "@/lib/espn/enums/statDisplayMaps";
 
-export const LEAGUE_IDS = ["nfl", "cfb", "nhl"] as const;
-
-export type LeagueId = (typeof LEAGUE_IDS)[number];
+export type LeagueId = string;
 export type LeagueContextMode = "season" | "date";
+export type LeagueMetadata = components["schemas"]["LeagueMetadata"];
 
-interface LeagueConfig {
+export interface LeagueRuntimeConfig {
+  id: LeagueId;
   label: string;
   path: `/${string}`;
   supportsStandings: boolean;
   showInHeader: boolean;
   showInDashboard: boolean;
   contextMode: LeagueContextMode;
-  contextEndpoint: string;
   seasonTypes: Map<string, string>;
   numberOfWeeks: Map<string, number>;
   yearOptions: string[];
   statsToDisplay: Map<string, string>;
 }
+
+const LEAGUE_ID_REGEX = /^[a-z0-9-]+$/;
 
 const yearOptions = [
   "2026",
@@ -37,15 +39,54 @@ const yearOptions = [
   "2015",
 ];
 
-export const LEAGUE_CONFIG: Record<LeagueId, LeagueConfig> = {
-  nfl: {
+const DEFAULT_LEAGUE_METADATA: LeagueMetadata[] = [
+  {
+    id: "nfl",
     label: "NFL",
     path: "/nfl",
     supportsStandings: true,
+    contextMode: "season",
+    supportsYearFilter: true,
+    supportsWeekFilter: true,
+    statsProfile: "football",
     showInHeader: true,
     showInDashboard: true,
+  },
+  {
+    id: "cfb",
+    label: "CFB",
+    path: "/cfb",
+    supportsStandings: true,
     contextMode: "season",
-    contextEndpoint: "/api/v1/games/context?league={league}",
+    supportsYearFilter: true,
+    supportsWeekFilter: true,
+    statsProfile: "football",
+    showInHeader: true,
+    showInDashboard: true,
+  },
+  {
+    id: "nhl",
+    label: "NHL",
+    path: "/nhl",
+    supportsStandings: false,
+    contextMode: "date",
+    supportsYearFilter: false,
+    supportsWeekFilter: false,
+    statsProfile: "hockey",
+    showInHeader: true,
+    showInDashboard: true,
+  },
+];
+
+const UI_PRESETS: Record<
+  string,
+  {
+    seasonTypes: Map<string, string>;
+    numberOfWeeks: Map<string, number>;
+    yearOptions: string[];
+  }
+> = {
+  nfl: {
     seasonTypes: new Map<string, string>([
       ["1", "Preseason"],
       ["2", "Regular Season"],
@@ -57,16 +98,8 @@ export const LEAGUE_CONFIG: Record<LeagueId, LeagueConfig> = {
       ["3", 5],
     ]),
     yearOptions,
-    statsToDisplay: footballStatsToDisplay,
   },
   cfb: {
-    label: "CFB",
-    path: "/cfb",
-    supportsStandings: true,
-    showInHeader: true,
-    showInDashboard: true,
-    contextMode: "season",
-    contextEndpoint: "/api/v1/games/context?league={league}",
     seasonTypes: new Map<string, string>([
       ["2", "Regular Season"],
       ["3", "Postseason"],
@@ -76,40 +109,63 @@ export const LEAGUE_CONFIG: Record<LeagueId, LeagueConfig> = {
       ["3", 1],
     ]),
     yearOptions,
-    statsToDisplay: footballStatsToDisplay,
-  },
-  nhl: {
-    label: "NHL",
-    path: "/nhl",
-    supportsStandings: false,
-    showInHeader: true,
-    showInDashboard: true,
-    contextMode: "date",
-    contextEndpoint: "/api/v1/games/nhl-dates",
-    seasonTypes: new Map<string, string>(),
-    numberOfWeeks: new Map<string, number>(),
-    yearOptions: [],
-    statsToDisplay: hockeyStatsToDisplay,
   },
 };
 
+const EMPTY_PRESET = {
+  seasonTypes: new Map<string, string>(),
+  numberOfWeeks: new Map<string, number>(),
+  yearOptions: [],
+};
+
+function getStatsMapForProfile(profile?: string): Map<string, string> {
+  if (profile === "hockey") {
+    return hockeyStatsToDisplay;
+  }
+  return footballStatsToDisplay;
+}
+
+export function getFallbackLeagueMetadata(): LeagueMetadata[] {
+  return DEFAULT_LEAGUE_METADATA;
+}
+
+export function buildLeagueConfigs(
+  metadata?: LeagueMetadata[] | null,
+): LeagueRuntimeConfig[] {
+  const source =
+    metadata && metadata.length > 0 ? metadata : DEFAULT_LEAGUE_METADATA;
+  return source.map((league) => {
+    const preset = UI_PRESETS[league.id] ?? EMPTY_PRESET;
+    return {
+      id: league.id,
+      label: league.label,
+      path: league.path as `/${string}`,
+      supportsStandings: league.supportsStandings,
+      showInHeader: league.showInHeader,
+      showInDashboard: league.showInDashboard,
+      contextMode: league.contextMode as LeagueContextMode,
+      seasonTypes: preset.seasonTypes,
+      numberOfWeeks: preset.numberOfWeeks,
+      yearOptions: preset.yearOptions,
+      statsToDisplay: getStatsMapForProfile(league.statsProfile),
+    };
+  });
+}
+
+export function getLeagueConfigById(
+  leagueId: string,
+  metadata?: LeagueMetadata[] | null,
+): LeagueRuntimeConfig | null {
+  return (
+    buildLeagueConfigs(metadata).find((league) => league.id === leagueId) ??
+    null
+  );
+}
+
 export function parseLeagueId(value?: string | null): LeagueId | null {
-  const normalized = value?.toLowerCase();
-  if (!normalized) {
+  const normalized = value?.toLowerCase().trim();
+  if (!normalized || !LEAGUE_ID_REGEX.test(normalized)) {
     return null;
   }
-  return LEAGUE_IDS.includes(normalized as LeagueId)
-    ? (normalized as LeagueId)
-    : null;
+  return normalized;
 }
-
-export function isLeagueId(value?: string | null): value is LeagueId {
-  return parseLeagueId(value) !== null;
-}
-
-export const HEADER_LEAGUE_LINKS = LEAGUE_IDS.filter(
-  (id) => LEAGUE_CONFIG[id].showInHeader,
-).map((id) => ({
-  label: LEAGUE_CONFIG[id].label,
-  href: LEAGUE_CONFIG[id].path,
-}));

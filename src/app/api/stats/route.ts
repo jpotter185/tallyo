@@ -1,4 +1,5 @@
 import EspnService from "@/lib/espn/espnService";
+import { isEspnLeagueId } from "@/lib/espn/enums/espnEndpoints";
 import { parseLeagueId } from "@/lib/leagues/leagueConfig";
 import { NextResponse } from "next/server";
 
@@ -6,7 +7,7 @@ export async function GET(request: Request) {
   const espnService = new EspnService();
   const { searchParams } = new URL(request.url);
   const league = parseLeagueId(searchParams.get("league"));
-  if (!league) {
+  if (!league || !isEspnLeagueId(league)) {
     return new Response("Bad request: Invalid league", { status: 400 });
   }
   const gameId = searchParams.get("gameId") || "";

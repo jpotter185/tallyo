@@ -6,7 +6,11 @@ import League from "@/components/League";
 import Standings from "@/components/Standings";
 import { useLeagueState } from "@/components/hooks/useLeagueState";
 import { fetcher } from "@/lib/api/fetcher";
-import { LEAGUE_CONFIG, LeagueId } from "@/lib/leagues/leagueConfig";
+import {
+  LeagueId,
+  getFallbackLeagueMetadata,
+  getLeagueConfigById,
+} from "@/lib/leagues/leagueConfig";
 import { CurrentContextResponse } from "@/types/api-contract";
 import useSWR from "swr";
 import { useEffect, useMemo, useState } from "react";
@@ -47,12 +51,19 @@ export default function SportPage({ league }: SportPageProps) {
     year,
     setYear,
   } = useLeagueState();
-  const config = LEAGUE_CONFIG[league];
+  const { data: leaguesMetadata } = useSWR("/api/leagues", fetcher);
+  const config = getLeagueConfigById(
+    league,
+    leaguesMetadata ?? getFallbackLeagueMetadata(),
+  );
+  const hasConfig = !!config;
+  const contextMode = config?.contextMode;
 
-  const contextUrl =
-    config.contextMode === "date"
-      ? `/api/context?league=${league}&timezone=${userTimeZone}`
-      : `/api/context?league=${league}`;
+  const contextUrl = !hasConfig
+    ? null
+    : contextMode === "date"
+      ? `/api/context?league=${league}&mode=date&timezone=${userTimeZone}`
+      : `/api/context?league=${league}&mode=season&timezone=${userTimeZone}`;
 
   const { data: context } = useSWR(contextUrl, fetcher, {
     revalidateOnFocus: false,
@@ -61,11 +72,11 @@ export default function SportPage({ league }: SportPageProps) {
   });
 
   useEffect(() => {
-    if (!context || isInitialized) {
+    if (!config || !context || isInitialized) {
       return;
     }
 
-    if (config.contextMode === "date") {
+    if (contextMode === "date") {
       const parsedDates = Array.isArray(context) ? (context as string[]) : [];
       if (parsedDates.length > 0) {
         setDateOptions(parsedDates);
@@ -86,7 +97,8 @@ export default function SportPage({ league }: SportPageProps) {
 
     setIsInitialized(true);
   }, [
-    config.contextMode,
+    contextMode,
+    config,
     context,
     isInitialized,
     setSeasonType,
@@ -95,7 +107,7 @@ export default function SportPage({ league }: SportPageProps) {
   ]);
 
   useEffect(() => {
-    if (!isInitialized || config.contextMode !== "season") {
+    if (!config || !isInitialized || contextMode !== "season") {
       return;
     }
     const maxWeeks = config.numberOfWeeks.get(seasonType) || 1;
@@ -103,20 +115,13 @@ export default function SportPage({ league }: SportPageProps) {
     if (currentWeek > maxWeeks || currentWeek < 1) {
       setWeek("1");
     }
-  }, [
-    config.contextMode,
-    config.numberOfWeeks,
-    isInitialized,
-    seasonType,
-    setWeek,
-    week,
-  ]);
+  }, [contextMode, config, isInitialized, seasonType, setWeek, week]);
 
   const gamesUrl = useMemo(() => {
-    if (!isInitialized) {
+    if (!config || !isInitialized) {
       return null;
     }
-    if (config.contextMode === "date") {
+    if (contextMode === "date") {
       if (!selectedDate) {
         return null;
       }
@@ -124,7 +129,8 @@ export default function SportPage({ league }: SportPageProps) {
     }
     return `/api/games?league=${league}&week=${week}&seasonType=${seasonType}&year=${year}`;
   }, [
-    config.contextMode,
+    config,
+    contextMode,
     isInitialized,
     league,
     seasonType,
@@ -139,7 +145,7 @@ export default function SportPage({ league }: SportPageProps) {
     fetcher,
   );
   const { data: standings, isLoading: isStandingsLoading } = useSWR(
-    config.supportsStandings ? `/api/standings?league=${league}` : null,
+    config?.supportsStandings ? `/api/standings?league=${league}` : null,
     fetcher,
   );
 
@@ -164,36 +170,39 @@ export default function SportPage({ league }: SportPageProps) {
   return (
     <div className="bg-sky-50 dark:bg-neutral-800 border border-gray-500 divide-y divide-x divide-gray-500">
       <Header />
+      {!hasConfig && <div className="p-4">Unknown league: {league}</div>}
       <div>
-        {isInitialized ? (
-          <League
-            leagueName={config.label}
-            games={gamesData ?? []}
-            isOpen={isOpen}
-            setIsOpen={setIsOpen}
-            week={week}
-            setWeek={setWeek}
-            numberOfWeeks={config.numberOfWeeks}
-            seasonTypes={config.seasonTypes}
-            openGames={openGames}
-            toggleOpenGame={toggleGame}
-            isLoading={isGamesLoading}
-            seasonType={seasonType}
-            setSeasonType={setSeasonType}
-            setYear={setYear}
-            year={year}
-            customSelectorMap={customSelectorMap}
-            customSelectorValue={selectedDate}
-            setCustomSelectorValue={setSelectedDate}
-            showYearSelector={config.contextMode === "season"}
-            yearOptions={config.yearOptions}
-            statsToDisplay={config.statsToDisplay}
-          />
-        ) : (
-          <div>Loading...</div>
-        )}
+        {hasConfig ? (
+          isInitialized && config ? (
+            <League
+              leagueName={config.label}
+              games={gamesData ?? []}
+              isOpen={isOpen}
+              setIsOpen={setIsOpen}
+              week={week}
+              setWeek={setWeek}
+              numberOfWeeks={config.numberOfWeeks}
+              seasonTypes={config.seasonTypes}
+              openGames={openGames}
+              toggleOpenGame={toggleGame}
+              isLoading={isGamesLoading}
+              seasonType={seasonType}
+              setSeasonType={setSeasonType}
+              setYear={setYear}
+              year={year}
+              customSelectorMap={customSelectorMap}
+              customSelectorValue={selectedDate}
+              setCustomSelectorValue={setSelectedDate}
+              showYearSelector={config.contextMode === "season"}
+              yearOptions={config.yearOptions}
+              statsToDisplay={config.statsToDisplay}
+            />
+          ) : (
+            <div>Loading...</div>
+          )
+        ) : null}
       </div>
-      {config.supportsStandings && (
+      {config?.supportsStandings && (
         <Standings
           standings={standings}
           isLoading={isStandingsLoading}

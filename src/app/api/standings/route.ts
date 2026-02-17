@@ -1,12 +1,20 @@
 import EspnService from "@/lib/espn/espnService";
-import { LEAGUE_CONFIG, parseLeagueId } from "@/lib/leagues/leagueConfig";
+import {
+  getStandingsEndpoint,
+  isEspnLeagueId,
+} from "@/lib/espn/enums/espnEndpoints";
+import { parseLeagueId } from "@/lib/leagues/leagueConfig";
 import { NextResponse } from "next/server";
 
 export async function GET(request: Request) {
   const espnService = new EspnService();
   const { searchParams } = new URL(request.url);
   const league = parseLeagueId(searchParams.get("league"));
-  if (!league || !LEAGUE_CONFIG[league].supportsStandings) {
+  if (
+    !league ||
+    !isEspnLeagueId(league) ||
+    getStandingsEndpoint(league) === undefined
+  ) {
     return new Response("Bad request: Invalid league", { status: 400 });
   }
   try {

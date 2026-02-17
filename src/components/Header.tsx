@@ -1,13 +1,20 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { HEADER_LEAGUE_LINKS } from "@/lib/leagues/leagueConfig";
+import { fetcher } from "@/lib/api/fetcher";
+import {
+  buildLeagueConfigs,
+  getFallbackLeagueMetadata,
+} from "@/lib/leagues/leagueConfig";
+import useSWR from "swr";
 
 const Header: React.FC = () => {
-  const links = [
-    { label: "Dashboard", href: "/" },
-    ...HEADER_LEAGUE_LINKS,
-    { label: "Odds", href: "/odds" },
-  ];
+  const { data: leaguesMetadata } = useSWR("/api/leagues", fetcher);
+  const leagueLinks = buildLeagueConfigs(
+    leaguesMetadata ?? getFallbackLeagueMetadata(),
+  )
+    .filter((league) => league.showInHeader)
+    .map((league) => ({ label: league.label, href: league.path }));
+  const links = [{ label: "Dashboard", href: "/" }, ...leagueLinks];
 
   const pathname = usePathname();
 

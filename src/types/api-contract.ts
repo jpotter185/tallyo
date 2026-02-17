@@ -7,3 +7,4 @@ export type TeamStatsResponse = components["schemas"]["TeamStats"];
 export type GameOddResponse = components["schemas"]["GameOdd"];
 export type GameResponse = components["schemas"]["Game"];
 export type CurrentContextResponse = components["schemas"]["CurrentContext"];
+export type LeagueMetadataResponse = components["schemas"]["LeagueMetadata"];
