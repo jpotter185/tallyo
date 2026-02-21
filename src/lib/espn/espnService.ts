@@ -3,7 +3,7 @@ import StatsService from "../service/StatsService";
 import {
   ESPN_ENDPOINTS,
   EspnLeagueId,
-  getStandingsEndpoint,
+  getStandingsEndpoints,
   isEspnLeagueId,
 } from "./enums/espnEndpoints";
 // import getCleanedOdds from "./mappers/oddsMapper";
@@ -39,6 +39,12 @@ const parseStatsByLeague: Record<
       scoringPlays,
     };
   },
+  mls: (payload) => ({
+    leaders: Array.isArray(payload?.leaders) ? payload.leaders : [],
+    scoringPlays: Array.isArray(payload?.scoringPlays)
+      ? payload.scoringPlays
+      : [],
+  }),
 };
 
 export default class EspnService implements StandingsService, StatsService {
@@ -46,18 +52,30 @@ export default class EspnService implements StandingsService, StatsService {
     if (!isEspnLeagueId(league)) {
       return [];
     }
-    try {
-      const standingsEndpoint = getStandingsEndpoint(league);
-      if (!standingsEndpoint) {
-        return [];
-      }
-      const response = await fetch(standingsEndpoint);
-      const data = await response.json();
-      return getStandings(data);
-    } catch (error) {
-      console.error(error);
+    const standingsEndpoints = getStandingsEndpoints(league);
+    if (standingsEndpoints.length === 0) {
       return [];
     }
+
+    for (const standingsEndpoint of standingsEndpoints) {
+      try {
+        const response = await fetch(standingsEndpoint);
+        if (!response.ok) {
+          continue;
+        }
+        const data = await response.json();
+        const standings = getStandings(data);
+        if (standings.length > 0) {
+          return standings;
+        }
+      } catch (error) {
+        console.error(
+          `Error loading standings endpoint ${standingsEndpoint}`,
+          error,
+        );
+      }
+    }
+    return [];
   }
   async getStats(
     gameId: string,

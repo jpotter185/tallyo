@@ -168,11 +168,14 @@ export function buildLeagueConfigs(
     metadata && metadata.length > 0 ? metadata : DEFAULT_LEAGUE_METADATA;
   return source.map((league) => {
     const preset = UI_PRESETS[league.id] ?? EMPTY_PRESET;
+    const supportsStandings = ["nhl", "mls"].includes(league.id)
+      ? true
+      : league.supportsStandings;
     return {
       id: league.id,
       label: league.label,
       path: league.path as `/${string}`,
-      supportsStandings: league.supportsStandings,
+      supportsStandings,
       supportsOdds: league.supportsOdds,
       supportsLiveDetails: league.supportsLiveDetails,
       teamOrder: league.teamOrder,

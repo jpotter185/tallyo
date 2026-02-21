@@ -1,6 +1,6 @@
 import EspnService from "@/lib/espn/espnService";
 import {
-  getStandingsEndpoint,
+  getStandingsEndpoints,
   isEspnLeagueId,
 } from "@/lib/espn/enums/espnEndpoints";
 import { parseLeagueId } from "@/lib/leagues/leagueConfig";
@@ -13,7 +13,7 @@ export async function GET(request: Request) {
   if (
     !league ||
     !isEspnLeagueId(league) ||
-    getStandingsEndpoint(league) === undefined
+    getStandingsEndpoints(league).length === 0
   ) {
     return new Response("Bad request: Invalid league", { status: 400 });
   }

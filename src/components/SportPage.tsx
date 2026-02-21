@@ -143,6 +143,9 @@ export default function SportPage({ league }: SportPageProps) {
   const { data: gamesData, isLoading: isGamesLoading } = useSWR(
     gamesUrl,
     fetcher,
+    {
+      keepPreviousData: true,
+    },
   );
   const { data: standings, isLoading: isStandingsLoading } = useSWR(
     config?.supportsStandings ? `/api/standings?league=${league}` : null,

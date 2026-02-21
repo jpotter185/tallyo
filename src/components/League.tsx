@@ -109,9 +109,12 @@ const League: React.FC<LeagueProps> = ({
                 ></Selector>
               )}
 
-            {isLoading ? (
-              <div>Loading...</div>
-            ) : games && games.length > 0 ? (
+            {isLoading && (
+              <div className="text-sm text-gray-600 dark:text-gray-300 py-1">
+                Updating games...
+              </div>
+            )}
+            {games && games.length > 0 ? (
               <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 p-2">
                 {games.map((game) => {
                   return (
@@ -125,7 +128,7 @@ const League: React.FC<LeagueProps> = ({
                   );
                 })}
               </div>
-            ) : (
+            ) : isLoading ? null : (
               <div>No games match filter</div>
             )}
           </div>
