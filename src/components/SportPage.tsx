@@ -19,8 +19,20 @@ interface SportPageProps {
   league: LeagueId;
 }
 
+function toLocalIsoDate(date: Date): string {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return [year, month, day].join("-");
+}
+
+function parseLocalIsoDate(date: string): Date {
+  const [year, month, day] = date.split("-").map(Number);
+  return new Date(year, month - 1, day);
+}
+
 function getClosestIsoDate(dates: string[]): string {
-  const todayIso = new Date().toLocaleDateString("en-CA");
+  const todayIso = toLocalIsoDate(new Date());
   if (dates.includes(todayIso)) {
     return todayIso;
   }
@@ -28,7 +40,7 @@ function getClosestIsoDate(dates: string[]): string {
   return dates
     .map((date) => ({
       date,
-      diff: Math.abs(new Date(date).getTime() - now),
+      diff: Math.abs(parseLocalIsoDate(date).getTime() - now),
     }))
     .sort((a, b) => a.diff - b.diff)[0].date;
 }
@@ -156,16 +168,22 @@ export default function SportPage({ league }: SportPageProps) {
     () =>
       new Map<string, string>(
         [...dateOptions]
-          .sort((a, b) => new Date(a).getTime() - new Date(b).getTime())
-          .map((isoDate) => [
-            new Date(isoDate).toLocaleDateString("en-US", {
-              weekday: "short",
-              month: "short",
-              day: "numeric",
-              year: "numeric",
-            }),
-            new Date(isoDate).toLocaleDateString("en-CA"),
-          ]),
+          .sort(
+            (a, b) =>
+              parseLocalIsoDate(a).getTime() - parseLocalIsoDate(b).getTime(),
+          )
+          .map((isoDate) => {
+            const date = parseLocalIsoDate(isoDate);
+            return [
+              date.toLocaleDateString("en-US", {
+                weekday: "short",
+                month: "short",
+                day: "numeric",
+                year: "numeric",
+              }),
+              isoDate,
+            ];
+          }),
       ),
     [dateOptions],
   );
