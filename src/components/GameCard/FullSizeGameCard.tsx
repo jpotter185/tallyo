@@ -1,7 +1,8 @@
 import Link from "next/link";
+import { Game, ScoringPlay, StatLeader } from "@/types/api-contract";
 import FullsizeTeamCard from "../TeamCard/FullsizeTeamCard";
 import CollapsableSection from "../CollapsableSection";
-import { dateFormatter } from "@/lib/espn/enums/dateFormatter";
+import { dateFormatter } from "@/lib/format/dateFormatter";
 import {
   isScheduledGame,
   shouldShowGameChannel,
@@ -14,29 +15,30 @@ import {
   supportsLiveDetailsForLeague,
   supportsOddsForLeague,
 } from "@/lib/leagues/leagueConfig";
+
 interface GameProps {
   game: Game;
-  stats: Map<string, Stat> | undefined;
-  scoringPlays: ScoringPlay[] | undefined;
-  openScoringPlaysForGame: () => void;
+  leaders: Map<string, StatLeader>;
+  scoringPlays: ScoringPlay[];
   isScoringPlaysOpen: boolean;
-  openStatsForGame: () => void;
+  toggleScoringPlays: () => void;
   isStatsOpen: boolean;
-  openTeamStatsForGame: () => void;
+  toggleStats: () => void;
   isTeamStatsOpen: boolean;
+  toggleTeamStats: () => void;
   statsToDisplay: Map<string, string>;
 }
 
 const FullSizeGameCard: React.FC<GameProps> = ({
   game,
-  stats,
+  leaders,
   scoringPlays,
-  openScoringPlaysForGame,
   isScoringPlaysOpen,
-  openStatsForGame,
+  toggleScoringPlays,
   isStatsOpen,
-  openTeamStatsForGame,
+  toggleStats,
   isTeamStatsOpen,
+  toggleTeamStats,
   statsToDisplay,
 }) => {
   const { left, right } = getGameSides(game);
@@ -45,25 +47,14 @@ const FullSizeGameCard: React.FC<GameProps> = ({
     leagueSupportsLiveDetails && shouldShowLiveGameDetails(game.gameStatus);
   const canShowOdds =
     supportsOddsForLeague(game.league) && !!game.gameOdd?.spreadText;
-  const gameStatNameTracker = new Set<string>();
-  const defaultStat: Stat = {
-    name: "",
-    displayName: "",
-    shortDisplayName: "",
-    abbreviation: "",
-    value: "",
-    displayValue: "",
-    playerName: "",
-    playerShortName: "",
-    teamId: "",
-  };
+  const renderedStatNames = new Set<string>();
 
   const hasTeamStats =
     !!game.stats &&
     Array.from(statsToDisplay.keys()).some(
       (stat) =>
-        game.stats.homeStats?.[stat] != null ||
-        game.stats.awayStats?.[stat] != null,
+        game.stats?.homeStats?.[stat] != null ||
+        game.stats?.awayStats?.[stat] != null,
     );
 
   return (
@@ -133,103 +124,100 @@ const FullSizeGameCard: React.FC<GameProps> = ({
           )}
         </div>
       )}
-      {scoringPlays && scoringPlays.length > 0 && (
+      {scoringPlays.length > 0 && (
         <CollapsableSection
           title={`Scoring Plays`}
           isOpen={isScoringPlaysOpen}
-          onToggle={() => openScoringPlaysForGame()}
+          onToggle={toggleScoringPlays}
         />
       )}
       {isScoringPlaysOpen && (
         <div className="border rounded overflow-hidden divide-y">
-          {scoringPlays?.map((play) => {
+          {scoringPlays.map((play) => {
+            const hasRunningScore =
+              play.homeScore != null && play.awayScore != null;
             return (
               <div className="p-1" key={play.id}>
                 <div>
-                  {play.quarter}Q - {play.clock}
+                  {play.period}Q - {play.clock}
                 </div>
                 <div>
                   {play.teamName} {play.scoringType} - {play.displayText}
                 </div>
-                <div>
-                  {left.team.abbreviation}{" "}
-                  {left.statSide === "homeStats"
-                    ? play.homeScore
-                    : play.awayScore}{" "}
-                  -{" "}
-                  {right.statSide === "homeStats"
-                    ? play.homeScore
-                    : play.awayScore}{" "}
-                  {right.team.abbreviation}
-                </div>
+                {hasRunningScore && (
+                  <div>
+                    {left.team.abbreviation}{" "}
+                    {left.statSide === "homeStats"
+                      ? play.homeScore
+                      : play.awayScore}{" "}
+                    -{" "}
+                    {right.statSide === "homeStats"
+                      ? play.homeScore
+                      : play.awayScore}{" "}
+                    {right.team.abbreviation}
+                  </div>
+                )}
               </div>
             );
           })}
         </div>
       )}
-      {stats && stats.size > 0 && (
+      {leaders.size > 0 && (
         <CollapsableSection
           title={`Player Stats`}
           isOpen={isStatsOpen}
-          onToggle={() => openStatsForGame()}
+          onToggle={toggleStats}
         />
       )}
-      {isStatsOpen && stats && (
+      {isStatsOpen && (
         <div className="border rounded overflow-hidden divide-y">
           <div className="grid grid-cols-3 text-center divide-x font-semibold">
             <div>{left.team.abbreviation}</div>
             <div>Stat</div>
             <div>{right.team.abbreviation}</div>
           </div>
-          {Array.from(stats.keys()).map((stat) => {
-            const statName = stat.split("-")[0];
-            if (!statName || gameStatNameTracker.has(statName)) {
-              return;
-            } else {
-              gameStatNameTracker.add(statName);
-              const leftStat: Stat | undefined = stats.get(
-                `${statName}-${left.team.teamKey.teamId}`,
-              );
-              const rightStat: Stat | undefined = stats.get(
-                `${statName}-${right.team.teamKey.teamId}`,
-              );
-              const safeLeftStat = leftStat ?? defaultStat;
-              const safeRightStat = rightStat ?? defaultStat;
-              if (safeLeftStat.name === "" && safeRightStat.name === "") {
-                return;
-              }
-
-              return (
-                <div
-                  key={statName}
-                  className="grid grid-cols-3 text-center divide-x"
-                >
-                  <div>
-                    <div>{safeLeftStat.playerShortName}</div>
-                    <div>{safeLeftStat.displayValue}</div>
-                  </div>
-                  <div>
-                    {safeLeftStat.displayName || safeRightStat.displayName}
-                  </div>
-                  <div>
-                    <div>{safeRightStat.playerShortName}</div>
-                    <div>{safeRightStat.displayValue}</div>
-                  </div>
-                </div>
-              );
+          {Array.from(leaders.values()).map((leader) => {
+            const statName = leader.name;
+            if (!statName || renderedStatNames.has(statName)) {
+              return null;
             }
+            renderedStatNames.add(statName);
+            const leftLeader = leaders.get(
+              `${statName}-${left.team.teamKey.teamId}`,
+            );
+            const rightLeader = leaders.get(
+              `${statName}-${right.team.teamKey.teamId}`,
+            );
+            if (!leftLeader && !rightLeader) {
+              return null;
+            }
+
+            return (
+              <div
+                key={statName}
+                className="grid grid-cols-3 text-center divide-x"
+              >
+                <div>
+                  <div>{leftLeader?.playerShortName}</div>
+                  <div>{leftLeader?.displayValue}</div>
+                </div>
+                <div>{leftLeader?.displayName || rightLeader?.displayName}</div>
+                <div>
+                  <div>{rightLeader?.playerShortName}</div>
+                  <div>{rightLeader?.displayValue}</div>
+                </div>
+              </div>
+            );
           })}
         </div>
       )}
-      {hasTeamStats &&
-        game.stats &&
-        (game.stats.homeStats || game.stats.awayStats) && (
-          <CollapsableSection
-            title={`Team Stats`}
-            isOpen={isTeamStatsOpen}
-            onToggle={() => openTeamStatsForGame()}
-          />
-        )}
+      {hasTeamStats && (
+        <CollapsableSection
+          title={`Team Stats`}
+          isOpen={isTeamStatsOpen}
+          onToggle={toggleTeamStats}
+        />
+      )}
       {hasTeamStats && isTeamStatsOpen && (
         <div className="border rounded overflow-hidden divide-y">
           <div className="grid grid-cols-3 text-center divide-x font-semibold">
@@ -237,15 +225,15 @@ const FullSizeGameCard: React.FC<GameProps> = ({
             <div>Team Stats</div>
             <div>{right.team.abbreviation}</div>
           </div>
-          {Array.from(statsToDisplay.entries()).map((stat) => {
+          {Array.from(statsToDisplay.entries()).map(([statKey, statLabel]) => {
             return (
               <div
                 className="grid grid-cols-3 text-center divide-x"
-                key={stat + game.id}
+                key={statKey + game.id}
               >
-                <div>{game.stats[left.statSide][stat[0]]}</div>
-                <div>{stat[1]}</div>
-                <div>{game.stats[right.statSide][stat[0]]}</div>
+                <div>{game.stats?.[left.statSide]?.[statKey]}</div>
+                <div>{statLabel}</div>
+                <div>{game.stats?.[right.statSide]?.[statKey]}</div>
               </div>
             );
           })}
@@ -260,15 +248,17 @@ const FullSizeGameCard: React.FC<GameProps> = ({
         )}
         <div>{game.stadiumName}</div>
         <div>{game.location}</div>
-        <div>
-          <Link
-            href={game.espnLink}
-            className="font-medium text-blue-600 dark:text-blue-400 hover:underline"
-            target="_blank"
-          >
-            ESPN
-          </Link>
-        </div>
+        {game.espnLink && (
+          <div>
+            <Link
+              href={game.espnLink}
+              className="font-medium text-blue-600 dark:text-blue-400 hover:underline"
+              target="_blank"
+            >
+              ESPN
+            </Link>
+          </div>
+        )}
       </div>
     </div>
   );

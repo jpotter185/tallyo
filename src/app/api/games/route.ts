@@ -1,5 +1,10 @@
 import { NextResponse } from "next/server";
 import { parseLeagueId } from "@/lib/leagues/leagueConfig";
+import {
+  jsonBody,
+  passthroughError,
+  proxyBackend,
+} from "@/app/api/_lib/backendProxy";
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
@@ -7,31 +12,21 @@ export async function GET(request: Request) {
   if (!league) {
     return new Response("Bad request: Invalid league", { status: 400 });
   }
-  const week = searchParams.get("week");
-  const seasonType = searchParams.get("seasonType");
-  const year = searchParams.get("year");
-  const date = searchParams.get("date");
-  const timezone = searchParams.get("timezone");
 
-  const games = await fetch(
-    `${process.env.BACKEND_URL}/api/v1/games?league=${league}${year ? `&year=${year}` : ""}${seasonType ? `&seasonType=${seasonType}` : ""}${week ? `&week=${week}` : ""}${date ? `&date=${date}` : ""}${timezone ? `&userTimeZone=${encodeURIComponent(timezone)}` : ""}`,
-    {
-      headers: {
-        "x-api-key": process.env.API_KEY || "",
-      },
+  const response = await proxyBackend("/api/v1/games", {
+    params: {
+      league,
+      year: searchParams.get("year"),
+      seasonType: searchParams.get("seasonType"),
+      week: searchParams.get("week"),
+      date: searchParams.get("date"),
+      timezone: searchParams.get("timezone"),
     },
-  );
+  });
 
-  const rawBody = await games.text();
-  if (!games.ok) {
-    return new Response(rawBody || "Backend request failed", {
-      status: games.status,
-      headers: {
-        "content-type": games.headers.get("content-type") || "text/plain",
-      },
-    });
+  if (!response.ok) {
+    return passthroughError(response);
   }
-
-  const body = rawBody ? JSON.parse(rawBody) : {};
+  const body = await jsonBody<{ content?: unknown[] }>(response, {});
   return NextResponse.json(body.content ?? []);
 }

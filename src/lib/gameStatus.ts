@@ -1,3 +1,5 @@
+import { Game } from "@/types/api-contract";
+
 const IN_PROGRESS_STATUSES = new Set([
   "STATUS_IN_PROGRESS",
   "STATUS_HALFTIME",

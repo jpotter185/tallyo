@@ -1,11 +1,13 @@
+import { useState } from "react";
+import useSWR from "swr";
 import { fetcher } from "@/lib/api/fetcher";
+import { currentGamesUrl, leaguesUrl } from "@/lib/api/client";
 import {
   buildLeagueConfigs,
   getFallbackLeagueMetadata,
 } from "@/lib/leagues/leagueConfig";
 import { isLiveDashboardGame } from "@/lib/gameStatus";
-import { useState } from "react";
-import useSWR from "swr";
+import { Game, LeagueMetadata } from "@/types/api-contract";
 import GameCard from "./GameCard/GameCard";
 import CollapsableSection from "./CollapsableSection";
 
@@ -40,17 +42,15 @@ const LiveLeagueSection: React.FC<LiveLeagueSectionProps> = ({
       />
       {isOpen && (
         <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 p-2">
-          {games.map((game) => {
-            return (
-              <GameCard
-                key={game.id}
-                game={game}
-                isOpen={!!openGames[game.id]}
-                toggleOpenGame={() => toggleGame(game.id)}
-                statsToDisplay={statsToDisplay}
-              />
-            );
-          })}
+          {games.map((game) => (
+            <GameCard
+              key={game.id}
+              game={game}
+              isOpen={!!openGames[game.id]}
+              toggleOpenGame={() => toggleGame(game.id)}
+              statsToDisplay={statsToDisplay}
+            />
+          ))}
         </div>
       )}
     </div>
@@ -58,7 +58,10 @@ const LiveLeagueSection: React.FC<LiveLeagueSectionProps> = ({
 };
 
 const Dashboard: React.FC = () => {
-  const { data: leaguesMetadata } = useSWR("/api/leagues", fetcher);
+  const { data: leaguesMetadata } = useSWR<LeagueMetadata[]>(
+    leaguesUrl(),
+    fetcher,
+  );
   const liveLeagues = buildLeagueConfigs(
     leaguesMetadata ?? getFallbackLeagueMetadata(),
   ).filter((league) => league.showInDashboard);
@@ -68,14 +71,14 @@ const Dashboard: React.FC = () => {
     async () => {
       const entries = await Promise.all(
         liveLeagues.map(async (league) => {
-          const data = await fetcher(
-            `/api/games/current?league=${league.id}&timezone=${userTimeZone}`,
+          const data: Game[] = await fetcher(
+            currentGamesUrl(league.id, userTimeZone),
           );
-          const games: Game[] = (data ?? [])
-            .filter((game: Game) => isLiveDashboardGame(game))
-            .sort((a: Game, b: Game) => {
-              return new Date(a.date).getTime() - new Date(b.date).getTime();
-            });
+          const games = (data ?? [])
+            .filter((game) => isLiveDashboardGame(game))
+            .sort(
+              (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
+            );
           return [league.id, games] as const;
         }),
       );

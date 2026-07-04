@@ -1,17 +1,18 @@
 import Image from "next/image";
+import { Team } from "@/types/api-contract";
 import { shouldShowLiveGameDetails } from "@/lib/gameStatus";
 
 interface TeamCardProps {
   team: Team;
-  score: string;
+  score?: string;
   winner?: string;
-  possessionTeamId: string;
+  possessionTeamId?: string;
   timeouts?: number;
   league: string;
   gameStatus?: string;
   homeTeam: boolean;
   showScore: boolean;
-  record: string;
+  record?: string;
   supportsLiveDetails: boolean;
 }
 
@@ -52,7 +53,7 @@ const FullsizeTeamCard: React.FC<TeamCardProps> = ({
         </div>
 
         <div className="text-xs">{record}</div>
-        {timeouts !== undefined && league === "NFL" && (
+        {timeouts !== undefined && league === "nfl" && (
           <div className="flex items-center gap-1 mt-1">
             {[...Array(3)].map((_, i) => (
               <div
@@ -68,14 +69,11 @@ const FullsizeTeamCard: React.FC<TeamCardProps> = ({
 
       {/* INNER EDGE SCORE + POSSESSION */}
       <div className="flex items-center gap-1 p-2">
-        {/* possession (left of score for home, right for away due to flex reversing) */}
-
         {hasPossession && (
           <svg width="18" height="18" viewBox="0 0 120 50">
             <polygon points="10,25 60,5 110,25 60,45" fill="currentColor" />
           </svg>
         )}
-        {/* score */}
         <span
           className={`p-2 ${
             winner === team.teamKey.teamId.toString()

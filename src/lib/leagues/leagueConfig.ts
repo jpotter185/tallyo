@@ -1,13 +1,12 @@
-import { components } from "@/types/api.generated";
+import { LeagueMetadata } from "@/types/api-contract";
 import {
   footballStatsToDisplay,
   hockeyStatsToDisplay,
   soccerStatsToDisplay,
-} from "@/lib/espn/enums/statDisplayMaps";
+} from "@/lib/leagues/statDisplayMaps";
 
 export type LeagueId = string;
 export type LeagueContextMode = "season" | "date";
-export type LeagueMetadata = components["schemas"]["LeagueMetadata"];
 
 export interface LeagueRuntimeConfig {
   id: LeagueId;
@@ -44,6 +43,7 @@ const yearOptions = [
   "2015",
 ];
 
+// Fallbacks used when the backend's /api/v1/leagues metadata is unavailable.
 const DEFAULT_LEAGUE_METADATA: LeagueMetadata[] = [
   {
     id: "nfl",
@@ -79,14 +79,14 @@ const DEFAULT_LEAGUE_METADATA: LeagueMetadata[] = [
     id: "nhl",
     label: "NHL",
     path: "/nhl",
-    supportsStandings: false,
+    supportsStandings: true,
     contextMode: "date",
     supportsYearFilter: false,
     supportsWeekFilter: false,
     statsProfile: "hockey",
     teamOrder: "away-left",
     supportsOdds: false,
-    supportsLiveDetails: false,
+    supportsLiveDetails: true,
     showInHeader: true,
     showInDashboard: true,
   },
@@ -94,19 +94,21 @@ const DEFAULT_LEAGUE_METADATA: LeagueMetadata[] = [
     id: "mls",
     label: "MLS",
     path: "/mls",
-    supportsStandings: false,
+    supportsStandings: true,
     contextMode: "date",
     supportsYearFilter: false,
     supportsWeekFilter: false,
     statsProfile: "soccer",
     teamOrder: "home-left",
     supportsOdds: false,
-    supportsLiveDetails: false,
+    supportsLiveDetails: true,
     showInHeader: true,
     showInDashboard: true,
   },
 ];
 
+// Season/week/year selector options are a UI presentation concern layered on
+// top of backend metadata; only season-mode leagues have them.
 const UI_PRESETS: Record<
   string,
   {
@@ -144,7 +146,7 @@ const UI_PRESETS: Record<
 const EMPTY_PRESET = {
   seasonTypes: new Map<string, string>(),
   numberOfWeeks: new Map<string, number>(),
-  yearOptions: [],
+  yearOptions: [] as string[],
 };
 
 function getStatsMapForProfile(profile?: string): Map<string, string> {
@@ -168,14 +170,11 @@ export function buildLeagueConfigs(
     metadata && metadata.length > 0 ? metadata : DEFAULT_LEAGUE_METADATA;
   return source.map((league) => {
     const preset = UI_PRESETS[league.id] ?? EMPTY_PRESET;
-    const supportsStandings = ["nhl", "mls"].includes(league.id)
-      ? true
-      : league.supportsStandings;
     return {
       id: league.id,
       label: league.label,
       path: league.path as `/${string}`,
-      supportsStandings,
+      supportsStandings: league.supportsStandings,
       supportsOdds: league.supportsOdds,
       supportsLiveDetails: league.supportsLiveDetails,
       teamOrder: league.teamOrder,
@@ -209,17 +208,17 @@ export function parseLeagueId(value?: string | null): LeagueId | null {
   return normalized;
 }
 
-export function isHomeTeamLeftAligned(leagueId: string): boolean {
-  const league = getLeagueConfigById(leagueId);
+export function isHomeTeamLeftAligned(leagueId?: string): boolean {
+  const league = getLeagueConfigById(leagueId ?? "");
   return league?.teamOrder === "home-left";
 }
 
-export function supportsOddsForLeague(leagueId: string): boolean {
-  const league = getLeagueConfigById(leagueId);
+export function supportsOddsForLeague(leagueId?: string): boolean {
+  const league = getLeagueConfigById(leagueId ?? "");
   return !!league?.supportsOdds;
 }
 
-export function supportsLiveDetailsForLeague(leagueId: string): boolean {
-  const league = getLeagueConfigById(leagueId);
+export function supportsLiveDetailsForLeague(leagueId?: string): boolean {
+  const league = getLeagueConfigById(leagueId ?? "");
   return !!league?.supportsLiveDetails;
 }

@@ -1,31 +1,28 @@
 import { NextResponse } from "next/server";
 import { parseLeagueId } from "@/lib/leagues/leagueConfig";
+import {
+  jsonBody,
+  passthroughError,
+  proxyBackend,
+} from "@/app/api/_lib/backendProxy";
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const league = parseLeagueId(searchParams.get("league"));
-  const timezone = searchParams.get("timezone");
   if (!league) {
     return new Response("Bad request: Invalid league", { status: 400 });
   }
-  const games = await fetch(
-    `${process.env.BACKEND_URL}/api/v1/games/current?league=${league}${timezone ? `&userTimeZone=${encodeURIComponent(timezone)}` : ""}`,
-    {
-      headers: {
-        "x-api-key": process.env.API_KEY || "",
-      },
-    },
-  );
-  const rawBody = await games.text();
-  if (!games.ok) {
-    return new Response(rawBody || "Backend request failed", {
-      status: games.status,
-      headers: {
-        "content-type": games.headers.get("content-type") || "text/plain",
-      },
-    });
-  }
-  const body = rawBody ? JSON.parse(rawBody) : {};
 
+  const response = await proxyBackend("/api/v1/games/current", {
+    params: {
+      league,
+      timezone: searchParams.get("timezone"),
+    },
+  });
+
+  if (!response.ok) {
+    return passthroughError(response);
+  }
+  const body = await jsonBody<{ content?: unknown[] }>(response, {});
   return NextResponse.json(body.content ?? []);
 }

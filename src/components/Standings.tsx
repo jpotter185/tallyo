@@ -1,10 +1,11 @@
 import { useState } from "react";
-import { HeaderConstants } from "../types/StandingsConstants";
 import Image from "next/image";
+import { HeaderConstants } from "../types/StandingsConstants";
+import { StandingsGroup, StandingsTeam } from "@/types/api-contract";
 import CollapsableSection from "./CollapsableSection";
 
 interface StandingsProps {
-  standings: Standings[];
+  standings: StandingsGroup[];
   isLoading: boolean;
   league: string;
 }
@@ -14,13 +15,13 @@ type SortDirection = "asc" | "desc";
 type StandingsColumn = {
   id: string;
   header: { long: string; short: string };
-  render: (team: Team) => React.ReactNode;
+  render: (team: StandingsTeam) => React.ReactNode;
   sticky: boolean;
-  sortValue?: (team: Team) => string | number;
+  sortValue?: (team: StandingsTeam) => string | number;
 };
 
 type StandingsRow = {
-  team: Team;
+  team: StandingsTeam;
   tag?: string;
   isEmphasized?: boolean;
 };
@@ -35,7 +36,18 @@ type StandingsProfile = {
   title: string;
   columns: StandingsColumn[];
   sortScope: "global" | "section";
-  buildSections: (standing: Standings) => StandingsSection[];
+  buildSections: (standing: StandingsGroup) => StandingsSection[];
+};
+
+// ESPN stat keys vary by league/endpoint; return the first non-empty value.
+const stat = (team: StandingsTeam, ...keys: string[]): string | undefined => {
+  for (const key of keys) {
+    const value = team.stats?.[key];
+    if (value !== undefined && value !== null && value !== "") {
+      return value;
+    }
+  }
+  return undefined;
 };
 
 const parseSortableNumber = (value: string | number | undefined): number => {
@@ -50,125 +62,118 @@ const parseSortableNumber = (value: string | number | undefined): number => {
   return Number.isFinite(parsed) ? parsed : Number.NEGATIVE_INFINITY;
 };
 
-const getPointsPerGame = (team: Team): number | null => {
-  const points = parseSortableNumber(team.points);
-  const gamesPlayed = parseSortableNumber(team.gamesplayed);
-  if (!Number.isFinite(points) || !Number.isFinite(gamesPlayed)) {
+const getPointsPerGame = (
+  points: string | undefined,
+  gamesPlayed: string | undefined,
+): number | null => {
+  const pointsValue = parseSortableNumber(points);
+  const gamesPlayedValue = parseSortableNumber(gamesPlayed);
+  if (!Number.isFinite(pointsValue) || !Number.isFinite(gamesPlayedValue)) {
     return null;
   }
-  if (gamesPlayed <= 0) {
+  if (gamesPlayedValue <= 0) {
     return null;
   }
-  return points / gamesPlayed;
+  return pointsValue / gamesPlayedValue;
 };
 
-const getFirstDefined = (
-  team: Team,
-  keys: string[],
-): string | number | undefined => {
-  for (const key of keys) {
-    const value = team[key];
-    if (value !== undefined && value !== null && value !== "") {
-      return value;
-    }
-  }
-  return undefined;
-};
-
-const getPointsValue = (team: Team): number => {
-  const parsed = Number(team.points);
+const getPointsValue = (team: StandingsTeam): number => {
+  const parsed = Number(stat(team, "points"));
   return Number.isFinite(parsed) ? parsed : -1;
 };
 
-const getPlayoffSeedValue = (team: Team): number => {
-  const parsed = Number(team.playoffseed || team.seed);
+const getPlayoffSeedValue = (team: StandingsTeam): number => {
+  const parsed = Number(stat(team, "playoffseed") || team.seed);
   return Number.isFinite(parsed) ? parsed : 999;
 };
 
 const TEAM_COLUMN: StandingsColumn = {
   id: "team",
   header: HeaderConstants.TeamName,
-  render: (team: Team) => (
+  render: (team) => (
     <div className="grid grid-cols-[auto_1fr_auto] items-center gap-1">
       <Image src={team.logo} alt="" width={24} height={24} />
-      {team.ranking ? team.ranking + team.abbreviation : team.abbreviation}
+      {team.abbreviation}
     </div>
   ),
   sticky: true,
-  sortValue: (team: Team) => team.abbreviation || team.name || "",
+  sortValue: (team) => team.abbreviation || team.name || "",
 };
 
 const RANK_COLUMN: StandingsColumn = {
   id: "rank",
   header: HeaderConstants.Rank,
-  render: (team: Team) => team.seed || team.playoffseed || "-",
+  render: (team) => team.seed || stat(team, "playoffseed") || "-",
   sticky: false,
-  sortValue: (team: Team) => parseSortableNumber(team.seed || team.playoffseed),
+  sortValue: (team) =>
+    parseSortableNumber(team.seed || stat(team, "playoffseed")),
 };
 
 const NHL_COLUMNS: StandingsColumn[] = [
   {
     id: "points",
     header: { long: "Points", short: "PTS" },
-    render: (t: Team) => t.points ?? "-",
+    render: (t) => stat(t, "points") ?? "-",
     sticky: false,
-    sortValue: (t: Team) => parseSortableNumber(t.points),
+    sortValue: (t) => parseSortableNumber(stat(t, "points")),
   },
   {
     id: "gp",
     header: { long: "Games Played", short: "GP" },
-    render: (t: Team) => t.gamesplayed ?? "-",
+    render: (t) => stat(t, "gamesplayed") ?? "-",
     sticky: false,
-    sortValue: (t: Team) => parseSortableNumber(t.gamesplayed),
+    sortValue: (t) => parseSortableNumber(stat(t, "gamesplayed")),
   },
   {
     id: "ppg",
     header: { long: "Points Per Game", short: "PPG" },
-    render: (t: Team) => {
-      const ppg = getPointsPerGame(t);
+    render: (t) => {
+      const ppg = getPointsPerGame(stat(t, "points"), stat(t, "gamesplayed"));
       return ppg === null ? "-" : ppg.toFixed(2);
     },
     sticky: false,
-    sortValue: (t: Team) => getPointsPerGame(t) ?? Number.NEGATIVE_INFINITY,
+    sortValue: (t) =>
+      getPointsPerGame(stat(t, "points"), stat(t, "gamesplayed")) ??
+      Number.NEGATIVE_INFINITY,
   },
   {
     id: "gf",
     header: { long: "Goals For", short: "GF" },
-    render: (t: Team) => t.pointsfor ?? "-",
+    render: (t) => stat(t, "pointsfor") ?? "-",
     sticky: false,
-    sortValue: (t: Team) => parseSortableNumber(t.pointsfor),
+    sortValue: (t) => parseSortableNumber(stat(t, "pointsfor")),
   },
   {
     id: "ga",
     header: { long: "Goals Against", short: "GA" },
-    render: (t: Team) => t.pointsagainst ?? "-",
+    render: (t) => stat(t, "pointsagainst") ?? "-",
     sticky: false,
-    sortValue: (t: Team) => parseSortableNumber(t.pointsagainst),
+    sortValue: (t) => parseSortableNumber(stat(t, "pointsagainst")),
   },
   {
     id: "record",
     header: HeaderConstants.OverallRecord,
-    render: (t: Team) => t.total || t.record || "-",
+    render: (t) => stat(t, "total") || t.record || "-",
     sticky: false,
   },
   {
     id: "diff",
     header: HeaderConstants.Differential,
-    render: (t: Team) => t.pointdifferential || t.pointsdiff || "-",
+    render: (t) => stat(t, "pointdifferential", "pointsdiff") || "-",
     sticky: false,
-    sortValue: (t: Team) =>
-      parseSortableNumber(t.pointdifferential || t.pointsdiff),
+    sortValue: (t) =>
+      parseSortableNumber(stat(t, "pointdifferential", "pointsdiff")),
   },
   {
     id: "streak",
     header: { long: "Streak", short: "STRK" },
-    render: (t: Team) => t.streak ?? "-",
+    render: (t) => stat(t, "streak") ?? "-",
     sticky: false,
   },
   {
     id: "last10",
     header: { long: "Last 10", short: "L10" },
-    render: (t: Team) => t.lasttengames?.replace(/,\s*0 PTS$/, "") ?? "-",
+    render: (t) => stat(t, "lasttengames")?.replace(/,\s*0 PTS$/, "") ?? "-",
     sticky: false,
   },
 ];
@@ -177,35 +182,35 @@ const BASE_COLUMNS: StandingsColumn[] = [
   {
     id: "record",
     header: HeaderConstants.OverallRecord,
-    render: (t: Team) => t.record || t.total,
+    render: (t) => t.record || stat(t, "total"),
     sticky: false,
   },
   {
     id: "vsconf",
     header: HeaderConstants.ConferenceRecord,
-    render: (t: Team) => t.vsconf,
+    render: (t) => stat(t, "vsconf"),
     sticky: false,
   },
   {
     id: "pf",
     header: HeaderConstants.PointsFor,
-    render: (t: Team) => t.pointsfor,
+    render: (t) => stat(t, "pointsfor"),
     sticky: false,
-    sortValue: (t: Team) => parseSortableNumber(t.pointsfor),
+    sortValue: (t) => parseSortableNumber(stat(t, "pointsfor")),
   },
   {
     id: "pa",
     header: HeaderConstants.PointsAgainst,
-    render: (t: Team) => t.pointsagainst,
+    render: (t) => stat(t, "pointsagainst"),
     sticky: false,
-    sortValue: (t: Team) => parseSortableNumber(t.pointsagainst),
+    sortValue: (t) => parseSortableNumber(stat(t, "pointsagainst")),
   },
   {
     id: "diff",
     header: HeaderConstants.Differential,
-    render: (t: Team) => t.differential,
+    render: (t) => t.differential,
     sticky: false,
-    sortValue: (t: Team) => parseSortableNumber(t.differential),
+    sortValue: (t) => parseSortableNumber(t.differential),
   },
 ];
 
@@ -213,14 +218,14 @@ const NFL_EXTRA_COLUMNS: StandingsColumn[] = [
   {
     id: "wp",
     header: HeaderConstants.WinPercentage,
-    render: (t: Team) => t.winpercent,
+    render: (t) => stat(t, "winpercent"),
     sticky: false,
-    sortValue: (t: Team) => parseSortableNumber(t.winpercent),
+    sortValue: (t) => parseSortableNumber(stat(t, "winpercent")),
   },
   {
     id: "vsdiv",
     header: HeaderConstants.DivisionRecord,
-    render: (t: Team) => t.vsdiv,
+    render: (t) => stat(t, "vsdiv"),
     sticky: false,
   },
 ];
@@ -229,133 +234,82 @@ const MLS_COLUMNS: StandingsColumn[] = [
   {
     id: "points",
     header: { long: "Points", short: "PTS" },
-    render: (t: Team) => getFirstDefined(t, ["points", "pts"]) ?? "-",
+    render: (t) => stat(t, "points", "pts") ?? "-",
     sticky: false,
-    sortValue: (t: Team) =>
-      parseSortableNumber(
-        getFirstDefined(t, ["points", "pts"]) as string | number | undefined,
-      ),
+    sortValue: (t) => parseSortableNumber(stat(t, "points", "pts")),
   },
   {
     id: "gp",
     header: { long: "Games Played", short: "GP" },
-    render: (t: Team) =>
-      getFirstDefined(t, ["gamesplayed", "gamesPlayed"]) ?? "-",
+    render: (t) => stat(t, "gamesplayed", "gamesPlayed") ?? "-",
     sticky: false,
-    sortValue: (t: Team) =>
-      parseSortableNumber(
-        getFirstDefined(t, ["gamesplayed", "gamesPlayed"]) as
-          | string
-          | number
-          | undefined,
-      ),
+    sortValue: (t) =>
+      parseSortableNumber(stat(t, "gamesplayed", "gamesPlayed")),
   },
   {
     id: "ppg",
     header: { long: "Points Per Game", short: "PPG" },
-    render: (t: Team) => {
-      const points = parseSortableNumber(
-        getFirstDefined(t, ["points", "pts"]) as string | number | undefined,
+    render: (t) => {
+      const ppg = getPointsPerGame(
+        stat(t, "points", "pts"),
+        stat(t, "gamesplayed", "gamesPlayed"),
       );
-      const gamesPlayed = parseSortableNumber(
-        getFirstDefined(t, ["gamesplayed", "gamesPlayed"]) as
-          | string
-          | number
-          | undefined,
-      );
-      if (
-        !Number.isFinite(points) ||
-        !Number.isFinite(gamesPlayed) ||
-        gamesPlayed <= 0
-      ) {
-        return "-";
-      }
-      return (points / gamesPlayed).toFixed(2);
+      return ppg === null ? "-" : ppg.toFixed(2);
     },
     sticky: false,
-    sortValue: (t: Team) => {
-      const points = parseSortableNumber(
-        getFirstDefined(t, ["points", "pts"]) as string | number | undefined,
-      );
-      const gamesPlayed = parseSortableNumber(
-        getFirstDefined(t, ["gamesplayed", "gamesPlayed"]) as
-          | string
-          | number
-          | undefined,
-      );
-      if (
-        !Number.isFinite(points) ||
-        !Number.isFinite(gamesPlayed) ||
-        gamesPlayed <= 0
-      ) {
-        return Number.NEGATIVE_INFINITY;
-      }
-      return points / gamesPlayed;
-    },
+    sortValue: (t) =>
+      getPointsPerGame(
+        stat(t, "points", "pts"),
+        stat(t, "gamesplayed", "gamesPlayed"),
+      ) ?? Number.NEGATIVE_INFINITY,
   },
   {
     id: "record",
     header: HeaderConstants.OverallRecord,
-    render: (t: Team) => t.record || t.total || "-",
+    render: (t) => t.record || stat(t, "total") || "-",
     sticky: false,
   },
   {
     id: "gf",
     header: { long: "Goals For", short: "GF" },
-    render: (t: Team) =>
-      getFirstDefined(t, ["goalsfor", "goalsFor", "pointsfor"]) ?? "-",
+    render: (t) => stat(t, "goalsfor", "goalsFor", "pointsfor") ?? "-",
     sticky: false,
-    sortValue: (t: Team) =>
-      parseSortableNumber(
-        getFirstDefined(t, ["goalsfor", "goalsFor", "pointsfor"]) as
-          | string
-          | number
-          | undefined,
-      ),
+    sortValue: (t) =>
+      parseSortableNumber(stat(t, "goalsfor", "goalsFor", "pointsfor")),
   },
   {
     id: "ga",
     header: { long: "Goals Against", short: "GA" },
-    render: (t: Team) =>
-      getFirstDefined(t, ["goalsagainst", "goalsAgainst", "pointsagainst"]) ??
-      "-",
+    render: (t) =>
+      stat(t, "goalsagainst", "goalsAgainst", "pointsagainst") ?? "-",
     sticky: false,
-    sortValue: (t: Team) =>
+    sortValue: (t) =>
       parseSortableNumber(
-        getFirstDefined(t, [
-          "goalsagainst",
-          "goalsAgainst",
-          "pointsagainst",
-        ]) as string | number | undefined,
+        stat(t, "goalsagainst", "goalsAgainst", "pointsagainst"),
       ),
   },
   {
     id: "diff",
     header: HeaderConstants.Differential,
-    render: (t: Team) =>
-      getFirstDefined(t, ["differential", "pointdifferential", "pointsdiff"]) ??
-      "-",
+    render: (t) =>
+      t.differential || stat(t, "pointdifferential", "pointsdiff") || "-",
     sticky: false,
-    sortValue: (t: Team) =>
+    sortValue: (t) =>
       parseSortableNumber(
-        getFirstDefined(t, [
-          "differential",
-          "pointdifferential",
-          "pointsdiff",
-        ]) as string | number | undefined,
+        t.differential || stat(t, "pointdifferential", "pointsdiff"),
       ),
   },
 ];
 
-const buildFlatSections = (standing: Standings): StandingsSection[] => [
+const buildFlatSections = (standing: StandingsGroup): StandingsSection[] => [
   {
     key: `${standing.groupName}-all`,
     rows: standing.teams.map((team) => ({ team })),
   },
 ];
 
-const buildNhlSections = (standing: Standings): StandingsSection[] => {
-  const groups = new Map<string, Team[]>();
+const buildNhlSections = (standing: StandingsGroup): StandingsSection[] => {
+  const groups = new Map<string, StandingsTeam[]>();
   for (const team of standing.teams) {
     const division = team.division || "Other";
     if (!groups.has(division)) {
