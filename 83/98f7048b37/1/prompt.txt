@@ -1,0 +1,5 @@
+Hi. Check out this project and projects/tallyo-backend. Look at how they integrate. Write a new .md file with your findings of how they integrate
+
+---
+
+It has gotten difficult to maintain this UI. I made the UI first and then shifted logic into the spring boot backend. I think I want to make a new UI that integrates more seamlessly with the backend. Could you help me do that? You could make a new branch in the tallyo project and start from scratch
