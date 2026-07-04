@@ -1,10 +1,11 @@
 import Image from "next/image";
+import { Team } from "@/types/api-contract";
 
 interface TeamCardProps {
   team: Team;
-  score: string;
+  score?: string;
   winner?: string;
-  possessionTeamId: string;
+  possessionTeamId?: string;
   showScore: boolean;
 }
 

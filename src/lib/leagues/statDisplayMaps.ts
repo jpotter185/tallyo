@@ -11,7 +11,7 @@ export const footballStatsToDisplay = new Map([
   ["firstDownsPassing", "Passing First Downs"],
   ["firstDownsRushing", "Rushing First Downs"],
   ["thirdDownEff", "Third Down Efficiency"],
-  ["fourthDownEff", "Fourth Down Efficiency "],
+  ["fourthDownEff", "Fourth Down Efficiency"],
   ["totalPenaltiesYards", "Penalties"],
 ]);
 
@@ -28,17 +28,16 @@ export const hockeyStatsToDisplay = new Map([
   ["hits", "Hits"],
   ["blockedShots", "Blocked Shots"],
   ["shortHandedGoals", "Short Handed Goals"],
-  ["powerPlayGoals", "Power Play Goals"],
 ]);
 
 export const soccerStatsToDisplay = new Map([
-  ["shotsTotal", "Total Shots"],
+  ["totalShots", "Total Shots"],
   ["shotsOnTarget", "Shots On Target"],
   ["possessionPct", "Possession"],
   ["foulsCommitted", "Fouls"],
   ["yellowCards", "Yellow Cards"],
   ["redCards", "Red Cards"],
-  ["cornerKicks", "Corners"],
+  ["wonCorners", "Corners"],
   ["offsides", "Offsides"],
   ["saves", "Saves"],
 ]);

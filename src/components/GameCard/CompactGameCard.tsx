@@ -1,9 +1,10 @@
-import { dateFormatter } from "@/lib/espn/enums/dateFormatter";
+import { Game } from "@/types/api-contract";
+import { dateFormatter } from "@/lib/format/dateFormatter";
 import {
+  isScheduledGame,
   shouldShowGameChannel,
   shouldShowGameScore,
   shouldShowScheduledOrFinalDate,
-  isScheduledGame,
 } from "@/lib/gameStatus";
 import { getGameSides } from "@/lib/gameLayout";
 import CompactTeamCard from "../TeamCard/CompactTeamCard";
@@ -11,6 +12,7 @@ import CompactTeamCard from "../TeamCard/CompactTeamCard";
 interface GameCompactProps {
   game: Game;
 }
+
 const CompactGameCard: React.FC<GameCompactProps> = ({ game }) => {
   const { left, right } = getGameSides(game);
 

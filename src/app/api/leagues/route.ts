@@ -1,22 +1,15 @@
 import { NextResponse } from "next/server";
+import {
+  jsonBody,
+  passthroughError,
+  proxyBackend,
+} from "@/app/api/_lib/backendProxy";
 
 export async function GET() {
-  const response = await fetch(`${process.env.BACKEND_URL}/api/v1/leagues`, {
-    headers: {
-      "x-api-key": process.env.API_KEY || "",
-    },
-  });
+  const response = await proxyBackend("/api/v1/leagues");
 
-  const rawBody = await response.text();
   if (!response.ok) {
-    return new Response(rawBody || "Backend request failed", {
-      status: response.status,
-      headers: {
-        "content-type": response.headers.get("content-type") || "text/plain",
-      },
-    });
+    return passthroughError(response);
   }
-
-  const data = rawBody ? JSON.parse(rawBody) : [];
-  return NextResponse.json(data);
+  return NextResponse.json(await jsonBody<unknown[]>(response, []));
 }

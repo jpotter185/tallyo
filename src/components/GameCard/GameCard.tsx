@@ -1,5 +1,14 @@
 "use client";
 
+import { useState } from "react";
+import useSWR from "swr";
+import { fetcher } from "@/lib/api/fetcher";
+import { gameDetailsUrl } from "@/lib/api/client";
+import { shouldPollGameStats } from "@/lib/gameStatus";
+import { Game, GameDetails, StatLeader } from "@/types/api-contract";
+import FullsizeGameCard from "./FullSizeGameCard";
+import CompactGameCard from "./CompactGameCard";
+
 interface GameProps {
   game: Game;
   isOpen: boolean;
@@ -7,54 +16,30 @@ interface GameProps {
   statsToDisplay: Map<string, string>;
 }
 
-import FullsizeGameCard from "./FullSizeGameCard";
-import CompactGameCard from "./CompactGameCard";
-import { useState } from "react";
-import useSWR from "swr";
-import { fetcher } from "@/lib/api/fetcher";
-import { shouldPollGameStats } from "@/lib/gameStatus";
 const GameCard: React.FC<GameProps> = ({
   game,
   isOpen,
   toggleOpenGame,
   statsToDisplay,
 }) => {
-  const [openStatsForGame, setOpenStatsForGame] = useState<{
-    [id: string]: boolean;
-  }>({});
-  const [openScoringPlaysForGame, setOpenScoringPlaysForGame] = useState<{
-    [id: string]: boolean;
-  }>({});
-  const [openTeamStatsForGame, setOpenTeamStatsForGame] = useState<{
-    [id: string]: boolean;
-  }>({});
+  const [isStatsOpen, setIsStatsOpen] = useState(false);
+  const [isScoringPlaysOpen, setIsScoringPlaysOpen] = useState(false);
+  const [isTeamStatsOpen, setIsTeamStatsOpen] = useState(false);
 
-  const toggleOpenScoringPlays = (id: string) => {
-    setOpenScoringPlaysForGame((prev) => ({ ...prev, [id]: !prev[id] }));
-  };
-
-  const toggleOpenStatsForGame = (id: string) => {
-    setOpenStatsForGame((prev) => ({ ...prev, [id]: !prev[id] }));
-  };
-  const toggleOpenTeamStatsForGame = (id: string) => {
-    setOpenTeamStatsForGame((prev) => ({ ...prev, [id]: !prev[id] }));
-  };
-  let data = {
-    stats: [],
-    scoringPlays: [],
-  };
-  const { data: statData } = useSWR(
-    `/api/stats?league=${game.league}&gameId=${game.id}`,
+  const { data: details } = useSWR<GameDetails>(
+    gameDetailsUrl(game.id),
     fetcher,
     shouldPollGameStats(game.gameStatus)
       ? { refreshInterval: 10000 }
       : undefined,
   );
-  data = statData;
 
-  const formattedStats: Map<string, Stat> | undefined = data?.stats
-    ? new Map(data.stats)
-    : undefined;
+  const leaders = new Map<string, StatLeader>(
+    (details?.leaders ?? []).map((leader) => [
+      `${leader.name}-${leader.teamId}`,
+      leader,
+    ]),
+  );
 
   return (
     <div
@@ -66,14 +51,14 @@ const GameCard: React.FC<GameProps> = ({
       {isOpen ? (
         <FullsizeGameCard
           game={game}
-          stats={formattedStats}
-          scoringPlays={data?.scoringPlays}
-          openScoringPlaysForGame={() => toggleOpenScoringPlays(game.id)}
-          isScoringPlaysOpen={!!openScoringPlaysForGame[game.id]}
-          openStatsForGame={() => toggleOpenStatsForGame(game.id)}
-          isStatsOpen={!!openStatsForGame[game.id]}
-          openTeamStatsForGame={() => toggleOpenTeamStatsForGame(game.id)}
-          isTeamStatsOpen={!!openTeamStatsForGame[game.id]}
+          leaders={leaders}
+          scoringPlays={details?.scoringPlays ?? []}
+          isScoringPlaysOpen={isScoringPlaysOpen}
+          toggleScoringPlays={() => setIsScoringPlaysOpen((open) => !open)}
+          isStatsOpen={isStatsOpen}
+          toggleStats={() => setIsStatsOpen((open) => !open)}
+          isTeamStatsOpen={isTeamStatsOpen}
+          toggleTeamStats={() => setIsTeamStatsOpen((open) => !open)}
           statsToDisplay={statsToDisplay}
         />
       ) : (

@@ -1,5 +1,7 @@
 "use client";
 
+import { useEffect, useMemo, useState } from "react";
+import useSWR from "swr";
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
 import League from "@/components/League";
@@ -7,13 +9,22 @@ import Standings from "@/components/Standings";
 import { useLeagueState } from "@/components/hooks/useLeagueState";
 import { fetcher } from "@/lib/api/fetcher";
 import {
+  contextUrl,
+  gamesUrl,
+  leaguesUrl,
+  standingsUrl,
+} from "@/lib/api/client";
+import {
   LeagueId,
   getFallbackLeagueMetadata,
   getLeagueConfigById,
 } from "@/lib/leagues/leagueConfig";
-import { CurrentContextResponse } from "@/types/api-contract";
-import useSWR from "swr";
-import { useEffect, useMemo, useState } from "react";
+import {
+  CurrentContext,
+  Game,
+  LeagueMetadata,
+  StandingsGroup,
+} from "@/types/api-contract";
 
 interface SportPageProps {
   league: LeagueId;
@@ -63,7 +74,10 @@ export default function SportPage({ league }: SportPageProps) {
     year,
     setYear,
   } = useLeagueState();
-  const { data: leaguesMetadata } = useSWR("/api/leagues", fetcher);
+  const { data: leaguesMetadata } = useSWR<LeagueMetadata[]>(
+    leaguesUrl(),
+    fetcher,
+  );
   const config = getLeagueConfigById(
     league,
     leaguesMetadata ?? getFallbackLeagueMetadata(),
@@ -71,13 +85,15 @@ export default function SportPage({ league }: SportPageProps) {
   const hasConfig = !!config;
   const contextMode = config?.contextMode;
 
-  const contextUrl = !hasConfig
+  const currentContextUrl = !hasConfig
     ? null
-    : contextMode === "date"
-      ? `/api/context?league=${league}&mode=date&timezone=${userTimeZone}`
-      : `/api/context?league=${league}&mode=season&timezone=${userTimeZone}`;
+    : contextUrl(
+        league,
+        contextMode === "date" ? "date" : "season",
+        userTimeZone,
+      );
 
-  const { data: context } = useSWR(contextUrl, fetcher, {
+  const { data: context } = useSWR(currentContextUrl, fetcher, {
     revalidateOnFocus: false,
     revalidateOnReconnect: false,
     refreshInterval: 0,
@@ -101,7 +117,7 @@ export default function SportPage({ league }: SportPageProps) {
       "year" in context &&
       "seasonType" in context
     ) {
-      const seasonContext = context as CurrentContextResponse;
+      const seasonContext = context as CurrentContext;
       setWeek(String(seasonContext.week));
       setYear(String(seasonContext.year));
       setSeasonType(seasonContext.seasonType.toString());
@@ -129,7 +145,7 @@ export default function SportPage({ league }: SportPageProps) {
     }
   }, [contextMode, config, isInitialized, seasonType, setWeek, week]);
 
-  const gamesUrl = useMemo(() => {
+  const currentGamesUrl = useMemo(() => {
     if (!config || !isInitialized) {
       return null;
     }
@@ -137,9 +153,9 @@ export default function SportPage({ league }: SportPageProps) {
       if (!selectedDate) {
         return null;
       }
-      return `/api/games?league=${league}&date=${selectedDate}&timezone=${userTimeZone}`;
+      return gamesUrl({ league, date: selectedDate, timezone: userTimeZone });
     }
-    return `/api/games?league=${league}&week=${week}&seasonType=${seasonType}&year=${year}`;
+    return gamesUrl({ league, week, seasonType, year });
   }, [
     config,
     contextMode,
@@ -152,17 +168,16 @@ export default function SportPage({ league }: SportPageProps) {
     year,
   ]);
 
-  const { data: gamesData, isLoading: isGamesLoading } = useSWR(
-    gamesUrl,
+  const { data: gamesData, isLoading: isGamesLoading } = useSWR<Game[]>(
+    currentGamesUrl,
     fetcher,
     {
       keepPreviousData: true,
     },
   );
-  const { data: standings, isLoading: isStandingsLoading } = useSWR(
-    config?.supportsStandings ? `/api/standings?league=${league}` : null,
-    fetcher,
-  );
+  const { data: standings, isLoading: isStandingsLoading } = useSWR<
+    StandingsGroup[]
+  >(config?.supportsStandings ? standingsUrl(league) : null, fetcher);
 
   const customSelectorMap = useMemo(
     () =>
@@ -225,7 +240,7 @@ export default function SportPage({ league }: SportPageProps) {
       </div>
       {config?.supportsStandings && (
         <Standings
-          standings={standings}
+          standings={standings ?? []}
           isLoading={isStandingsLoading}
           league={config.label}
         />

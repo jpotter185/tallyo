@@ -3,6 +3,7 @@ import GameCard from "./GameCard/GameCard";
 import Selector from "./Selector";
 import { Dispatch, SetStateAction } from "react";
 import CollapsableSection from "./CollapsableSection";
+import { Game } from "@/types/api-contract";
 
 interface LeagueProps {
   games: Game[];

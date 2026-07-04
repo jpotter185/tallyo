@@ -1,14 +1,19 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import useSWR from "swr";
 import { fetcher } from "@/lib/api/fetcher";
+import { leaguesUrl } from "@/lib/api/client";
 import {
   buildLeagueConfigs,
   getFallbackLeagueMetadata,
 } from "@/lib/leagues/leagueConfig";
-import useSWR from "swr";
+import { LeagueMetadata } from "@/types/api-contract";
 
 const Header: React.FC = () => {
-  const { data: leaguesMetadata } = useSWR("/api/leagues", fetcher);
+  const { data: leaguesMetadata } = useSWR<LeagueMetadata[]>(
+    leaguesUrl(),
+    fetcher,
+  );
   const leagueLinks = buildLeagueConfigs(
     leaguesMetadata ?? getFallbackLeagueMetadata(),
   )

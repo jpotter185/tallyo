@@ -25,6 +25,22 @@ export interface components {
       location: string;
       record?: string;
       score?: string;
+      seed?: string;
+      ranking?: string;
+      wins?: string;
+      losses?: string;
+      ties?: string;
+      conference?: string;
+      division?: string;
+      homeRecord?: string;
+      roadRecord?: string;
+      recordVsConference?: string;
+      recordVsDivision?: string;
+      pointsFor?: string;
+      pointsAgainst?: string;
+      pointDifferential?: string;
+      streak?: string;
+      winPercent?: string;
     };
     TeamStats: {
       homeStats?: { [key: string]: string };
@@ -87,6 +103,52 @@ export interface components {
       supportsLiveDetails: boolean;
       showInHeader: boolean;
       showInDashboard: boolean;
+    };
+    StandingsTeam: {
+      id: string;
+      name: string;
+      abbreviation: string;
+      logo: string;
+      location: string;
+      seed?: string;
+      conference?: string;
+      division?: string;
+      record?: string;
+      differential?: string;
+      stats: { [key: string]: string };
+    };
+    StandingsGroup: {
+      groupName: string;
+      teams: components["schemas"]["StandingsTeam"][];
+    };
+    StatLeader: {
+      name: string;
+      displayName?: string;
+      value?: number;
+      displayValue?: string;
+      playerName?: string;
+      playerShortName?: string;
+      teamId?: number;
+    };
+    ScoringPlay: {
+      id: string;
+      teamId?: string;
+      teamName?: string;
+      displayText?: string;
+      homeScore?: number;
+      awayScore?: number;
+      scoringType?: string;
+      period?: number;
+      clock?: string;
+    };
+    GameDetails: {
+      gameId: string;
+      leaders: components["schemas"]["StatLeader"][];
+      scoringPlays: components["schemas"]["ScoringPlay"][];
+    };
+    UpdateResponse: {
+      gameCount: number;
+      durationMs: number;
     };
     GamesPage: {
       content: components["schemas"]["Game"][];

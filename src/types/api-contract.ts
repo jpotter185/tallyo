@@ -1,10 +1,15 @@
 import { components } from "@/types/api.generated";
 
 export type ApiError = components["schemas"]["ApiError"];
-export type TeamKeyResponse = components["schemas"]["TeamKey"];
-export type TeamResponse = components["schemas"]["Team"];
-export type TeamStatsResponse = components["schemas"]["TeamStats"];
-export type GameOddResponse = components["schemas"]["GameOdd"];
-export type GameResponse = components["schemas"]["Game"];
-export type CurrentContextResponse = components["schemas"]["CurrentContext"];
-export type LeagueMetadataResponse = components["schemas"]["LeagueMetadata"];
+export type TeamKey = components["schemas"]["TeamKey"];
+export type Team = components["schemas"]["Team"];
+export type TeamStats = components["schemas"]["TeamStats"];
+export type GameOdd = components["schemas"]["GameOdd"];
+export type Game = components["schemas"]["Game"];
+export type CurrentContext = components["schemas"]["CurrentContext"];
+export type LeagueMetadata = components["schemas"]["LeagueMetadata"];
+export type StandingsTeam = components["schemas"]["StandingsTeam"];
+export type StandingsGroup = components["schemas"]["StandingsGroup"];
+export type StatLeader = components["schemas"]["StatLeader"];
+export type ScoringPlay = components["schemas"]["ScoringPlay"];
+export type GameDetails = components["schemas"]["GameDetails"];
