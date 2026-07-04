@@ -1,0 +1,9 @@
+Hi, can we continue?
+
+---
+
+I just started docker. Go ahead and start up the backend and then the frontend so you can make sure it works
+
+---
+
+Just run the deploy.sh files, won't that handle all of it?
