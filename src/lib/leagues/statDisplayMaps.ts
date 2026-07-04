@@ -31,13 +31,13 @@ export const hockeyStatsToDisplay = new Map([
 ]);
 
 export const soccerStatsToDisplay = new Map([
-  ["shotsTotal", "Total Shots"],
+  ["totalShots", "Total Shots"],
   ["shotsOnTarget", "Shots On Target"],
   ["possessionPct", "Possession"],
   ["foulsCommitted", "Fouls"],
   ["yellowCards", "Yellow Cards"],
   ["redCards", "Red Cards"],
-  ["cornerKicks", "Corners"],
+  ["wonCorners", "Corners"],
   ["offsides", "Offsides"],
   ["saves", "Saves"],
 ]);
