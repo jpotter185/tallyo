@@ -1,0 +1,5 @@
+Will the backend run auto-updates to fetch the latest data? Or do I have to manually do that?
+
+---
+
+Yeah add the daily refresh. Can we also make it run on startup?
