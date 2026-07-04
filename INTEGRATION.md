@@ -129,6 +129,13 @@ A single `ApiError` envelope is shared end to end:
   stats, stat leaders, scoring plays — all from one summary call per game) for
   yesterday+today across all leagues, but only while
   `GameRepository.shouldUpdate()` says a game is live or recently started.
+- **Schedule refresh:** `GameServiceImpl.refreshSchedules` runs on startup and
+  daily at 4am ET. One scoreboard call per league seeds/updates the current
+  year's schedule so the 20s job always has upcoming games to trigger on. It
+  only saves games that are new or still awaiting play — merging a
+  schedule-only game over an ingested one would orphan-delete its
+  stats/leaders/scoring plays, so live and finished games are never touched by
+  this path. No manual season seeding needed.
 - **Standings:** fetched from ESPN on demand per league with fallback URL
   chains (`espn.standings.urls` in `application.yml`), cached in-memory,
   evicted every 30 minutes. Never persisted.
@@ -154,7 +161,10 @@ frontend interval (10s).
   frontend's `.env.local` `BACKEND_URL` at `http://localhost:8080`.
 - Historical games ingested before the details feature have no leaders/scoring
   plays; backfill per league/year with
-  `POST /api/v1/games?league=X&year=Y&shouldFetchStats=true`.
+  `POST /api/v1/games?league=X&year=Y&shouldFetchStats=true`. Note that a POST
+  with `shouldFetchStats=false` merges games with null child collections and
+  therefore wipes existing stats/leaders/scoring plays for the games it
+  touches — use `true` unless that's intended.
 
 ## Adding a league (cross-repo checklist)
 
