@@ -1,0 +1,9 @@
+And the frontend looks good?
+
+---
+
+The frontend contract test is faling. But everything is working well
+
+---
+
+They're both merged now

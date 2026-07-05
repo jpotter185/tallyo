@@ -1,0 +1,29 @@
+{
+  "cli_version": "0.7.8",
+  "checkpoint_version": "branch-v1",
+  "checkpoint_id": "6972235c46ee",
+  "strategy": "manual-commit",
+  "branch": "master",
+  "checkpoints_count": 3,
+  "files_touched": [
+    "CLAUDE.md",
+    "src/lib/leagues/leagueConfig.ts",
+    "src/types/api.generated.ts"
+  ],
+  "sessions": [
+    {
+      "metadata": "/69/72235c46ee/0/metadata.json",
+      "transcript": "/69/72235c46ee/0/full.jsonl",
+      "compact_transcript": "/69/72235c46ee/0/transcript.jsonl",
+      "content_hash": "/69/72235c46ee/0/content_hash.txt",
+      "prompt": "/69/72235c46ee/0/prompt.txt"
+    }
+  ],
+  "token_usage": {
+    "input_tokens": 1067,
+    "cache_creation_tokens": 379763,
+    "cache_read_tokens": 18723136,
+    "output_tokens": 36312,
+    "api_call_count": 54
+  }
+}
