@@ -38,10 +38,6 @@ curl -s -o /dev/null -w "%{http_code}" localhost:3300/<league-id>   # SSR page, 
   paginated `{content: [...]}` envelope.
 - League ids must pass `parseLeagueId` in `src/lib/leagues/leagueConfig.ts`
   (LEAGUE_ID_REGEX) or proxy routes 400 before reaching the backend.
-- `src/types/api.generated.ts`: the committed file is prettier-formatted;
-  the raw `npm run gen:api-types` output is not. Run
-  `npx eslint --fix src/types/api.generated.ts` after regenerating or the
-  diff is 300 lines of formatting churn (and `check:api-contract`'s
-  raw-diff assumption is broken because of this).
-- Repo CLAUDE.md mentions `src/lib/espn/espnService.ts` — that layer no
-  longer exists; standings/stats go through the backend proxy now.
+- `npm run gen:api-types` pipes its output through prettier, so the
+  generated file matches the committed format and `check:api-contract`
+  diffs cleanly. Don't hand-format the file.

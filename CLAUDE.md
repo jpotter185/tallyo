@@ -24,10 +24,10 @@ Backend (reference only, in `../tallyo-backend`): `./mvnw -q -DskipTests compile
 ## Architecture
 
 ### Data flow
-UI components call Next.js API routes under `src/app/api/*` (`/api/games`, `/api/games/current`, `/api/context`, `/api/standings`, `/api/stats`, `/api/leagues`) via SWR. These routes are thin proxies: they read query params, forward the request to `${BACKEND_URL}/api/v1/...` with an `x-api-key` header (`API_KEY` env var), and pass the backend's status/body straight through on error (don't swallow or reshape backend errors — see `src/app/api/games/route.ts` for the pattern). Some routes (odds, standings, stats) instead go through `src/lib/espn/espnService.ts`, which calls ESPN endpoints directly and maps the response into internal types via `src/lib/espn/mappers/*`.
+UI components call Next.js API routes under `src/app/api/*` (`/api/games`, `/api/games/current`, `/api/games/[gameId]/details`, `/api/context`, `/api/standings`, `/api/leagues`) via SWR. These routes are thin proxies: they read query params, forward the request to `${BACKEND_URL}/api/v1/...` with an `x-api-key` header (`API_KEY` env var), and pass the backend's status/body straight through on error (don't swallow or reshape backend errors — see `src/app/api/games/route.ts` for the pattern). All sports data comes from the backend; this repo makes no direct ESPN calls.
 
 ### Key source-of-truth files
-- `src/lib/leagues/leagueConfig.ts` — per-league capability flags (`supportsStandings`, `supportsOdds`, `supportsLiveDetails`, `teamOrder`, season/week/year UI options, stats profile). Backend-provided `LeagueMetadata` is merged with local `UI_PRESETS`/`DEFAULT_LEAGUE_METADATA` fallbacks. Note: `supportsStandings` is force-enabled for `nhl`/`mls` in `buildLeagueConfigs` regardless of backend metadata.
+- `src/lib/leagues/leagueConfig.ts` — per-league capability flags (`supportsStandings`, `supportsOdds`, `supportsLiveDetails`, `teamOrder`, season/week/year UI options, stats profile). Backend-provided `LeagueMetadata` is merged with local `UI_PRESETS`/`DEFAULT_LEAGUE_METADATA` fallbacks. League ids must match `LEAGUE_ID_REGEX` (lowercase letters, digits, `-`, `_`) — `parseLeagueId` gates both the `[league]` page route and the proxy API routes.
 - `src/lib/gameStatus.ts` — single source of truth for scheduled/live/final status logic (`isScheduledGame`, `isInProgressGame`, `isFinalGame`, `isLiveDashboardGame`, etc.). Always use these helpers rather than comparing `gameStatus` strings inline.
 - `src/lib/api/fetcher.ts` — shared SWR fetcher; throws on non-2xx and attaches `status`/`code`/`details` from the API error envelope.
 - `src/app/[league]/page.tsx` — dynamic league route; works for any league id present in league config, no per-league routing needed.
@@ -47,7 +47,7 @@ The UI resolves the browser's local timezone and passes it to Next API routes as
 ### Adding a new sport/league
 1. Add the league to `src/lib/leagues/leagueConfig.ts` (`DEFAULT_LEAGUE_METADATA`, and a `UI_PRESETS` entry if it needs season/week/year filtering).
 2. No new route needed — the dynamic `[league]` route picks it up once config exists.
-3. Add/wire a stats display map in `src/lib/espn/enums/statDisplayMaps.ts` if the league needs a new stats profile.
+3. Add/wire a stats display map in `src/lib/leagues/statDisplayMaps.ts` if the league needs a new stats profile.
 4. Add the league on the backend (enum + data fetch support) and confirm `/games`, `/games/current`, `/context`, `/dates` behave as expected.
 5. Update `../tallyo-backend/openapi.yaml` if request/response shape changed, then run `npm run gen:api-types`.
 6. Validate: `npm run lint && npx tsc --noEmit`.
