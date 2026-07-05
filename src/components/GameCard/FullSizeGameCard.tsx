@@ -12,6 +12,7 @@ import {
 } from "@/lib/gameStatus";
 import { getGameSides } from "@/lib/gameLayout";
 import {
+  statsProfileForLeague,
   supportsLiveDetailsForLeague,
   supportsOddsForLeague,
 } from "@/lib/leagues/leagueConfig";
@@ -29,6 +30,21 @@ interface GameProps {
   statsToDisplay: Map<string, string>;
 }
 
+function inningLabel(period?: number | null): string {
+  if (period == null) {
+    return "";
+  }
+  const suffix =
+    period % 10 === 1 && period % 100 !== 11
+      ? "st"
+      : period % 10 === 2 && period % 100 !== 12
+        ? "nd"
+        : period % 10 === 3 && period % 100 !== 13
+          ? "rd"
+          : "th";
+  return `${period}${suffix} Inning`;
+}
+
 const FullSizeGameCard: React.FC<GameProps> = ({
   game,
   leaders,
@@ -42,6 +58,7 @@ const FullSizeGameCard: React.FC<GameProps> = ({
   statsToDisplay,
 }) => {
   const { left, right } = getGameSides(game);
+  const isBaseball = statsProfileForLeague(game.league) === "baseball";
   const leagueSupportsLiveDetails = supportsLiveDetailsForLeague(game.league);
   const canShowLiveDetails =
     leagueSupportsLiveDetails && shouldShowLiveGameDetails(game.gameStatus);
@@ -139,10 +156,16 @@ const FullSizeGameCard: React.FC<GameProps> = ({
             return (
               <div className="p-1" key={play.id}>
                 <div>
-                  {play.period}Q - {play.clock}
+                  {/* Baseball plays carry the inning as period and no clock */}
+                  {isBaseball
+                    ? inningLabel(play.period)
+                    : `${play.period}Q - ${play.clock}`}
                 </div>
                 <div>
-                  {play.teamName} {play.scoringType} - {play.displayText}
+                  {/* Baseball's generic "Play Result" type adds no signal */}
+                  {isBaseball && play.scoringType === "Play Result"
+                    ? `${play.teamName} - ${play.displayText}`
+                    : `${play.teamName} ${play.scoringType} - ${play.displayText}`}
                 </div>
                 {hasRunningScore && (
                   <div>

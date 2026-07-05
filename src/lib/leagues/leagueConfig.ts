@@ -1,5 +1,6 @@
 import { LeagueMetadata } from "@/types/api-contract";
 import {
+  baseballStatsToDisplay,
   footballStatsToDisplay,
   hockeyStatsToDisplay,
   soccerStatsToDisplay,
@@ -120,6 +121,21 @@ const DEFAULT_LEAGUE_METADATA: LeagueMetadata[] = [
     showInHeader: true,
     showInDashboard: true,
   },
+  {
+    id: "mlb",
+    label: "MLB",
+    path: "/mlb",
+    supportsStandings: true,
+    contextMode: "date",
+    supportsYearFilter: false,
+    supportsWeekFilter: false,
+    statsProfile: "baseball",
+    teamOrder: "away-left",
+    supportsOdds: true,
+    supportsLiveDetails: true,
+    showInHeader: true,
+    showInDashboard: true,
+  },
 ];
 
 // Season/week/year selector options are a UI presentation concern layered on
@@ -170,6 +186,9 @@ function getStatsMapForProfile(profile?: string): Map<string, string> {
   }
   if (profile === "soccer") {
     return soccerStatsToDisplay;
+  }
+  if (profile === "baseball") {
+    return baseballStatsToDisplay;
   }
   return footballStatsToDisplay;
 }
@@ -236,4 +255,9 @@ export function supportsOddsForLeague(leagueId?: string): boolean {
 export function supportsLiveDetailsForLeague(leagueId?: string): boolean {
   const league = getLeagueConfigById(leagueId ?? "");
   return !!league?.supportsLiveDetails;
+}
+
+export function statsProfileForLeague(leagueId?: string): string | undefined {
+  const league = getLeagueConfigById(leagueId ?? "");
+  return league?.statsProfile;
 }

@@ -301,6 +301,62 @@ const MLS_COLUMNS: StandingsColumn[] = [
   },
 ];
 
+// Classic baseball table: W L PCT GB Home Road STRK L10.
+const MLB_COLUMNS: StandingsColumn[] = [
+  {
+    id: "wins",
+    header: { long: "Wins", short: "W" },
+    render: (t) => stat(t, "wins") ?? "-",
+    sticky: false,
+    sortValue: (t) => parseSortableNumber(stat(t, "wins")),
+  },
+  {
+    id: "losses",
+    header: { long: "Losses", short: "L" },
+    render: (t) => stat(t, "losses") ?? "-",
+    sticky: false,
+    sortValue: (t) => parseSortableNumber(stat(t, "losses")),
+  },
+  {
+    id: "pct",
+    header: { long: "Win Percentage", short: "PCT" },
+    render: (t) => stat(t, "winpercent") ?? "-",
+    sticky: false,
+    sortValue: (t) => parseSortableNumber(stat(t, "winpercent")),
+  },
+  {
+    id: "gb",
+    header: { long: "Games Behind", short: "GB" },
+    render: (t) => stat(t, "gamesbehind") ?? "-",
+    sticky: false,
+    sortValue: (t) => parseSortableNumber(stat(t, "gamesbehind")),
+  },
+  {
+    id: "home",
+    header: { long: "Home Record", short: "HOME" },
+    render: (t) => stat(t, "home") ?? "-",
+    sticky: false,
+  },
+  {
+    id: "road",
+    header: { long: "Road Record", short: "ROAD" },
+    render: (t) => stat(t, "road") ?? "-",
+    sticky: false,
+  },
+  {
+    id: "streak",
+    header: { long: "Streak", short: "STRK" },
+    render: (t) => stat(t, "streak") ?? "-",
+    sticky: false,
+  },
+  {
+    id: "last10",
+    header: { long: "Last 10", short: "L10" },
+    render: (t) => stat(t, "lasttengames") ?? "-",
+    sticky: false,
+  },
+];
+
 // Classic tournament group table: P W D L GF GA GD Pts.
 const WORLD_CUP_COLUMNS: StandingsColumn[] = [
   {
@@ -425,7 +481,43 @@ const buildNhlSections = (standing: StandingsGroup): StandingsSection[] => {
   }));
 };
 
+// Division sections (e.g. AL East) within each conference group, best
+// win percentage first.
+const buildDivisionSections = (
+  standing: StandingsGroup,
+): StandingsSection[] => {
+  const groups = new Map<string, StandingsTeam[]>();
+  for (const team of standing.teams) {
+    const division = team.division || "Other";
+    if (!groups.has(division)) {
+      groups.set(division, []);
+    }
+    groups.get(division)?.push(team);
+  }
+
+  return Array.from(groups.entries()).map(([division, teams]) => ({
+    key: `${standing.groupName}-${division}`,
+    title: division,
+    rows: [...teams]
+      .sort(
+        (a, b) =>
+          parseSortableNumber(stat(b, "winpercent")) -
+          parseSortableNumber(stat(a, "winpercent")),
+      )
+      .map((team) => ({ team })),
+  }));
+};
+
 const getProfile = (league: string): StandingsProfile => {
+  if (league === "MLB") {
+    return {
+      title: "MLB Standings",
+      columns: [TEAM_COLUMN, ...MLB_COLUMNS],
+      sortScope: "section",
+      buildSections: buildDivisionSections,
+    };
+  }
+
   if (league === "NHL") {
     return {
       title: "NHL Playoff Standings",

@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project
 
-`tallyo` is a Next.js (App Router) UI for viewing sports games with live updates, game details, standings, and league dashboards. Supported leagues: `nfl`, `cfb`, `nhl`, `mls`, `world_cup`. Deployed on Vercel at https://tallyo.us.
+`tallyo` is a Next.js (App Router) UI for viewing sports games with live updates, game details, standings, and league dashboards. Supported leagues: `nfl`, `cfb`, `nhl`, `mls`, `world_cup`, `mlb`. Deployed on Vercel at https://tallyo.us.
 
 The backend is a Spring Boot service in the sibling repo `../tallyo-backend`, which is the source of truth for the API contract (`../tallyo-backend/openapi.yaml`). This repo has no database and no backend logic of its own — it's a thin proxy + presentation layer.
 
