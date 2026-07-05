@@ -32,6 +32,15 @@ curl -s "localhost:3300/api/games/<gameId>/details"
 curl -s -o /dev/null -w "%{http_code}" localhost:3300/<league-id>   # SSR page, 200 vs 404
 ```
 
+## Visual verification (Playwright)
+
+Chromium headless shell is cached at `~/Library/Caches/ms-playwright`
+(installed 2026-07-05). In a scratch dir: `npm i playwright`, then drive
+`http://localhost:3300/<league>` and screenshot. Standings/games sections
+are collapsed by default — click the `CollapsableSection` titles first
+(e.g. `page.getByText("World Cup Standings").first().click()` then a
+group/conference name). Rows render client-side only after expanding.
+
 ## Gotchas
 
 - `/api/games/current` (proxy) returns a bare array, unlike the backend's

@@ -301,6 +301,66 @@ const MLS_COLUMNS: StandingsColumn[] = [
   },
 ];
 
+// Classic tournament group table: P W D L GF GA GD Pts.
+const WORLD_CUP_COLUMNS: StandingsColumn[] = [
+  {
+    id: "gp",
+    header: { long: "Played", short: "GP" },
+    render: (t) => stat(t, "gamesplayed") ?? "-",
+    sticky: false,
+    sortValue: (t) => parseSortableNumber(stat(t, "gamesplayed")),
+  },
+  {
+    id: "wins",
+    header: { long: "Wins", short: "W" },
+    render: (t) => stat(t, "wins") ?? "-",
+    sticky: false,
+    sortValue: (t) => parseSortableNumber(stat(t, "wins")),
+  },
+  {
+    id: "draws",
+    header: { long: "Draws", short: "D" },
+    render: (t) => stat(t, "ties") ?? "-",
+    sticky: false,
+    sortValue: (t) => parseSortableNumber(stat(t, "ties")),
+  },
+  {
+    id: "losses",
+    header: { long: "Losses", short: "L" },
+    render: (t) => stat(t, "losses") ?? "-",
+    sticky: false,
+    sortValue: (t) => parseSortableNumber(stat(t, "losses")),
+  },
+  {
+    id: "gf",
+    header: { long: "Goals For", short: "GF" },
+    render: (t) => stat(t, "pointsfor") ?? "-",
+    sticky: false,
+    sortValue: (t) => parseSortableNumber(stat(t, "pointsfor")),
+  },
+  {
+    id: "ga",
+    header: { long: "Goals Against", short: "GA" },
+    render: (t) => stat(t, "pointsagainst") ?? "-",
+    sticky: false,
+    sortValue: (t) => parseSortableNumber(stat(t, "pointsagainst")),
+  },
+  {
+    id: "gd",
+    header: { long: "Goal Difference", short: "GD" },
+    render: (t) => stat(t, "pointdifferential") ?? "-",
+    sticky: false,
+    sortValue: (t) => parseSortableNumber(stat(t, "pointdifferential")),
+  },
+  {
+    id: "points",
+    header: { long: "Points", short: "PTS" },
+    render: (t) => stat(t, "points") ?? "-",
+    sticky: false,
+    sortValue: (t) => parseSortableNumber(stat(t, "points")),
+  },
+];
+
 const buildFlatSections = (standing: StandingsGroup): StandingsSection[] => [
   {
     key: `${standing.groupName}-all`,
@@ -385,6 +445,15 @@ const getProfile = (league: string): StandingsProfile => {
         ...NFL_EXTRA_COLUMNS,
         ...BASE_COLUMNS.slice(1),
       ],
+      sortScope: "global",
+      buildSections: buildFlatSections,
+    };
+  }
+
+  if (league === "World Cup") {
+    return {
+      title: "World Cup Standings",
+      columns: [TEAM_COLUMN, ...WORLD_CUP_COLUMNS],
       sortScope: "global",
       buildSections: buildFlatSections,
     };
