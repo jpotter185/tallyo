@@ -450,7 +450,7 @@ const getProfile = (league: string): StandingsProfile => {
     };
   }
 
-  if (league === "World Cup") {
+  if (league === "WC") {
     return {
       title: "World Cup Standings",
       columns: [TEAM_COLUMN, ...WORLD_CUP_COLUMNS],
