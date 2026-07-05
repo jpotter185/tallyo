@@ -26,7 +26,7 @@ export interface LeagueRuntimeConfig {
   statsToDisplay: Map<string, string>;
 }
 
-const LEAGUE_ID_REGEX = /^[a-z0-9-]+$/;
+const LEAGUE_ID_REGEX = /^[a-z0-9_-]+$/;
 
 const yearOptions = [
   "2026",
@@ -94,6 +94,21 @@ const DEFAULT_LEAGUE_METADATA: LeagueMetadata[] = [
     id: "mls",
     label: "MLS",
     path: "/mls",
+    supportsStandings: true,
+    contextMode: "date",
+    supportsYearFilter: false,
+    supportsWeekFilter: false,
+    statsProfile: "soccer",
+    teamOrder: "home-left",
+    supportsOdds: false,
+    supportsLiveDetails: true,
+    showInHeader: true,
+    showInDashboard: true,
+  },
+  {
+    id: "world_cup",
+    label: "World Cup",
+    path: "/world_cup",
     supportsStandings: true,
     contextMode: "date",
     supportsYearFilter: false,
