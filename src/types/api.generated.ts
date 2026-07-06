@@ -71,6 +71,9 @@ export interface components {
       possessionTeamId?: string;
       homeTimeouts?: number;
       awayTimeouts?: number;
+      balls?: number;
+      strikes?: number;
+      outs?: number;
       winner?: string;
       headline?: string;
       gameOdd?: components["schemas"]["GameOdd"];

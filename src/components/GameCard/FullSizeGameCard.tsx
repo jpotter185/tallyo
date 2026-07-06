@@ -98,6 +98,13 @@ const FullSizeGameCard: React.FC<GameProps> = ({
           {canShowLiveDetails && (
             <div className="text-xs">{game.ballLocation}</div>
           )}
+          {canShowLiveDetails && game.balls != null && game.strikes != null && (
+            <div className="text-xs">
+              {game.balls}-{game.strikes}
+              {game.outs != null &&
+                `, ${game.outs} ${game.outs === 1 ? "Out" : "Outs"}`}
+            </div>
+          )}
           {shouldShowGameChannel(game.gameStatus) && (
             <div className="text-xs">{game.channel}</div>
           )}
