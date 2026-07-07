@@ -16,6 +16,7 @@ export interface LeagueRuntimeConfig {
   supportsStandings: boolean;
   supportsOdds: boolean;
   supportsLiveDetails: boolean;
+  supportsPlayerStats: boolean;
   teamOrder: "away-left" | "home-left";
   showInHeader: boolean;
   showInDashboard: boolean;
@@ -58,6 +59,7 @@ const DEFAULT_LEAGUE_METADATA: LeagueMetadata[] = [
     teamOrder: "home-left",
     supportsOdds: false,
     supportsLiveDetails: true,
+    supportsPlayerStats: false,
     showInHeader: true,
     showInDashboard: true,
   },
@@ -73,6 +75,7 @@ const DEFAULT_LEAGUE_METADATA: LeagueMetadata[] = [
     teamOrder: "home-left",
     supportsOdds: false,
     supportsLiveDetails: true,
+    supportsPlayerStats: false,
     showInHeader: true,
     showInDashboard: true,
   },
@@ -88,6 +91,7 @@ const DEFAULT_LEAGUE_METADATA: LeagueMetadata[] = [
     teamOrder: "away-left",
     supportsOdds: true,
     supportsLiveDetails: true,
+    supportsPlayerStats: false,
     showInHeader: true,
     showInDashboard: true,
   },
@@ -103,6 +107,7 @@ const DEFAULT_LEAGUE_METADATA: LeagueMetadata[] = [
     teamOrder: "away-left",
     supportsOdds: true,
     supportsLiveDetails: true,
+    supportsPlayerStats: false,
     showInHeader: true,
     showInDashboard: true,
   },
@@ -118,6 +123,7 @@ const DEFAULT_LEAGUE_METADATA: LeagueMetadata[] = [
     teamOrder: "away-left",
     supportsOdds: false,
     supportsLiveDetails: true,
+    supportsPlayerStats: false,
     showInHeader: true,
     showInDashboard: true,
   },
@@ -133,6 +139,7 @@ const DEFAULT_LEAGUE_METADATA: LeagueMetadata[] = [
     teamOrder: "away-left",
     supportsOdds: true,
     supportsLiveDetails: true,
+    supportsPlayerStats: true,
     showInHeader: true,
     showInDashboard: true,
   },
@@ -211,6 +218,7 @@ export function buildLeagueConfigs(
       supportsStandings: league.supportsStandings,
       supportsOdds: league.supportsOdds,
       supportsLiveDetails: league.supportsLiveDetails,
+      supportsPlayerStats: league.supportsPlayerStats,
       teamOrder: league.teamOrder,
       showInHeader: league.showInHeader,
       showInDashboard: league.showInDashboard,
@@ -255,6 +263,11 @@ export function supportsOddsForLeague(leagueId?: string): boolean {
 export function supportsLiveDetailsForLeague(leagueId?: string): boolean {
   const league = getLeagueConfigById(leagueId ?? "");
   return !!league?.supportsLiveDetails;
+}
+
+export function supportsPlayerStatsForLeague(leagueId?: string): boolean {
+  const league = getLeagueConfigById(leagueId ?? "");
+  return !!league?.supportsPlayerStats;
 }
 
 export function statsProfileForLeague(leagueId?: string): string | undefined {

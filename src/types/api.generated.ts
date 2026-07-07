@@ -104,6 +104,7 @@ export interface components {
       teamOrder: "away-left" | "home-left";
       supportsOdds: boolean;
       supportsLiveDetails: boolean;
+      supportsPlayerStats: boolean;
       showInHeader: boolean;
       showInDashboard: boolean;
     };
@@ -144,10 +145,26 @@ export interface components {
       period?: number;
       clock?: string;
     };
+    PlayerStatLine: {
+      playerId: string;
+      playerName?: string;
+      playerShortName?: string;
+      position?: string;
+      batOrder?: number;
+      starter?: boolean;
+      stats: string[];
+    };
+    PlayerStatGroup: {
+      teamId: number;
+      category: string;
+      labels: string[];
+      players: components["schemas"]["PlayerStatLine"][];
+    };
     GameDetails: {
       gameId: string;
       leaders: components["schemas"]["StatLeader"][];
       scoringPlays: components["schemas"]["ScoringPlay"][];
+      players: components["schemas"]["PlayerStatGroup"][];
     };
     UpdateResponse: {
       gameCount: number;

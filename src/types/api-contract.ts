@@ -12,4 +12,6 @@ export type StandingsTeam = components["schemas"]["StandingsTeam"];
 export type StandingsGroup = components["schemas"]["StandingsGroup"];
 export type StatLeader = components["schemas"]["StatLeader"];
 export type ScoringPlay = components["schemas"]["ScoringPlay"];
+export type PlayerStatLine = components["schemas"]["PlayerStatLine"];
+export type PlayerStatGroup = components["schemas"]["PlayerStatGroup"];
 export type GameDetails = components["schemas"]["GameDetails"];

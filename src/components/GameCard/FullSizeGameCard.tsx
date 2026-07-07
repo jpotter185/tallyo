@@ -1,5 +1,10 @@
 import Link from "next/link";
-import { Game, ScoringPlay, StatLeader } from "@/types/api-contract";
+import {
+  Game,
+  PlayerStatGroup,
+  ScoringPlay,
+  StatLeader,
+} from "@/types/api-contract";
 import FullsizeTeamCard from "../TeamCard/FullsizeTeamCard";
 import CollapsableSection from "../CollapsableSection";
 import { dateFormatter } from "@/lib/format/dateFormatter";
@@ -27,6 +32,9 @@ interface GameProps {
   toggleStats: () => void;
   isTeamStatsOpen: boolean;
   toggleTeamStats: () => void;
+  playerGroups: PlayerStatGroup[];
+  isPlayersOpen: boolean;
+  togglePlayers: () => void;
   statsToDisplay: Map<string, string>;
 }
 
@@ -55,6 +63,9 @@ const FullSizeGameCard: React.FC<GameProps> = ({
   toggleStats,
   isTeamStatsOpen,
   toggleTeamStats,
+  playerGroups,
+  isPlayersOpen,
+  togglePlayers,
   statsToDisplay,
 }) => {
   const { left, right } = getGameSides(game);
@@ -239,6 +250,66 @@ const FullSizeGameCard: React.FC<GameProps> = ({
               </div>
             );
           })}
+        </div>
+      )}
+      {playerGroups.length > 0 && (
+        <CollapsableSection
+          // Scheduled games carry the projected lineup with season stats
+          title={isScheduledGame(game.gameStatus) ? "Lineups" : "Box Score"}
+          isOpen={isPlayersOpen}
+          onToggle={togglePlayers}
+        />
+      )}
+      {isPlayersOpen && (
+        <div className="flex flex-col gap-2">
+          {[left, right].flatMap((side) =>
+            playerGroups
+              .filter((group) => group.teamId === side.team.teamKey.teamId)
+              .map((group) => (
+                <div
+                  key={`${group.teamId}-${group.category}`}
+                  className="border rounded overflow-x-auto"
+                >
+                  <table className="w-full text-xs whitespace-nowrap">
+                    <thead>
+                      <tr className="font-semibold border-b">
+                        <th className="p-1 text-left">
+                          {side.team.abbreviation}{" "}
+                          {group.category.charAt(0).toUpperCase() +
+                            group.category.slice(1)}
+                        </th>
+                        {group.labels.map((label) => (
+                          <th key={label} className="p-1 text-right">
+                            {label}
+                          </th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y">
+                      {group.players.map((player) => (
+                        <tr key={player.playerId}>
+                          <td
+                            className={`p-1 text-left ${
+                              player.starter === false ? "pl-4" : ""
+                            }`}
+                          >
+                            {player.playerShortName ?? player.playerName}{" "}
+                            <span className="opacity-70">
+                              {player.position}
+                            </span>
+                          </td>
+                          {player.stats.map((value, index) => (
+                            <td key={index} className="p-1 text-right">
+                              {value}
+                            </td>
+                          ))}
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )),
+          )}
         </div>
       )}
       {hasTeamStats && (

@@ -25,6 +25,7 @@ const GameCard: React.FC<GameProps> = ({
   const [isStatsOpen, setIsStatsOpen] = useState(false);
   const [isScoringPlaysOpen, setIsScoringPlaysOpen] = useState(false);
   const [isTeamStatsOpen, setIsTeamStatsOpen] = useState(false);
+  const [isPlayersOpen, setIsPlayersOpen] = useState(false);
 
   const { data: details } = useSWR<GameDetails>(
     gameDetailsUrl(game.id),
@@ -59,6 +60,9 @@ const GameCard: React.FC<GameProps> = ({
           toggleStats={() => setIsStatsOpen((open) => !open)}
           isTeamStatsOpen={isTeamStatsOpen}
           toggleTeamStats={() => setIsTeamStatsOpen((open) => !open)}
+          playerGroups={details?.players ?? []}
+          isPlayersOpen={isPlayersOpen}
+          togglePlayers={() => setIsPlayersOpen((open) => !open)}
           statsToDisplay={statsToDisplay}
         />
       ) : (
