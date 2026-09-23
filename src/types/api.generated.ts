@@ -125,6 +125,31 @@ export interface components {
       groupName: string;
       teams: components["schemas"]["StandingsTeam"][];
     };
+    InjuredPlayer: {
+      athleteId: string;
+      name?: string;
+      position?: string;
+      status: string;
+      statusDate?: string;
+    };
+    QbDepthChartEntry: {
+      rank: number;
+      athleteId: string;
+      name?: string;
+      injuryStatus?: string;
+    };
+    TeamInjuryReport: {
+      teamId: number;
+      abbreviation?: string;
+      updatedAt?: string;
+      injuries: components["schemas"]["InjuredPlayer"][];
+      qbDepthChart: components["schemas"]["QbDepthChartEntry"][];
+    };
+    InjuryReport: {
+      league: string;
+      updatedAt?: string;
+      teams: components["schemas"]["TeamInjuryReport"][];
+    };
     StatLeader: {
       name: string;
       displayName?: string;
