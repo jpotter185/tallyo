@@ -51,7 +51,7 @@ export interface components {
     };
     Game: {
       id: string;
-      league: "nfl" | "cfb" | "nhl" | "mls" | "world_cup" | "mlb";
+      league: "nfl" | "cfb" | "nhl" | "mls" | "mlb";
       homeTeam: components["schemas"]["Team"];
       awayTeam: components["schemas"]["Team"];
       stadiumName?: string;

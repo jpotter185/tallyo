@@ -48,22 +48,6 @@ const yearOptions = [
 // Fallbacks used when the backend's /api/v1/leagues metadata is unavailable.
 const DEFAULT_LEAGUE_METADATA: LeagueMetadata[] = [
   {
-    id: "world_cup",
-    label: "World Cup",
-    path: "/world_cup",
-    supportsStandings: true,
-    contextMode: "date",
-    supportsYearFilter: false,
-    supportsWeekFilter: false,
-    statsProfile: "soccer",
-    teamOrder: "home-left",
-    supportsOdds: false,
-    supportsLiveDetails: true,
-    supportsPlayerStats: false,
-    showInHeader: true,
-    showInDashboard: true,
-  },
-  {
     id: "mls",
     label: "MLS",
     path: "/mls",
