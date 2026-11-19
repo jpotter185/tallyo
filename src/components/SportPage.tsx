@@ -99,6 +99,9 @@ export default function SportPage({ league }: SportPageProps) {
     refreshInterval: 0,
   });
 
+  // One-time initialisation from the fetched context (guarded by isInitialized),
+  // so the extra render from setting state here is intentional.
+  /* eslint-disable react-hooks/set-state-in-effect */
   useEffect(() => {
     if (!config || !context || isInitialized) {
       return;
@@ -133,6 +136,7 @@ export default function SportPage({ league }: SportPageProps) {
     setWeek,
     setYear,
   ]);
+  /* eslint-enable react-hooks/set-state-in-effect */
 
   useEffect(() => {
     if (!config || !isInitialized || contextMode !== "season") {
