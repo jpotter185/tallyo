@@ -3,6 +3,9 @@
 
 export interface components {
   schemas: {
+    HealthResponse: {
+      status: "UP" | "DOWN" | "OUT_OF_SERVICE" | "UNKNOWN";
+    };
     ApiError: {
       code: string;
       message: string;
@@ -190,6 +193,19 @@ export interface components {
       leaders: components["schemas"]["StatLeader"][];
       scoringPlays: components["schemas"]["ScoringPlay"][];
       players: components["schemas"]["PlayerStatGroup"][];
+    };
+    WhoamiResponse: {
+      subject: string;
+      username?: unknown;
+      groups: string[];
+      scopes: string[];
+    };
+    ProtectedResourceMetadata: {
+      resource: string;
+      authorization_servers: string[];
+      scopes_supported?: string[];
+      bearer_methods_supported?: string[];
+      resource_name?: string;
     };
     UpdateResponse: {
       gameCount: number;
