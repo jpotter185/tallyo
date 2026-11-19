@@ -19,6 +19,12 @@ The backend is a Spring Boot service in the sibling repo `../tallyo-backend`, wh
 
 There is no test suite configured in this repo — validation is lint + typecheck (+ build).
 
+Lint config (`eslint.config.mjs`) uses eslint-config-next's native flat configs (ESLint 10; no `FlatCompat`). `react-hooks/set-state-in-effect` is disabled only around `SportPage`'s one-time init effect.
+
+Dependabot (`.github/dependabot.yml`) opens weekly grouped npm and Actions PRs; CI (contract check, lint, typecheck) and the Vercel preview gate them. Majors it deliberately ignores:
+- **`typescript`**: TS 7 breaks lint until typescript-eslint supports it.
+- **`@types/node`**: keep on the Node runtime's major (20, as in CI); bump both together.
+
 Backend (reference only, in `../tallyo-backend`): `./mvnw -q -DskipTests compile` to compile, `./mvnw test` to test.
 
 ## Architecture
