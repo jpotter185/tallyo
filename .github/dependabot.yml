@@ -8,6 +8,13 @@ updates:
     groups:
       minor-and-patch:
         update-types: ["minor", "patch"]
+    ignore:
+      # typescript-eslint doesn't support TypeScript 7 yet; lint breaks
+      - dependency-name: "typescript"
+        update-types: ["version-update:semver-major"]
+      # Keep Node types on the runtime's major (CI uses Node 20); bump together
+      - dependency-name: "@types/node"
+        update-types: ["version-update:semver-major"]
 
   - package-ecosystem: "github-actions"
     directory: "/"
